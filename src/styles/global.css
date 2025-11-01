@@ -1,2 +1,7 @@
 @import "tailwindcss";
 @import "./components/index.css";
+
+body {
+    display: flex;
+    flex-direction: column;
+}

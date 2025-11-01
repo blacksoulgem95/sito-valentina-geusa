@@ -4,7 +4,11 @@ import Footer from '@/components/Footer.astro';
 
 import '@/styles/global.css'
 
-let pageTitle;
+interface Props {
+	pageTitle: string;
+}
+
+const { pageTitle } = Astro.props;
 ---
 <html lang="">
 <head>
@@ -17,6 +21,7 @@ let pageTitle;
 <body>
 <Header/>
 <h1>{pageTitle}</h1>
+<slot/>
 <Footer/>
 </body>
 </html>

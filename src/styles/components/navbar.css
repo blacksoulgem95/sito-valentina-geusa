@@ -1,0 +1,44 @@
+:root {
+    --navbar-height: 83px;
+}
+
+body {
+
+}
+
+.navbar {
+    width: 100%;
+    height: var(--navbar-height);
+
+    background: #FFFFFF;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+
+
+    .navbar-start {
+        @apply flex gap-3;
+        align-items: center;
+        justify-content: start;
+    }
+
+    .navbar-end {
+        @apply flex gap-3;
+        align-items: center;
+        justify-content: end;
+    }
+
+    .navbar-center {
+        @apply flex gap-3;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .navbar-item {
+        .navbar-logo img {
+            @apply h-10;
+        }
+    }
+}
