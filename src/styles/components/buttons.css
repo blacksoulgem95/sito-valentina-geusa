@@ -16,14 +16,40 @@
     color: var(--text-color);
     padding: var(--btn-padding);
     border-radius: var(--btn-border-radius);
+    transition: background 1s ease;
+
+
+    &:hover {
+        background: var(--primary-color);
+    }
 
     &.btn-sm {
         height: var(--btn-sm-height);
         font-size: var(--btn-sm-font-size);
     }
 
+    &.btn-outline {
+        background: transparent;
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+        &:hover {}
+    }
+
     &.btn-primary {
         background: var(--primary-color);
         color: var(--primary-text-color);
+        &:hover {
+            background: var(--primary-alt-color);
+        }
+
+        &.btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            &:hover {
+                background: var(--primary-color);
+                color: var(--primary-text-color);
+            }
+        }
     }
 }

@@ -1,0 +1,31 @@
+@import "../variables.css";
+
+.hero {
+    background-color: var(--primary-color);
+    color: var(--primary-text-color);
+    min-height: 30vh;
+    padding: 2rem 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &.hero-sm {
+        min-height: 10vh;
+    }
+    &.hero-lg {
+        min-height: 70vh;
+    }
+    &.hero-xl {
+        min-height: 90vh;
+    }
+    &.hero-screen {
+        min-height: 100vh;
+    }
+
+    &.hero-home {
+        background-image: url("../../assets/hero.svg");
+        background-size: cover;
+        background-position: center;
+    }
+}
