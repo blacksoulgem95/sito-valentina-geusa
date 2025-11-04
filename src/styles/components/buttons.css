@@ -37,7 +37,8 @@
         background: var(--primary-color);
         color: var(--primary-text-color);
         &:hover {
-            background: var(--primary-alt-color);
+            background: var(--primary-hover-color);
+            color: var(--primary-hover-text-color);
         }
 
         &.btn-outline {
