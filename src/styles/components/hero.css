@@ -28,4 +28,23 @@
         background-size: cover;
         background-position: center;
     }
+
+    & .title {
+        /* Valentina Geusa Graphic & Web Designer */
+
+        font-family: 'Urbanist';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 24px;
+        line-height: 29px;
+        text-align: center;
+
+        background: linear-gradient(180deg, #F73258 0%, #FF62C2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+
+
+    }
 }

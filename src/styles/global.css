@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "./components/index.css";
-
+@import "./fonts/index.css";
 body {
     display: flex;
     flex-direction: column;
