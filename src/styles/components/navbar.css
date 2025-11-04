@@ -7,33 +7,21 @@ body {
 }
 
 .navbar {
-    width: 100%;
+    @apply bg-white flex items-center justify-between w-full;
+
     height: var(--navbar-height);
-
-    background: #FFFFFF;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: 0 20px;
 
-
     .navbar-start {
-        @apply flex gap-3;
-        align-items: center;
-        justify-content: start;
+        @apply flex gap-3 items-center justify-items-start;
     }
 
     .navbar-end {
-        @apply flex gap-3;
-        align-items: center;
-        justify-content: end;
+        @apply flex gap-3 items-center justify-end;
     }
 
     .navbar-center {
-        @apply flex gap-3;
-        align-items: center;
-        justify-content: center;
+        @apply flex gap-3 justify-center items-center;
     }
 
     .navbar-item {

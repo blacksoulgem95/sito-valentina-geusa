@@ -10,14 +10,12 @@
 }
 
 .btn {
+    @apply bg-white transition-all ease-in-out;
     height: var(--btn-height);
-    background: #FFFFFF;
     font-size: var(--btn-font-size);
     color: var(--text-color);
     padding: var(--btn-padding);
     border-radius: var(--btn-border-radius);
-    transition: background 1s ease;
-
 
     &:hover {
         background: var(--primary-color);
