@@ -1,0 +1,12 @@
+---
+interface Props {
+    count?: number;
+    class?: string;
+}
+
+const { count = 3, class: className } = Astro.props;
+---
+
+<div class:list={["ellipses", className]}>
+    {Array.from({ length: count }).map((_, i) => <span key={i} />)}
+</div>

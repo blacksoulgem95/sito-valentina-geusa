@@ -1,0 +1,21 @@
+@import "../variables.css";
+
+.ellipses {
+    @apply flex gap-2;
+}
+
+.ellipses > span {
+    @apply w-5 h-5 min-h-5 min-w-5 rounded-full;
+}
+
+.ellipses > span:nth-child(3n + 1) {
+    @apply bg-primary;
+}
+
+.ellipses > span:nth-child(3n + 2) {
+    @apply bg-secondary;
+}
+
+.ellipses > span:nth-child(3n + 3) {
+    @apply bg-tertiary;
+}
