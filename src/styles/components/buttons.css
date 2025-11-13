@@ -10,8 +10,9 @@
 }
 
 .btn {
-    @apply bg-white transition-all ease-in-out;
+    @apply bg-white transition-all ease-in-out flex justify-around items-center;
     height: var(--btn-height);
+    max-height: var(--btn-height);
     font-size: var(--btn-font-size);
     color: var(--text-color);
     padding: var(--btn-padding);
@@ -23,6 +24,7 @@
 
     &.btn-sm {
         height: var(--btn-sm-height);
+        max-height: var(--btn-sm-height);
         font-size: var(--btn-sm-font-size);
     }
 
@@ -30,7 +32,8 @@
         background: transparent;
         border: 1px solid var(--primary-color);
         color: var(--primary-color);
-        &:hover {}
+        &:hover {
+        }
     }
 
     &.btn-primary {

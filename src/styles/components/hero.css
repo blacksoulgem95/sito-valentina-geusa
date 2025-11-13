@@ -13,38 +13,68 @@
     &.hero-sm {
         min-height: 10vh;
     }
+
     &.hero-lg {
         min-height: 70vh;
     }
+
     &.hero-xl {
         min-height: 90vh;
     }
+
     &.hero-screen {
         min-height: 100vh;
+    }
+
+    & .title {
+        font-family: "Poppins", sans-serif;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 19.3588px;
+        line-height: 29px;
+        /* identical to box height */
+        text-align: center;
+
+        background: linear-gradient(90deg, #ff62c2 43.75%, #8a38f5 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
     }
 
     &.hero-home {
         background-image: url("../../assets/hero.svg");
         background-size: cover;
         background-position: center;
+
+        & .title {
+            /* Valentina Geusa Graphic & Web Designer */
+
+            font-family: "Urbanist";
+            font-style: normal;
+            font-weight: 400;
+            font-size: 24px;
+            line-height: 29px;
+            text-align: center;
+
+            background: linear-gradient(180deg, #f73258 0%, #ff62c2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
     }
+}
+.font-welcome {
+    font-family: "Poppins", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.3rem;
+    text-align: center;
 
-    & .title {
-        /* Valentina Geusa Graphic & Web Designer */
-
-        font-family: 'Urbanist';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 24px;
-        line-height: 29px;
-        text-align: center;
-
-        background: linear-gradient(180deg, #F73258 0%, #FF62C2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-fill-color: transparent;
-
-
-    }
+    background: linear-gradient(90deg, #ff62c2 43.75%, #8a38f5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
 }

@@ -1,11 +1,22 @@
 ---
-import PageLayout from '@/layouts/PageLayout.astro';
+import PageLayout from "@/layouts/PageLayout.astro";
 
-const pageTitle = 'Home';
+const pageTitle = "Home";
 ---
 
 <PageLayout pageTitle={pageTitle}>
     <div class="hero hero-home">
-        <h1 class="title">Valentina Geusa<br/>Graphic & Web Designer</h1>
+        <h1 class="title">Valentina Geusa<br />Graphic & Web Designer</h1>
     </div>
+    <section class="flex mt-3 flex-col justify-justify-center items-center">
+        <p>
+            Creo identità visive, illustrazioni e contenuti social con un tocco
+            personale.
+        </p>
+        <p class="font-welcome">Benvenutə!</p>
+        <div class="flex justify-between items-center">
+            <a href="/about" class="btn btn-primary btn-outline">Su di me</a>
+            <a href="/contact" class="btn btn-primary">I miei lavori</a>
+        </div>
+    </section>
 </PageLayout>
