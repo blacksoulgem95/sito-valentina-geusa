@@ -1,0 +1,74 @@
+---
+interface Props {
+    class?: string;
+    type?: 'checkbox' | 'radio';
+    name?: string;
+    id?: string;
+    value?: string | number;
+    checked?: boolean;
+    disabled?: boolean;
+    required?: boolean;
+    label?: string;
+    labelClass?: string;
+}
+
+const {
+    class: className,
+    type = 'checkbox',
+    name,
+    id,
+    value,
+    checked = false,
+    disabled = false,
+    required = false,
+    label,
+    labelClass,
+} = Astro.props;
+
+// Genera ID univoco se non fornito
+const fieldId = id || name || `${type}-${Math.random().toString(36).substr(2, 9)}`;
+
+// Costruisci le classi dell'input
+const inputClasses = [
+    type === 'checkbox' ? 'checkbox' : 'radio',
+    className,
+].filter(Boolean);
+
+const wrapperClasses = ['form-check'];
+
+const labelClasses = [
+    'form-check-label',
+    labelClass,
+].filter(Boolean);
+
+const hasLabel = !!label || Astro.slots.has('default');
+---
+
+{hasLabel ? (
+    <div class:list={wrapperClasses}>
+        <input
+            type={type}
+            name={name}
+            id={fieldId}
+            value={value}
+            checked={checked}
+            disabled={disabled}
+            required={required}
+            class:list={inputClasses}
+        />
+        <label for={fieldId} class:list={labelClasses}>
+            <slot>{label}</slot>
+        </label>
+    </div>
+) : (
+    <input
+        type={type}
+        name={name}
+        id={fieldId}
+        value={value}
+        checked={checked}
+        disabled={disabled}
+        required={required}
+        class:list={inputClasses}
+    />
+)}

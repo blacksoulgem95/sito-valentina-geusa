@@ -1,0 +1,70 @@
+---
+interface Props {
+    class?: string;
+    name?: string;
+    id?: string;
+    value?: string;
+    placeholder?: string;
+    required?: boolean;
+    disabled?: boolean;
+    readonly?: boolean;
+    rows?: number;
+    cols?: number;
+    size?: 'sm' | 'normal' | 'lg' | 'xl';
+    variant?: 'default' | 'bordered' | 'secondary' | 'tertiary' | 'subtle';
+    error?: boolean;
+    success?: boolean;
+    maxlength?: number;
+    minlength?: number;
+    resize?: 'both' | 'vertical' | 'horizontal' | 'none';
+    autocomplete?: string;
+}
+
+const {
+    class: className,
+    name,
+    id,
+    value,
+    placeholder,
+    required = false,
+    disabled = false,
+    readonly = false,
+    rows,
+    cols,
+    size = 'normal',
+    variant = 'default',
+    error = false,
+    success = false,
+    maxlength,
+    minlength,
+    resize = 'vertical',
+    autocomplete,
+} = Astro.props;
+
+// Costruisci le classi della textarea
+const textareaClasses = [
+    'textarea',
+    size !== 'normal' && `textarea-${size}`,
+    variant !== 'default' && `input-${variant}`,
+    error && 'input-error',
+    success && 'input-success',
+    resize === 'none' && 'textarea-fixed',
+    className,
+].filter(Boolean);
+---
+
+<textarea
+    name={name}
+    id={id}
+    placeholder={placeholder}
+    required={required}
+    disabled={disabled}
+    readonly={readonly}
+    rows={rows}
+    cols={cols}
+    maxlength={maxlength}
+    minlength={minlength}
+    autocomplete={autocomplete}
+    class:list={textareaClasses}
+    style={resize !== 'vertical' ? `resize: ${resize}` : undefined}
+>{value}</textarea>

@@ -1,0 +1,62 @@
+---
+interface Props {
+    class?: string;
+    label?: string;
+    name?: string;
+    id?: string;
+    required?: boolean;
+    hint?: string;
+    error?: string;
+    success?: boolean;
+    compact?: boolean;
+}
+
+const {
+    class: className,
+    label,
+    name,
+    id,
+    required = false,
+    hint,
+    error,
+    success = false,
+    compact = false,
+} = Astro.props;
+
+// Genera ID univoco se non fornito
+const fieldId = id || name || `field-${Math.random().toString(36).substr(2, 9)}`;
+
+// Costruisci le classi del form-group
+const formGroupClasses = [
+    'form-group',
+    compact && 'form-group-compact',
+    error && 'is-invalid',
+    success && !error && 'is-valid',
+    className,
+].filter(Boolean);
+
+const labelClasses = [
+    'form-label',
+    required && 'form-label-required',
+].filter(Boolean);
+---
+
+<div class:list={formGroupClasses}>
+    {label && (
+        <label for={fieldId} class:list={labelClasses}>
+            {label}
+        </label>
+    )}
+
+    <slot name="input">
+        <slot />
+    </slot>
+
+    {hint && !error && (
+        <p class="form-hint">{hint}</p>
+    )}
+
+    {error && (
+        <p class="form-error">{error}</p>
+    )}
+</div>

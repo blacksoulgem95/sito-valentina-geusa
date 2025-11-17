@@ -1,0 +1,77 @@
+---
+interface Props {
+    class?: string;
+    name?: string;
+    id?: string;
+    value?: string | number;
+    required?: boolean;
+    disabled?: boolean;
+    size?: 'sm' | 'normal' | 'lg';
+    variant?: 'default' | 'bordered' | 'secondary' | 'tertiary' | 'subtle';
+    error?: boolean;
+    success?: boolean;
+    placeholder?: string;
+    options?: Array<{ value: string | number; label: string; disabled?: boolean }>;
+    autocomplete?: string;
+}
+
+const {
+    class: className,
+    name,
+    id,
+    value,
+    required = false,
+    disabled = false,
+    size = 'normal',
+    variant = 'default',
+    error = false,
+    success = false,
+    placeholder,
+    options = [],
+    autocomplete,
+} = Astro.props;
+
+// Genera ID univoco se non fornito
+const fieldId = id || name || `select-${Math.random().toString(36).substr(2, 9)}`;
+
+// Costruisci le classi del select
+const selectClasses = [
+    'select',
+    size !== 'normal' && `input-${size}`,
+    variant !== 'default' && `input-${variant}`,
+    error && 'input-error',
+    success && 'input-success',
+    className,
+].filter(Boolean);
+
+const hasSlot = Astro.slots.has('default');
+---
+
+<select
+    name={name}
+    id={fieldId}
+    required={required}
+    disabled={disabled}
+    autocomplete={autocomplete}
+    class:list={selectClasses}
+>
+    {placeholder && (
+        <option value="" disabled selected={!value}>
+            {placeholder}
+        </option>
+    )}
+
+    {hasSlot ? (
+        <slot />
+    ) : (
+        options.map((option) => (
+            <option
+                value={option.value}
+                selected={value === option.value}
+                disabled={option.disabled}
+            >
+                {option.label}
+            </option>
+        ))
+    )}
+</select>

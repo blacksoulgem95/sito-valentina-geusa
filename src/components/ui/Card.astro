@@ -1,0 +1,139 @@
+---
+interface Props {
+    class?: string;
+    variant?: 'default' | 'bordered' | 'shadow' | 'shadow-md' | 'shadow-xl' | 'hover' | 'interactive';
+    color?: 'default' | 'primary' | 'secondary' | 'tertiary' | 'gradient';
+    size?: 'compact' | 'normal' | 'spacious';
+    type?: 'default' | 'profile' | 'stat' | 'pricing' | 'testimonial' | 'horizontal';
+    image?: string;
+    imageAlt?: string;
+    badge?: string;
+    badgeColor?: 'primary' | 'secondary' | 'tertiary';
+    overlay?: boolean;
+}
+
+const {
+    class: className,
+    variant = 'default',
+    color = 'default',
+    size = 'normal',
+    type = 'default',
+    image,
+    imageAlt = '',
+    badge,
+    badgeColor = 'primary',
+    overlay = false,
+} = Astro.props;
+
+// Costruisci le classi della card
+const cardClasses = [
+    // Classe base o tipo specifico
+    type === 'default' ? 'card' : `card-${type}`,
+
+    // Variante
+    variant !== 'default' && `card-${variant}`,
+
+    // Colore di sfondo
+    color !== 'default' && `card-${color}`,
+
+    // Dimensione
+    size !== 'normal' && `card-${size}`,
+
+    // Overlay se richiesto
+    overlay && 'card-overlay',
+
+    // Classi custom
+    className,
+].filter(Boolean);
+
+const badgeClasses = [
+    'card-badge',
+    badgeColor !== 'primary' && `card-badge-${badgeColor}`,
+].filter(Boolean);
+
+const hasHeader = Astro.slots.has('header');
+const hasFooter = Astro.slots.has('footer');
+const hasBody = Astro.slots.has('default') || Astro.slots.has('body');
+---
+
+<div class:list={cardClasses}>
+    {badge && <span class:list={badgeClasses}>{badge}</span>}
+
+    {image && !overlay && (
+        <div class="card-image">
+            <img src={image} alt={imageAlt} loading="lazy" />
+        </div>
+    )}
+
+    {overlay && image && (
+        <>
+            <div class="card-image">
+                <img src={image} alt={imageAlt} loading="lazy" />
+            </div>
+            <div class="card-overlay-content">
+                <slot name="overlay" />
+            </div>
+        </>
+    )}
+
+    {type === 'horizontal' && (
+        <div class="card-content">
+            {hasHeader && (
+                <div class="card-header">
+                    <slot name="header" />
+                </div>
+            )}
+
+            {hasBody && (
+                <div class="card-body">
+                    <slot name="body">
+                        <slot />
+                    </slot>
+                </div>
+            )}
+
+            {hasFooter && (
+                <div class="card-footer">
+                    <slot name="footer" />
+                </div>
+            )}
+        </div>
+    )}
+
+    {type !== 'horizontal' && (
+        <>
+            {hasHeader && (
+                <div class="card-header">
+                    <slot name="header" />
+                </div>
+            )}
+
+            {hasBody && (
+                <div class="card-body">
+                    <slot name="body">
+                        <slot />
+                    </slot>
+                </div>
+            )}
+
+            {hasFooter && (
+                <div class="card-footer">
+                    <slot name="footer" />
+                </div>
+            )}
+        </>
+    )}
+
+    <!-- Slot speciali per tipi di card specifici -->
+    {type === 'profile' && Astro.slots.has('avatar') && (
+        <div class="card-profile-avatar">
+            <slot name="avatar" />
+        </div>
+    )}
+
+    {type === 'testimonial' && Astro.slots.has('author') && (
+        <div class="card-testimonial-author">
+            <slot name="author" />
+        </div>
+    )}
+</div>

@@ -1,15 +1,24 @@
 ---
+import Hero from "@/components/Hero.astro";
 import Ellipses from "@/components/ui/Ellipses.astro";
 import Section from "@/components/ui/Section.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
+import Card from "@/components/ui/Card.astro";
+import Input from "@/components/ui/Input.astro";
+import Textarea from "@/components/ui/Textarea.astro";
+import {
+    Mail,
+    MessageCircle,
+    Instagram,
+    Linkedin,
+    Sparkles,
+} from "lucide-astro";
 
 const pageTitle = "Home";
 ---
 
 <PageLayout pageTitle={pageTitle}>
-    <div class="hero hero-home">
-        <h1 class="title">Valentina Geusa<br />Graphic & Web Designer</h1>
-    </div>
+    <Hero title="Valentina Geusa<br />Graphic & Web Designer" />
 
     <section class="flex mt-3 flex-col justify-justify-center items-center">
         <p>
@@ -27,16 +36,138 @@ const pageTitle = "Home";
         <Ellipses class="" />
     </div>
 
-    <Section class="section-primary mt-11">
-        <div class="container text-gray">
-            <h1 class="text-poppins text-2xl text-center font-semibold">
-                Creiamo qualcosa <span class="text-primary-dark">insieme</span>
-            </h1>
-            <p class="text-center">
-                Sono sempre entusiasta di intraprendere nuovi progetti e
-                collaborare con professionisti creativi. Per qualsiasi
-                opportunità, non esitare a contattarmi.
-            </p>
+    <Section class="section-primary mt-11 py-16">
+        <div class="container mx-auto px-4">
+            <!-- Titolo e sottotitolo -->
+            <div class="text-center mb-12">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                    Creiamo qualcosa <span class="text-primary-dark"
+                        >insieme</span
+                    >
+                </h1>
+                <p class="text-gray text-lg max-w-3xl mx-auto">
+                    Sono sempre entusiasta di intraprendere nuovi progetti e
+                    collaborare con professionisti creativi. Per qualsiasi
+                    opportunità, non esitare a contattarmi.
+                </p>
+            </div>
+
+            <!-- Cards Container - Layout dell'immagine -->
+            <div
+                class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto mb-16"
+            >
+                <!-- Card Scrivimi - Sinistra -->
+                <Card
+                    variant="shadow-md"
+                    size="spacious"
+                    class="flex flex-col justify-center"
+                >
+                    <div class="flex items-start gap-6">
+                        <div class="form-header-icon flex-shrink-0">
+                            <Mail size={40} />
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">
+                                Scrivimi
+                            </h3>
+                            <p class="text-gray">
+                                Puoi inviarmi un'email in qualsiasi momento!
+                            </p>
+                        </div>
+                    </div>
+                </Card>
+
+                <!-- Card Form - Destra -->
+                <Card variant="shadow-md" size="spacious">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="form-header-icon flex-shrink-0">
+                            <MessageCircle size={40} />
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-1">
+                                Parliamone assieme
+                            </h3>
+                            <p class="text-gray">
+                                Mi piacerebbe conoscere il tuo progetto! ✨
+                            </p>
+                        </div>
+                    </div>
+
+                    <form
+                        action="/api/contact"
+                        method="post"
+                        class="grid grid-cols-1 md:grid-cols-2 gap-4"
+                    >
+                        <!-- Colonna sinistra - 3 input -->
+                        <div class="space-y-4 md:col-span-1">
+                            <Input
+                                type="text"
+                                name="nome"
+                                placeholder="Nome*"
+                                required
+                            />
+                            <Input
+                                type="email"
+                                name="email"
+                                placeholder="Email*"
+                                required
+                                autocomplete="email"
+                            />
+                            <Input
+                                type="tel"
+                                name="telefono"
+                                placeholder="Telefono"
+                                autocomplete="tel"
+                            />
+                        </div>
+
+                        <!-- Colonna destra - Textarea + Button -->
+                        <div
+                            class="md:col-span-1 flex flex-col gap-4 h-full min-h-[200px]"
+                        >
+                            <Textarea
+                                name="messaggio"
+                                placeholder="Messaggio*"
+                                required
+                                class="flex-1"
+                                resize="none"
+                            />
+                            <div class="flex justify-end">
+                                <button type="submit" class="form-submit">
+                                    Invia
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </Card>
+            </div>
+
+            <!-- Social Links -->
+            <div class="text-center">
+                <p class="text-gray mb-6">Tienimi in contatto</p>
+                <div class="flex justify-center items-center gap-6">
+                    <Sparkles size={32} class="text-yellow-400" />
+                    <a
+                        href="https://instagram.com/valentiinageusa"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="w-12 h-12 flex items-center justify-center rounded-full border-2 border-gray-300 hover:border-primary hover:bg-primary/10 transition-all"
+                        aria-label="Instagram"
+                    >
+                        <Instagram size={24} />
+                    </a>
+                    <a
+                        href="https://linkedin.com/in/valentinageusa"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="w-12 h-12 flex items-center justify-center rounded-full border-2 border-gray-300 hover:border-primary hover:bg-primary/10 transition-all"
+                        aria-label="LinkedIn"
+                    >
+                        <Linkedin size={24} />
+                    </a>
+                    <Sparkles size={32} class="text-yellow-400" />
+                </div>
+            </div>
         </div>
     </Section>
 </PageLayout>

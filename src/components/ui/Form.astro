@@ -1,0 +1,94 @@
+---
+interface Props {
+    class?: string;
+    action?: string;
+    method?: 'get' | 'post';
+    layout?: 'default' | 'split' | 'card';
+    size?: 'compact' | 'normal' | 'wide' | 'full';
+    title?: string;
+    subtitle?: string;
+    icon?: string;
+    onSubmit?: string;
+    enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data' | 'text/plain';
+    novalidate?: boolean;
+    autocomplete?: 'on' | 'off';
+}
+
+const {
+    class: className,
+    action,
+    method = 'post',
+    layout = 'default',
+    size = 'normal',
+    title,
+    subtitle,
+    icon,
+    onSubmit,
+    enctype,
+    novalidate = false,
+    autocomplete = 'on',
+} = Astro.props;
+
+// Costruisci le classi del form container
+const containerClasses = [
+    'form',
+    size !== 'normal' && `form-${size}`,
+    layout === 'card' && 'form-card',
+    className,
+].filter(Boolean);
+
+// Layout split per il form come nell'immagine
+const isLayoutSplit = layout === 'split';
+
+const hasHeader = title || subtitle || icon || Astro.slots.has('header');
+const hasFooter = Astro.slots.has('footer');
+const hasActions = Astro.slots.has('actions');
+---
+
+<form
+    action={action}
+    method={method}
+    class:list={containerClasses}
+    onsubmit={onSubmit}
+    enctype={enctype}
+    novalidate={novalidate}
+    autocomplete={autocomplete}
+>
+    {hasHeader && (
+        <div class="form-header">
+            {icon && (
+                <div class="form-header-icon" set:html={icon} />
+            )}
+
+            <slot name="header">
+                {title && <h2 class="form-title">{title}</h2>}
+                {subtitle && <p class="form-subtitle">{subtitle}</p>}
+            </slot>
+        </div>
+    )}
+
+    {isLayoutSplit ? (
+        <div class="form-layout-split">
+            <div class="form-layout-split-left">
+                <slot name="left" />
+            </div>
+            <div class="form-layout-split-right">
+                <slot name="right" />
+            </div>
+        </div>
+    ) : (
+        <slot />
+    )}
+
+    {hasActions && (
+        <div class="form-actions">
+            <slot name="actions" />
+        </div>
+    )}
+
+    {hasFooter && (
+        <div class="form-footer">
+            <slot name="footer" />
+        </div>
+    )}
+</form>

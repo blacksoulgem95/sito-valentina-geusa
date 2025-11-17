@@ -1,0 +1,22 @@
+---
+interface Props {
+    title: string;
+    subtitle?: string;
+}
+
+const { title, subtitle } = Astro.props;
+---
+
+<div class="hero">
+    <h1 class="title" set:html={title} />
+    {subtitle && <p class="subtitle">{subtitle}</p>}
+</div>
+
+<style>
+    .subtitle {
+        margin-top: 1rem;
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+    }
+</style>

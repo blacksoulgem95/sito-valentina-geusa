@@ -1,5 +1,582 @@
+/* ==========================================
+   CARD SYSTEM - Base & Variants
+   ========================================== */
+
+:root {
+    --card-padding: 25.45px 24.6px;
+    --card-border-radius: 25px;
+    --card-padding-compact: 16px 18px;
+    --card-padding-spacious: 35px 32px;
+}
+
+/* Base Card */
 .card {
     background: #ffffff;
-    border-radius: 25.4491px;
-    padding: 25.45px 24.6px;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+}
+
+/* Card Variants */
+.card-bordered {
+    background: #ffffff;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+    border: 2px solid rgba(255, 193, 232, 0.2);
+}
+
+.card-shadow {
+    background: #ffffff;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 10px 15px -3px rgba(255, 193, 232, 0.1);
+}
+
+.card-shadow-md {
+    background: #ffffff;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 6px -1px rgba(255, 193, 232, 0.05);
+}
+
+.card-shadow-xl {
+    background: #ffffff;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 20px 25px -5px rgba(255, 193, 232, 0.15);
+}
+
+.card-hover {
+    background: #ffffff;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.card-hover:hover {
+    box-shadow: 0 20px 25px -5px rgba(255, 193, 232, 0.2);
+    transform: translateY(-4px);
+}
+
+.card-interactive {
+    background: #ffffff;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.card-interactive:hover {
+    box-shadow: 0 20px 25px -5px rgba(255, 193, 232, 0.2);
+    transform: translateY(-4px);
+    border-color: rgba(255, 193, 232, 0.3);
+}
+
+/* Card with Background Colors */
+.card-primary {
+    background: rgba(255, 193, 232, 0.1);
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+}
+
+.card-secondary {
+    background: rgba(200, 158, 255, 0.1);
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+}
+
+.card-tertiary {
+    background: rgba(255, 241, 223, 0.3);
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+}
+
+.card-gradient {
+    background: linear-gradient(
+        135deg,
+        rgba(255, 193, 232, 0.1) 0%,
+        rgba(200, 158, 255, 0.1) 100%
+    );
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+}
+
+/* ==========================================
+   CARD STRUCTURE COMPONENTS
+   ========================================== */
+
+.card-header {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(255, 193, 232, 0.1);
+}
+
+.card-header-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.card-header-subtitle {
+    font-size: 0.875rem;
+    color: rgba(0, 0, 0, 0.5);
+    margin-top: 0.25rem;
+}
+
+.card-body {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.card-body-compact {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+.card-body-spacious {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+.card-footer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 2px solid rgba(255, 193, 232, 0.1);
+}
+
+.card-footer-actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 2px solid rgba(255, 193, 232, 0.1);
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* Card Image Container */
+.card-image {
+    width: 100%;
+    border-radius: var(--card-border-radius) var(--card-border-radius) 0 0;
+    overflow: hidden;
+    margin: -25.45px -24.6px 20px;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease-in-out;
+}
+
+.card-hover .card-image img:hover,
+.card-interactive .card-image img:hover {
+    transform: scale(1.05);
+}
+
+/* Card with Side Image */
+.card-horizontal {
+    background: #ffffff;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+}
+
+.card-horizontal .card-image {
+    width: 33.333333%;
+    border-radius: var(--card-border-radius) 0 0 var(--card-border-radius);
+    margin: 0;
+}
+
+.card-horizontal .card-content {
+    flex: 1;
+}
+
+/* ==========================================
+   CARD SIZES
+   ========================================== */
+
+.card-compact {
+    background: #ffffff;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding-compact);
+    transition: all 0.3s ease-in-out;
+}
+
+.card-normal {
+    background: #ffffff;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+}
+
+.card-spacious {
+    background: #ffffff;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding-spacious);
+    transition: all 0.3s ease-in-out;
+}
+
+/* ==========================================
+   CARD SPECIAL TYPES
+   ========================================== */
+
+.card-profile {
+    background: #ffffff;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 10px 15px -3px rgba(255, 193, 232, 0.1);
+    text-align: center;
+}
+
+.card-profile-avatar {
+    width: 6rem;
+    height: 6rem;
+    margin: 0 auto 1rem;
+    border-radius: 9999px;
+    border: 4px solid rgba(255, 193, 232, 0.2);
+}
+
+.card-profile-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.25rem;
+}
+
+.card-profile-bio {
+    font-size: 0.875rem;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+/* Stat Card */
+.card-stat {
+    background: #ffffff;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 6px -1px rgba(255, 193, 232, 0.05);
+    text-align: center;
+}
+
+.card-stat-value {
+    font-size: 1.875rem;
+    font-weight: 700;
+    background: linear-gradient(
+        to right,
+        var(--color-primary),
+        var(--color-secondary)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.card-stat-label {
+    font-size: 0.875rem;
+    color: rgba(0, 0, 0, 0.5);
+    margin-top: 0.5rem;
+}
+
+/* Pricing Card */
+.card-pricing {
+    background: #ffffff;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 20px 25px -5px rgba(255, 193, 232, 0.15);
+    text-align: center;
+}
+
+.card-pricing-featured {
+    background: #ffffff;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 20px 25px -5px rgba(255, 193, 232, 0.15);
+    text-align: center;
+    border: 2px solid var(--color-primary);
+}
+
+.card-pricing-price {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 1rem 0;
+}
+
+.card-pricing-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+}
+
+.card-pricing-features li {
+    font-size: 0.875rem;
+    color: rgba(0, 0, 0, 0.5);
+    margin-bottom: 0.5rem;
+}
+
+/* Testimonial Card */
+.card-testimonial {
+    background: #ffffff;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 10px 15px -3px rgba(255, 193, 232, 0.1);
+    position: relative;
+}
+
+.card-testimonial-quote {
+    color: #374151;
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+.card-testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.card-testimonial-avatar {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 9999px;
+    border: 2px solid rgba(255, 193, 232, 0.2);
+}
+
+.card-testimonial-info {
+    font-size: 0.875rem;
+}
+
+.card-testimonial-name {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.card-testimonial-role {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+/* ==========================================
+   CARD GROUPS & LAYOUTS
+   ========================================== */
+
+.card-group {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.card-group-cols-1 {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.card-group-cols-2 {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 768px) {
+    .card-group-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.card-group-cols-3 {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 768px) {
+    .card-group-cols-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .card-group-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+.card-group-cols-4 {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 768px) {
+    .card-group-cols-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .card-group-cols-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+/* Masonry-like layout */
+.card-masonry {
+    columns: 1;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .card-masonry {
+        columns: 2;
+    }
+}
+
+@media (min-width: 1024px) {
+    .card-masonry {
+        columns: 3;
+    }
+}
+
+.card-masonry .card {
+    margin-bottom: 1.5rem;
+    break-inside: avoid;
+}
+
+/* ==========================================
+   CARD UTILITIES
+   ========================================== */
+
+.card-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--color-primary);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+}
+
+.card-badge-secondary {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--color-secondary);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+}
+
+.card-badge-tertiary {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--color-tertiary);
+    color: #1f2937;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.card-subtitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.card-text {
+    color: rgba(0, 0, 0, 0.5);
+    line-height: 1.625;
+}
+
+.card-link {
+    color: var(--color-primary-dark);
+    font-weight: 500;
+    transition: color 0.2s ease-in-out;
+}
+
+.card-link:hover {
+    color: var(--color-primary);
+}
+
+/* Card Overlay (for image cards) */
+.card-overlay {
+    position: relative;
+    overflow: hidden;
+}
+
+.card-overlay-content {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(17, 24, 39, 0.8), transparent);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.5rem;
+    color: #ffffff;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.card-overlay:hover .card-overlay-content {
+    opacity: 1;
+}
+
+/* Loading State */
+.card-loading {
+    background: #ffffff;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    transition: all 0.3s ease-in-out;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.card-loading-content {
+    height: 1rem;
+    background: #e5e7eb;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
 }
