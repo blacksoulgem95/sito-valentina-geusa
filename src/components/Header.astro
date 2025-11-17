@@ -6,13 +6,44 @@ import logo from "@/assets/logo.svg";
     <div class="navbar-start">
         <div class="navbar-item">
             <div class="navbar-logo">
-                <img src={logo.src} alt="logo" />
+                <a href="/">
+                    <img src={logo.src} alt="logo" />
+                </a>
             </div>
+        </div>
+    </div>
+    <div class="navbar-center">
+        <div class="navbar-item">
+            <a class="navbar-link" href="/about">Chi sono</a>
+        </div>
+        <div class="navbar-item">
+            <a class="navbar-link" href="/portfolio">Portfolio</a>
+        </div>
+        <div class="navbar-item">
+            <a class="navbar-link" href="/contact">Contatti</a>
         </div>
     </div>
     <div class="navbar-end">
         <div class="navbar-item">
-            <a class="btn btn-primary btn-sm" href="/contatti">Contattami</a>
+            <a class="btn btn-primary btn-sm" href="/contact">Scrivimi</a>
         </div>
     </div>
+</div>
+
+<!-- Mobile Menu Toggle -->
+<input type="checkbox" id="mobile-menu-toggle" class="mobile-menu-toggle" />
+<label for="mobile-menu-toggle" class="mobile-menu-button">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+</label>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu">
+    <nav class="mobile-nav">
+        <a class="mobile-nav-link" href="/about">Chi sono</a>
+        <a class="mobile-nav-link" href="/portfolio">Portfolio</a>
+        <a class="mobile-nav-link" href="/contact">Contatti</a>
+        <a class="btn btn-primary w-full mt-4" href="/contact">Scrivimi</a>
+    </nav>
 </div>

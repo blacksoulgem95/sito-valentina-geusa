@@ -1,0 +1,748 @@
+---
+import PageLayout from "@/layouts/PageLayout.astro";
+import Section from "@/components/ui/Section.astro";
+import Card from "@/components/ui/Card.astro";
+import { Mail, Send, MessageCircle, Heart } from "lucide-astro";
+
+const pageTitle = "Contattami";
+---
+
+<PageLayout pageTitle={pageTitle}>
+    <!-- Hero Section con decorazioni -->
+    <Section class="bg-pink-50 py-16 relative overflow-hidden">
+        <!-- Decorazioni di sfondo -->
+        <div class="absolute inset-0 pointer-events-none">
+            <div
+                class="absolute top-10 left-10 w-64 h-64 bg-pink-200 opacity-30 rounded-full blur-3xl"
+            >
+            </div>
+            <div
+                class="absolute top-20 right-20 w-48 h-48 bg-purple-200 opacity-30 rounded-full blur-3xl"
+            >
+            </div>
+            <div
+                class="absolute bottom-20 left-1/3 w-56 h-56 bg-pink-200 opacity-30 rounded-full blur-3xl"
+            >
+            </div>
+
+            <!-- Decorazioni emoji -->
+            <div class="absolute top-8 left-[15%] text-6xl opacity-80">💌</div>
+            <div class="absolute top-12 right-[20%] text-6xl opacity-80">
+                ✨
+            </div>
+            <div class="absolute top-32 right-[35%] text-6xl opacity-80">
+                💖
+            </div>
+            <div class="absolute top-20 left-[25%] text-3xl opacity-80">🌸</div>
+        </div>
+
+        <div class="container mx-auto px-4 relative z-10">
+            <!-- Breadcrumb/Navigation -->
+            <div class="mb-8 text-center">
+                <a
+                    href="/"
+                    class="text-gray-600 hover:text-primary transition-colors mx-2"
+                    >Chi sono</a
+                >
+                <span class="text-gray-400">•</span>
+                <a
+                    href="/portfolio"
+                    class="text-gray-600 hover:text-primary transition-colors mx-2"
+                    >Portfolio</a
+                >
+                <span class="text-gray-400">•</span>
+                <span class="text-primary font-medium mx-2">Contatti</span>
+            </div>
+
+            <!-- Titolo -->
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span class="text-gray-800">Creiamo qualcosa </span>
+                    <span class="text-pink-500">insieme</span>
+                </h1>
+                <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                    Hai un progetto in mente? Sono sempre aperta a nuove
+                    opportunità e collaborazioni creative. Parliamone! ✨
+                </p>
+            </div>
+        </div>
+    </Section>
+
+    <!-- Sezione Form Contatto -->
+    <Section class="bg-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <!-- Colonna Sinistra - Info -->
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex items-center gap-3 mb-4">
+                                <MessageCircle
+                                    size={32}
+                                    class="text-pink-500"
+                                />
+                                <h2 class="text-3xl font-bold text-gray-800">
+                                    Parliamone
+                                </h2>
+                            </div>
+                            <p class="text-gray-600 text-lg leading-relaxed">
+                                Mi piacerebbe conoscere il tuo progetto e capire
+                                come posso aiutarti a realizzare la tua visione
+                                creativa.
+                            </p>
+                        </div>
+
+                        <!-- Card Email -->
+                        <Card
+                            variant="shadow-md"
+                            class="p-6 bg-pink-50 hover:shadow-lg transition-shadow"
+                        >
+                            <div class="flex items-start gap-4">
+                                <div
+                                    class="w-12 h-12 rounded-full bg-pink-200 flex items-center justify-center shrink-0"
+                                >
+                                    <Mail size={24} class="text-pink-600" />
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-800 mb-2">
+                                        Scrivimi direttamente
+                                    </h3>
+                                    <p class="text-gray-600 text-sm mb-3">
+                                        Preferisci una email diretta? Nessun
+                                        problema!
+                                    </p>
+                                    <a
+                                        href="mailto:valentinageusadesign@gmail.com"
+                                        class="text-pink-500 hover:text-pink-600 text-sm font-medium hover:underline"
+                                    >
+                                        valentinageusadesign@gmail.com
+                                    </a>
+                                </div>
+                            </div>
+                        </Card>
+
+                        <!-- Tempi di risposta -->
+                        <div
+                            class="bg-purple-50 rounded-lg p-6 border-2 border-purple-100"
+                        >
+                            <h3
+                                class="font-bold text-gray-800 mb-3 flex items-center gap-2"
+                            >
+                                <Heart size={20} class="text-purple-500" />
+                                Tempi di risposta
+                            </h3>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Rispondo generalmente entro <strong
+                                    >24-48 ore</strong
+                                > nei giorni lavorativi. Se non ricevi risposta,
+                                controlla la cartella spam o scrivimi direttamente
+                                via email.
+                            </p>
+                        </div>
+
+                        <!-- Social -->
+                        <div>
+                            <h3 class="font-bold text-gray-800 mb-4">
+                                Seguimi sui social
+                            </h3>
+                            <div class="flex gap-4">
+                                <a
+                                    href="https://instagram.com"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="social-icon"
+                                    aria-label="Instagram"
+                                >
+                                    <svg
+                                        class="w-6 h-6"
+                                        fill="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
+                                        ></path>
+                                    </svg>
+                                </a>
+                                <a
+                                    href="https://linkedin.com"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="social-icon"
+                                    aria-label="LinkedIn"
+                                >
+                                    <svg
+                                        class="w-6 h-6"
+                                        fill="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
+                                        ></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Colonna Destra - Form -->
+                    <div>
+                        <Card variant="shadow-lg" class="p-8 bg-white">
+                            <form
+                                class="space-y-6"
+                                id="contact-form"
+                                name="contact"
+                                method="POST"
+                                data-netlify="true"
+                                netlify-honeypot="bot-field"
+                            >
+                                <!-- Campo honeypot nascosto -->
+                                <input type="hidden" name="bot-field" />
+                                <input
+                                    type="hidden"
+                                    name="form-name"
+                                    value="contact"
+                                />
+
+                                <div>
+                                    <label
+                                        for="name"
+                                        class="block text-sm font-semibold text-gray-700 mb-2"
+                                    >
+                                        Nome <span class="text-pink-500">*</span
+                                        >
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        required
+                                        class="form-input"
+                                        placeholder="Il tuo nome"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label
+                                        for="email"
+                                        class="block text-sm font-semibold text-gray-700 mb-2"
+                                    >
+                                        Email <span class="text-pink-500"
+                                            >*</span
+                                        >
+                                    </label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        required
+                                        class="form-input"
+                                        placeholder="la.tua@email.com"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label
+                                        for="subject"
+                                        class="block text-sm font-semibold text-gray-700 mb-2"
+                                    >
+                                        Oggetto
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="subject"
+                                        name="subject"
+                                        class="form-input"
+                                        placeholder="Di cosa vorresti parlare?"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label
+                                        for="message"
+                                        class="block text-sm font-semibold text-gray-700 mb-2"
+                                    >
+                                        Messaggio <span class="text-pink-500"
+                                            >*</span
+                                        >
+                                    </label>
+                                    <textarea
+                                        id="message"
+                                        name="message"
+                                        rows="6"
+                                        required
+                                        class="form-input"
+                                        placeholder="Parlami del tuo progetto, delle tue idee o semplicemente di cosa hai bisogno..."
+                                    ></textarea>
+                                </div>
+
+                                <div class="flex items-start gap-3">
+                                    <input
+                                        type="checkbox"
+                                        id="privacy"
+                                        name="privacy"
+                                        required
+                                        class="mt-1 w-4 h-4 text-pink-500 border-gray-300 rounded focus:ring-pink-500"
+                                    />
+                                    <label
+                                        for="privacy"
+                                        class="text-sm text-gray-600"
+                                    >
+                                        Accetto la <a
+                                            href="/privacy-policy"
+                                            class="text-pink-500 hover:underline"
+                                            >Privacy Policy</a
+                                        > e autorizzo il trattamento dei miei dati
+                                        personali
+                                    </label>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary w-full flex items-center justify-center gap-2 text-lg py-3"
+                                >
+                                    <Send size={20} />
+                                    Invia messaggio
+                                </button>
+
+                                <p class="text-xs text-gray-500 text-center">
+                                    I campi contrassegnati con <span
+                                        class="text-pink-500">*</span
+                                    > sono obbligatori
+                                </p>
+                            </form>
+                        </Card>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Section>
+
+    <!-- Sezione Newsletter -->
+    <Section class="bg-linear-to-br from-pink-50 to-purple-50 py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="mb-8">
+                    <div class="text-6xl mb-4">💌</div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                        <span class="text-gray-800">Iscriviti alla </span>
+                        <span class="text-purple-600">newsletter</span>
+                    </h2>
+                    <p class="text-gray-600 text-lg">
+                        Ricevi aggiornamenti sui miei progetti, tips creativi e
+                        contenuti esclusivi direttamente nella tua inbox. Niente
+                        spam, promesso! 💜
+                    </p>
+                </div>
+
+                <Card
+                    variant="shadow-lg"
+                    class="p-8 bg-white max-w-2xl mx-auto"
+                >
+                    <form
+                        class="space-y-6"
+                        id="newsletter-form"
+                        name="newsletter"
+                        method="POST"
+                        data-netlify="true"
+                        netlify-honeypot="bot-field"
+                    >
+                        <input type="hidden" name="bot-field" />
+                        <input
+                            type="hidden"
+                            name="form-name"
+                            value="newsletter"
+                        />
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    for="newsletter-name"
+                                    class="block text-sm font-semibold text-gray-700 mb-2 text-left"
+                                >
+                                    Nome
+                                </label>
+                                <input
+                                    type="text"
+                                    id="newsletter-name"
+                                    name="name"
+                                    required
+                                    class="form-input"
+                                    placeholder="Il tuo nome"
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    for="newsletter-email"
+                                    class="block text-sm font-semibold text-gray-700 mb-2 text-left"
+                                >
+                                    Email
+                                </label>
+                                <input
+                                    type="email"
+                                    id="newsletter-email"
+                                    name="email"
+                                    required
+                                    class="form-input"
+                                    placeholder="la.tua@email.com"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="text-left">
+                            <p class="text-sm font-semibold text-gray-700 mb-3">
+                                Interessi (opzionale)
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <label
+                                    class="flex items-center gap-2 cursor-pointer"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        name="interests[]"
+                                        value="illustration"
+                                        class="w-4 h-4 text-purple-500 border-gray-300 rounded focus:ring-purple-500"
+                                    />
+                                    <span class="text-sm text-gray-700"
+                                        >Illustrazioni</span
+                                    >
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 cursor-pointer"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        name="interests[]"
+                                        value="ui-ux"
+                                        class="w-4 h-4 text-purple-500 border-gray-300 rounded focus:ring-purple-500"
+                                    />
+                                    <span class="text-sm text-gray-700"
+                                        >UI/UX Design</span
+                                    >
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 cursor-pointer"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        name="interests[]"
+                                        value="brand"
+                                        class="w-4 h-4 text-purple-500 border-gray-300 rounded focus:ring-purple-500"
+                                    />
+                                    <span class="text-sm text-gray-700"
+                                        >Brand Identity</span
+                                    >
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 cursor-pointer"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        name="interests[]"
+                                        value="tips"
+                                        class="w-4 h-4 text-purple-500 border-gray-300 rounded focus:ring-purple-500"
+                                    />
+                                    <span class="text-sm text-gray-700"
+                                        >Tips & Tutorial</span
+                                    >
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <input
+                                type="checkbox"
+                                id="newsletter-privacy"
+                                name="privacy"
+                                required
+                                class="mt-1 w-4 h-4 text-purple-500 border-gray-300 rounded focus:ring-purple-500"
+                            />
+                            <label
+                                for="newsletter-privacy"
+                                class="text-sm text-gray-600 text-left"
+                            >
+                                Accetto di ricevere email e autorizzo il
+                                trattamento dei dati secondo la <a
+                                    href="/privacy-policy"
+                                    class="text-purple-500 hover:underline"
+                                    >Privacy Policy</a
+                                >
+                            </label>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-full flex items-center justify-center gap-2 text-lg py-3 bg-purple-600 hover:bg-purple-700"
+                            style="background-color: #9333ea;"
+                        >
+                            ✨ Iscriviti alla Newsletter
+                        </button>
+
+                        <p class="text-xs text-gray-500">
+                            Puoi annullare l'iscrizione in qualsiasi momento. No
+                            spam, solo contenuti di valore!
+                        </p>
+                    </form>
+                </Card>
+
+                <!-- Benefici Newsletter -->
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="text-4xl mb-3">🎨</div>
+                        <h3 class="font-bold text-gray-800 mb-2">
+                            Progetti Esclusivi
+                        </h3>
+                        <p class="text-sm text-gray-600">
+                            Anteprima dei miei nuovi lavori prima di chiunque
+                            altro
+                        </p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-3">💡</div>
+                        <h3 class="font-bold text-gray-800 mb-2">
+                            Tips & Tutorial
+                        </h3>
+                        <p class="text-sm text-gray-600">
+                            Consigli pratici su design, illustrazione e
+                            creatività
+                        </p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-3">🎁</div>
+                        <h3 class="font-bold text-gray-800 mb-2">
+                            Contenuti Speciali
+                        </h3>
+                        <p class="text-sm text-gray-600">
+                            Risorse gratuite, sconti e opportunità riservate
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Section>
+
+    <!-- CTA finale -->
+    <Section class="bg-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                    Non sei ancora pronto a scrivermi?
+                </h2>
+                <p class="text-gray-600 text-lg mb-8">
+                    Nessun problema! Esplora il mio portfolio o scopri di più
+                    sul mio lavoro.
+                </p>
+                <div class="flex justify-center gap-4 flex-wrap">
+                    <a href="/portfolio" class="btn btn-primary btn-outline"
+                        >Vedi il Portfolio</a
+                    >
+                    <a href="/about" class="btn btn-primary btn-outline"
+                        >Chi sono</a
+                    >
+                </div>
+            </div>
+        </div>
+    </Section>
+</PageLayout>
+
+<style>
+    .form-input {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        background-color: white;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #ec4899;
+        box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+    }
+
+    .form-input::placeholder {
+        color: #9ca3af;
+    }
+
+    textarea.form-input {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .social-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3rem;
+        height: 3rem;
+        background: linear-gradient(135deg, #fce7f3 0%, #e9d5ff 100%);
+        border-radius: 50%;
+        color: #9333ea;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .social-icon:hover {
+        transform: translateY(-4px) scale(1.05);
+        box-shadow: 0 8px 16px rgba(147, 51, 234, 0.3);
+        background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
+        color: white;
+    }
+
+    /* Animazioni form */
+    #contact-form,
+    #newsletter-form {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Success message styles */
+    .success-message {
+        padding: 1rem;
+        background-color: #d1fae5;
+        border: 2px solid #6ee7b7;
+        border-radius: 0.5rem;
+        color: #065f46;
+        font-weight: 500;
+        text-align: center;
+        margin-top: 1rem;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<script>
+    // Form Contatto
+    const contactForm = document.getElementById(
+        "contact-form",
+    ) as HTMLFormElement | null;
+
+    contactForm?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(contactForm);
+        const submitButton = contactForm.querySelector(
+            'button[type="submit"]',
+        ) as HTMLButtonElement;
+
+        // Disabilita il pulsante durante l'invio
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.innerHTML =
+                '<span class="inline-block animate-spin mr-2">⏳</span> Invio in corso...';
+        }
+
+        try {
+            // Se usi Netlify Forms
+            const response = await fetch("/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams(formData as any).toString(),
+            });
+
+            if (response.ok) {
+                // Mostra messaggio di successo
+                const successMessage = document.createElement("div");
+                successMessage.className = "success-message";
+                successMessage.innerHTML =
+                    "✅ Messaggio inviato con successo! Ti risponderò al più presto. 💌";
+                contactForm.appendChild(successMessage);
+
+                // Reset del form
+                contactForm.reset();
+
+                // Rimuovi il messaggio dopo 5 secondi
+                setTimeout(() => {
+                    successMessage.remove();
+                }, 5000);
+            }
+        } catch (error) {
+            alert(
+                "Si è verificato un errore. Prova a scrivermi direttamente via email.",
+            );
+        } finally {
+            // Ripristina il pulsante
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.innerHTML =
+                    '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg> Invia messaggio';
+            }
+        }
+    });
+
+    // Form Newsletter
+    const newsletterForm = document.getElementById(
+        "newsletter-form",
+    ) as HTMLFormElement | null;
+
+    newsletterForm?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(newsletterForm);
+        const submitButton = newsletterForm.querySelector(
+            'button[type="submit"]',
+        ) as HTMLButtonElement;
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.innerHTML =
+                '<span class="inline-block animate-spin mr-2">⏳</span> Iscrizione in corso...';
+        }
+
+        try {
+            const response = await fetch("/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams(formData as any).toString(),
+            });
+
+            if (response.ok) {
+                const successMessage = document.createElement("div");
+                successMessage.className = "success-message";
+                successMessage.innerHTML =
+                    "🎉 Benvenuto/a nella community! Controlla la tua email per confermare l'iscrizione.";
+                newsletterForm.appendChild(successMessage);
+
+                newsletterForm.reset();
+
+                setTimeout(() => {
+                    successMessage.remove();
+                }, 5000);
+            }
+        } catch (error) {
+            alert(
+                "Si è verificato un errore durante l'iscrizione. Riprova più tardi.",
+            );
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.innerHTML = "✨ Iscriviti alla Newsletter";
+            }
+        }
+    });
+</script>

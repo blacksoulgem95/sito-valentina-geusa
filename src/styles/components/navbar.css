@@ -2,9 +2,6 @@
     --navbar-height: 83px;
 }
 
-body {
-}
-
 .navbar {
     @apply bg-white flex items-center justify-between w-full;
 
@@ -20,12 +17,121 @@ body {
     }
 
     .navbar-center {
-        @apply flex gap-3 justify-center items-center;
+        @apply flex gap-4 justify-center items-center;
     }
 
     .navbar-item {
         .navbar-logo img {
             @apply h-10;
         }
+    }
+}
+
+/* Navigation Links */
+.navbar-link {
+    @apply text-gray-700 font-medium px-4 py-2 rounded-lg transition-all duration-200;
+    position: relative;
+}
+
+.navbar-link:hover {
+    @apply text-primary;
+    background-color: rgba(255, 193, 232, 0.1);
+}
+
+.navbar-link::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+.navbar-link:hover::after {
+    width: 70%;
+}
+
+/* Mobile Menu */
+.mobile-menu-toggle {
+    display: none;
+}
+
+.mobile-menu-button {
+    display: none;
+    flex-direction: column;
+    gap: 0.375rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 1001;
+}
+
+.hamburger-line {
+    width: 1.5rem;
+    height: 2px;
+    background-color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle:checked ~ .mobile-menu-button .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(0.5rem, 0.5rem);
+}
+
+.mobile-menu-toggle:checked ~ .mobile-menu-button .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle:checked ~ .mobile-menu-button .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(0.5rem, -0.5rem);
+}
+
+.mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 320px;
+    height: 100vh;
+    background-color: white;
+    box-shadow: -2px 0 20px rgba(0, 0, 0, 0.1);
+    padding: 5rem 2rem 2rem;
+    transition: right 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.mobile-menu-toggle:checked ~ .mobile-menu {
+    right: 0;
+}
+
+.mobile-nav {
+    @apply flex flex-col gap-2;
+}
+
+.mobile-nav-link {
+    @apply text-gray-700 font-medium px-4 py-3 rounded-lg text-center transition-all duration-200;
+}
+
+.mobile-nav-link:hover {
+    @apply text-primary;
+    background-color: rgba(255, 193, 232, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar-center,
+    .navbar-end {
+        display: none;
+    }
+
+    .mobile-menu-button {
+        display: flex;
+    }
+
+    .mobile-menu {
+        display: block;
     }
 }

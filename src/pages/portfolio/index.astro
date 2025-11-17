@@ -1,0 +1,570 @@
+---
+import { getCollection } from "astro:content";
+import Hero from "@/components/Hero.astro";
+import Ellipses from "@/components/ui/Ellipses.astro";
+import Section from "@/components/ui/Section.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
+import Card from "@/components/ui/Card.astro";
+import { Sparkles, ExternalLink, ArrowRight } from "lucide-astro";
+
+const pageTitle = "Portfolio";
+
+// Recupera tutti i progetti dal backend
+const allProjects = await getCollection("portfolio");
+
+// Raggruppa i progetti per tipo
+const projectsByType = {
+    "ui-ux": allProjects.filter((p: any) => p.data.type === "ui-ux"),
+    "brand-identity": allProjects.filter(
+        (p: any) => p.data.type === "brand-identity",
+    ),
+    editorial: allProjects.filter((p: any) => p.data.type === "editorial"),
+    illustration: allProjects.filter(
+        (p: any) => p.data.type === "illustration",
+    ),
+};
+
+// Ordina ogni gruppo per order
+Object.keys(projectsByType).forEach((key) => {
+    projectsByType[key as keyof typeof projectsByType].sort(
+        (a: any, b: any) => a.data.order - b.data.order,
+    );
+});
+
+// Configurazione per ogni tipo di progetto
+const typeConfig = {
+    "ui-ux": {
+        title: "UI / UX Design",
+        description:
+            "Interfacce pulite, intuitive e facili da usare per web e mobile",
+        color: "bg-pink-100",
+        badgeColor: "bg-pink-200 text-pink-700",
+        count: projectsByType["ui-ux"].length,
+    },
+    "brand-identity": {
+        title: "Brand Identity",
+        description: "Identità visive che raccontano storie uniche",
+        color: "bg-green-100",
+        badgeColor: "bg-green-200 text-green-700",
+        count: projectsByType["brand-identity"].length,
+    },
+    editorial: {
+        title: "Editorial Design",
+        description: "Layout editoriali moderni e professionali",
+        color: "bg-purple-100",
+        badgeColor: "bg-purple-200 text-purple-700",
+        count: projectsByType["editorial"].length,
+    },
+    illustration: {
+        title: "Illustrazioni",
+        description:
+            "Illustrazioni digitali e tradizionali creative e di stile",
+        color: "bg-yellow-100",
+        badgeColor: "bg-yellow-200 text-yellow-700",
+        count: projectsByType["illustration"].length,
+    },
+};
+---
+
+<PageLayout pageTitle={pageTitle}>
+    <Hero title="Portfolio" />
+
+    <section class="flex mt-3 flex-col justify-center items-center relative">
+        <!-- Decorazioni torte -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden">
+            <div class="cake-decoration cake-1">🍰</div>
+            <div class="cake-decoration cake-2">🍰</div>
+            <div class="cake-decoration cake-3">🍰</div>
+            <div class="cake-decoration cake-4">🍰</div>
+            <div class="cherry-decoration cherry-1">🍒</div>
+            <div class="cherry-decoration cherry-2">🍒</div>
+        </div>
+
+        <p class="text-center max-w-2xl relative z-10">
+            Esplora i miei progetti creativi e le soluzioni che ho realizzato.
+        </p>
+    </section>
+
+    <div class="flex justify-center items-center mt-10">
+        <Ellipses class="" />
+    </div>
+
+    <Section class="section-primary mt-11 py-16">
+        <div class="container mx-auto px-4">
+            <!-- Titolo sezione -->
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+                    I miei lavori <span class="text-primary">Creativi</span>
+                </h2>
+                <p class="text-gray-600 text-lg max-w-3xl mx-auto">
+                    Una selezione di progetti a cui ho lavorato
+                </p>
+                <p class="text-gray-600 max-w-3xl mx-auto">
+                    Ogni creazione rappresenta un percorso di apprendimento e
+                    un'esplorazione creativa.
+                </p>
+            </div>
+
+            <!-- UI/UX Design Section -->
+            {
+                projectsByType["ui-ux"].length > 0 && (
+                    <div class="mb-20">
+                        <div class="text-center mb-8">
+                            <h3 class="text-3xl font-bold text-gray-800 mb-3">
+                                {typeConfig["ui-ux"].title}
+                            </h3>
+                            <p class="text-gray-600 max-w-2xl mx-auto">
+                                {typeConfig["ui-ux"].description}
+                            </p>
+                            <div class="inline-flex items-center gap-2 mt-3 text-sm text-gray-500">
+                                <span class="font-medium">
+                                    {typeConfig["ui-ux"].count}{" "}
+                                    {typeConfig["ui-ux"].count === 1
+                                        ? "progetto"
+                                        : "progetti"}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                            {projectsByType["ui-ux"].map((project: any) => (
+                                <a
+                                    href={`/portfolio/${project.slug}`}
+                                    class="portfolio-card-link"
+                                >
+                                    <Card
+                                        variant="shadow-md"
+                                        size="spacious"
+                                        class="portfolio-card relative overflow-hidden h-full"
+                                    >
+                                        <div
+                                            class={`aspect-video flex items-center justify-center relative ${typeConfig["ui-ux"].color}`}
+                                        >
+                                            <div class="text-center p-8">
+                                                <ExternalLink
+                                                    size={48}
+                                                    class="mx-auto mb-4 opacity-30 text-gray-400"
+                                                />
+                                                <p class="text-2xl font-bold text-gray-300 uppercase tracking-wider">
+                                                    {project.data.status ===
+                                                    "in-progress"
+                                                        ? "IN PROGRESS"
+                                                        : "Completato"}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-6">
+                                            <div class="mb-3">
+                                                <span
+                                                    class={`inline-block px-3 py-1 rounded-full text-sm font-medium ${typeConfig["ui-ux"].badgeColor}`}
+                                                >
+                                                    {project.data.category}
+                                                </span>
+                                            </div>
+                                            <h4 class="text-xl font-bold text-gray-800 mb-2">
+                                                {project.data.title}
+                                            </h4>
+                                            <p class="text-gray-600 mb-4">
+                                                {project.data.description}
+                                            </p>
+                                            <div class="flex items-center text-primary font-medium text-sm">
+                                                Vedi progetto
+                                                <ArrowRight
+                                                    size={16}
+                                                    class="ml-1"
+                                                />
+                                            </div>
+                                        </div>
+                                    </Card>
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                )
+            }
+
+            <!-- Brand Identity Section -->
+            {
+                projectsByType["brand-identity"].length > 0 && (
+                    <div class="mb-20">
+                        <div class="text-center mb-8">
+                            <h3 class="text-3xl font-bold text-gray-800 mb-3">
+                                {typeConfig["brand-identity"].title}
+                            </h3>
+                            <p class="text-gray-600 max-w-2xl mx-auto">
+                                {typeConfig["brand-identity"].description}
+                            </p>
+                            <div class="inline-flex items-center gap-2 mt-3 text-sm text-gray-500">
+                                <span class="font-medium">
+                                    {typeConfig["brand-identity"].count}{" "}
+                                    {typeConfig["brand-identity"].count === 1
+                                        ? "progetto"
+                                        : "progetti"}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                            {projectsByType["brand-identity"].map(
+                                (project: any) => (
+                                    <a
+                                        href={`/portfolio/${project.slug}`}
+                                        class="portfolio-card-link"
+                                    >
+                                        <Card
+                                            variant="shadow-md"
+                                            size="spacious"
+                                            class="portfolio-card relative overflow-hidden h-full"
+                                        >
+                                            <div
+                                                class={`aspect-video flex items-center justify-center relative ${typeConfig["brand-identity"].color}`}
+                                            >
+                                                <div class="text-center p-8">
+                                                    <ExternalLink
+                                                        size={48}
+                                                        class="mx-auto mb-4 opacity-30 text-gray-400"
+                                                    />
+                                                    <p class="text-2xl font-bold text-gray-300 uppercase tracking-wider">
+                                                        {project.data.status ===
+                                                        "in-progress"
+                                                            ? "IN PROGRESS"
+                                                            : "Completato"}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div class="p-6">
+                                                <div class="mb-3">
+                                                    <span
+                                                        class={`inline-block px-3 py-1 rounded-full text-sm font-medium ${typeConfig["brand-identity"].badgeColor}`}
+                                                    >
+                                                        {project.data.category}
+                                                    </span>
+                                                </div>
+                                                <h4 class="text-xl font-bold text-gray-800 mb-2">
+                                                    {project.data.title}
+                                                </h4>
+                                                <p class="text-gray-600 mb-4">
+                                                    {project.data.description}
+                                                </p>
+                                                <div class="flex items-center text-primary font-medium text-sm">
+                                                    Vedi progetto
+                                                    <ArrowRight
+                                                        size={16}
+                                                        class="ml-1"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    </a>
+                                ),
+                            )}
+                        </div>
+                    </div>
+                )
+            }
+
+            <!-- Editorial Design Section -->
+            {
+                projectsByType["editorial"].length > 0 && (
+                    <div class="mb-20">
+                        <div class="text-center mb-8">
+                            <h3 class="text-3xl font-bold text-gray-800 mb-3">
+                                {typeConfig["editorial"].title}
+                            </h3>
+                            <p class="text-gray-600 max-w-2xl mx-auto">
+                                {typeConfig["editorial"].description}
+                            </p>
+                            <div class="inline-flex items-center gap-2 mt-3 text-sm text-gray-500">
+                                <span class="font-medium">
+                                    {typeConfig["editorial"].count}{" "}
+                                    {typeConfig["editorial"].count === 1
+                                        ? "progetto"
+                                        : "progetti"}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                            {projectsByType["editorial"].map((project: any) => (
+                                <a
+                                    href={`/portfolio/${project.slug}`}
+                                    class="portfolio-card-link"
+                                >
+                                    <Card
+                                        variant="shadow-md"
+                                        size="spacious"
+                                        class="portfolio-card relative overflow-hidden h-full"
+                                    >
+                                        <div
+                                            class={`aspect-video flex items-center justify-center relative ${typeConfig["editorial"].color}`}
+                                        >
+                                            <div class="text-center p-8">
+                                                <ExternalLink
+                                                    size={48}
+                                                    class="mx-auto mb-4 opacity-30 text-gray-400"
+                                                />
+                                                <p class="text-2xl font-bold text-gray-300 uppercase tracking-wider">
+                                                    {project.data.status ===
+                                                    "in-progress"
+                                                        ? "IN PROGRESS"
+                                                        : "Completato"}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-6">
+                                            <div class="mb-3">
+                                                <span
+                                                    class={`inline-block px-3 py-1 rounded-full text-sm font-medium ${typeConfig["editorial"].badgeColor}`}
+                                                >
+                                                    {project.data.category}
+                                                </span>
+                                            </div>
+                                            <h4 class="text-xl font-bold text-gray-800 mb-2">
+                                                {project.data.title}
+                                            </h4>
+                                            <p class="text-gray-600 mb-4">
+                                                {project.data.description}
+                                            </p>
+                                            <div class="flex items-center text-primary font-medium text-sm">
+                                                Vedi progetto
+                                                <ArrowRight
+                                                    size={16}
+                                                    class="ml-1"
+                                                />
+                                            </div>
+                                        </div>
+                                    </Card>
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                )
+            }
+
+            <!-- Illustration Section -->
+            {
+                projectsByType["illustration"].length > 0 && (
+                    <div class="mb-20">
+                        <div class="text-center mb-8">
+                            <h3 class="text-3xl font-bold text-gray-800 mb-3">
+                                {typeConfig["illustration"].title}
+                            </h3>
+                            <p class="text-gray-600 max-w-2xl mx-auto">
+                                {typeConfig["illustration"].description}
+                            </p>
+                            <div class="inline-flex items-center gap-2 mt-3 text-sm text-gray-500">
+                                <span class="font-medium">
+                                    {typeConfig["illustration"].count}{" "}
+                                    {typeConfig["illustration"].count === 1
+                                        ? "progetto"
+                                        : "progetti"}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                            {projectsByType["illustration"].map(
+                                (project: any) => (
+                                    <a
+                                        href={`/portfolio/${project.slug}`}
+                                        class="portfolio-card-link"
+                                    >
+                                        <Card
+                                            variant="shadow-md"
+                                            size="spacious"
+                                            class="portfolio-card relative overflow-hidden h-full"
+                                        >
+                                            <div
+                                                class={`aspect-video flex items-center justify-center relative ${typeConfig["illustration"].color}`}
+                                            >
+                                                <div class="text-center p-8">
+                                                    <ExternalLink
+                                                        size={48}
+                                                        class="mx-auto mb-4 opacity-30 text-gray-400"
+                                                    />
+                                                    <p class="text-2xl font-bold text-gray-300 uppercase tracking-wider">
+                                                        {project.data.status ===
+                                                        "in-progress"
+                                                            ? "IN PROGRESS"
+                                                            : "Completato"}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div class="p-6">
+                                                <div class="mb-3">
+                                                    <span
+                                                        class={`inline-block px-3 py-1 rounded-full text-sm font-medium ${typeConfig["illustration"].badgeColor}`}
+                                                    >
+                                                        {project.data.category}
+                                                    </span>
+                                                </div>
+                                                <h4 class="text-xl font-bold text-gray-800 mb-2">
+                                                    {project.data.title}
+                                                </h4>
+                                                <p class="text-gray-600 mb-4">
+                                                    {project.data.description}
+                                                </p>
+                                                <div class="flex items-center text-primary font-medium text-sm">
+                                                    Vedi progetto
+                                                    <ArrowRight
+                                                        size={16}
+                                                        class="ml-1"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    </a>
+                                ),
+                            )}
+                        </div>
+                    </div>
+                )
+            }
+
+            <!-- Messaggio nuovi progetti -->
+            <div class="text-center mb-16">
+                <p class="text-gray-600 text-lg">
+                    Nuovi progetti in arrivo, per continuare a crescere e
+                    sperimentare!
+                </p>
+            </div>
+
+            <!-- Separatore decorativo -->
+            <div class="flex justify-center items-center gap-4 mb-16">
+                <div class="w-3 h-3 rounded-full bg-pink-400"></div>
+                <div class="w-3 h-3 rounded-full bg-purple-400"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+            </div>
+
+            <!-- CTA Finale -->
+            <div class="text-center">
+                <div class="flex justify-center items-center gap-4 mb-6">
+                    <Sparkles size={32} class="text-yellow-400" />
+                    <h3 class="text-2xl md:text-3xl font-bold text-gray-800">
+                        Creiamo qualcosa <span class="text-primary"
+                            >insieme</span
+                        >
+                    </h3>
+                    <Sparkles size={32} class="text-yellow-400" />
+                </div>
+                <p class="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
+                    Sono sempre entusiasta di intraprendere nuovi progetti e
+                    collaborare con professionisti creativi. Per qualsiasi
+                    opportunità, non esitare a contattarmi!
+                </p>
+                <div class="flex justify-center items-center gap-4 flex-wrap">
+                    <a href="/contact" class="btn btn-primary"
+                        >Parliamone insieme</a
+                    >
+                    <a href="/about" class="btn btn-primary btn-outline"
+                        >Scopri di più su di me</a
+                    >
+                </div>
+            </div>
+        </div>
+    </Section>
+</PageLayout>
+
+<style>
+    .aspect-video {
+        aspect-ratio: 16 / 9;
+    }
+
+    .portfolio-card {
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .portfolio-card-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        height: 100%;
+    }
+
+    .portfolio-card-link:hover .portfolio-card {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Decorazioni torte animate */
+    .cake-decoration,
+    .cherry-decoration {
+        position: absolute;
+        font-size: 3rem;
+        animation: float 6s ease-in-out infinite;
+        opacity: 0.7;
+    }
+
+    .cake-1 {
+        top: 5%;
+        left: 10%;
+        animation-delay: 0s;
+        transform: rotate(-15deg);
+    }
+
+    .cake-2 {
+        top: 10%;
+        right: 8%;
+        animation-delay: 1s;
+        transform: rotate(20deg);
+    }
+
+    .cake-3 {
+        top: 50%;
+        left: 5%;
+        animation-delay: 2s;
+        transform: rotate(-10deg);
+        font-size: 2.5rem;
+    }
+
+    .cake-4 {
+        top: 40%;
+        right: 5%;
+        animation-delay: 3s;
+        transform: rotate(15deg);
+        font-size: 2.5rem;
+    }
+
+    .cherry-1 {
+        top: 15%;
+        left: 25%;
+        animation-delay: 1.5s;
+        font-size: 1.5rem;
+    }
+
+    .cherry-2 {
+        top: 45%;
+        right: 20%;
+        animation-delay: 2.5s;
+        font-size: 1.5rem;
+    }
+
+    @keyframes float {
+        0%,
+        100% {
+            transform: translateY(0px) rotate(var(--rotate, 0deg));
+        }
+        50% {
+            transform: translateY(-20px) rotate(var(--rotate, 0deg));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .cake-decoration,
+        .cherry-decoration {
+            font-size: 2rem;
+        }
+
+        .cake-3,
+        .cake-4 {
+            font-size: 1.8rem;
+        }
+
+        .cherry-1,
+        .cherry-2 {
+            font-size: 1.2rem;
+        }
+    }
+</style>

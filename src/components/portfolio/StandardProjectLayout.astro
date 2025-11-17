@@ -1,0 +1,533 @@
+---
+import type { CollectionEntry } from "astro:content";
+import PageLayout from "@/layouts/PageLayout.astro";
+import Section from "@/components/ui/Section.astro";
+import Card from "@/components/ui/Card.astro";
+import { Mail, ExternalLink } from "lucide-astro";
+
+interface Props {
+    entry: CollectionEntry<"portfolio">;
+    Content: any;
+}
+
+const { entry, Content } = Astro.props;
+
+// Dati dinamici dal frontmatter
+const objectives = entry.data.objectives || [];
+const results = entry.data.results || {};
+const reflections = entry.data.reflections || {};
+const images = entry.data.images || {};
+
+// Configurazione colori badge per categoria
+const badgeColors = {
+    "ui-ux": "bg-pink-200 text-pink-700",
+    "brand-identity": "bg-green-200 text-green-700",
+    editorial: "bg-purple-200 text-purple-700",
+    "web-design": "bg-blue-200 text-blue-700",
+};
+
+const badgeColor =
+    badgeColors[entry.data.type as keyof typeof badgeColors] ||
+    "bg-pink-200 text-pink-700";
+
+// Estrai nome del cliente o progetto per evidenziare
+const highlightText = entry.data.client || entry.data.title.split(" ").pop();
+
+// Mappa colori per le card obiettivi
+const colorClasses = {
+    blue: "text-blue-600 bg-blue-100",
+    purple: "text-purple-600 bg-purple-100",
+    orange: "text-orange-600 bg-orange-100",
+    indigo: "text-indigo-600 bg-indigo-100",
+};
+---
+
+<PageLayout pageTitle={entry.data.title}>
+    <!-- Hero Section con decorazioni -->
+    <Section class="bg-pink-50 py-16 relative overflow-hidden">
+        <!-- Decorazioni di sfondo -->
+        <div class="absolute inset-0 pointer-events-none">
+            <!-- Macchie rosa organiche -->
+            <div
+                class="absolute top-10 left-10 w-64 h-64 bg-pink-200 opacity-30 rounded-full blur-3xl"
+            >
+            </div>
+            <div
+                class="absolute top-20 right-20 w-48 h-48 bg-pink-200 opacity-30 rounded-full blur-3xl"
+            >
+            </div>
+            <div
+                class="absolute bottom-20 left-1/3 w-56 h-56 bg-pink-200 opacity-30 rounded-full blur-3xl"
+            >
+            </div>
+
+            <!-- Decorazioni torte/elementi -->
+            <div class="absolute top-8 left-[15%] text-6xl opacity-80">🍰</div>
+            <div class="absolute top-12 right-[20%] text-6xl opacity-80">
+                🍰
+            </div>
+            <div class="absolute top-28 left-[45%] text-6xl opacity-80">🍰</div>
+            <div class="absolute top-32 right-[35%] text-6xl opacity-80">
+                🍰
+            </div>
+            <div class="absolute top-20 left-[25%] text-3xl opacity-80">🍒</div>
+            <div class="absolute top-36 right-[45%] text-3xl opacity-80">
+                🍒
+            </div>
+        </div>
+
+        <div class="container mx-auto px-4 relative z-10">
+            <!-- Breadcrumb/Navigation -->
+            <div class="mb-8 text-center">
+                <a
+                    href="/"
+                    class="text-gray-600 hover:text-primary transition-colors mx-2"
+                    >Chi sono</a
+                >
+                <span class="text-gray-400">•</span>
+                <a
+                    href="/portfolio"
+                    class="text-gray-600 hover:text-primary transition-colors mx-2"
+                    >Portfolio</a
+                >
+                <span class="text-gray-400">•</span>
+                <a href="/contact" class="btn btn-primary btn-sm ml-2"
+                    >Contatti</a
+                >
+            </div>
+
+            <!-- Badge -->
+            <div class="text-center mb-12">
+                <span
+                    class={`inline-block px-6 py-2 rounded-full text-sm font-medium ${badgeColor}`}
+                >
+                    {entry.data.category}
+                </span>
+            </div>
+        </div>
+    </Section>
+
+    <!-- Immagine Mockup Grande -->
+    <Section class="bg-amber-50 py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                <Card
+                    variant="shadow-2xl"
+                    class="overflow-hidden rounded-3xl bg-gray-100"
+                >
+                    {
+                        images.mockup ? (
+                            <img
+                                src={images.mockup}
+                                alt={entry.data.title}
+                                class="w-full aspect-video object-cover"
+                            />
+                        ) : (
+                            <div class="aspect-video flex items-center justify-center p-12">
+                                <div class="text-center">
+                                    <ExternalLink
+                                        size={80}
+                                        class="mx-auto mb-6 opacity-20 text-gray-400"
+                                    />
+                                    <p class="text-3xl font-bold text-gray-300 uppercase tracking-wider mb-2">
+                                        {entry.data.title}
+                                    </p>
+                                    <p class="text-gray-400">
+                                        Immagine mockup principale
+                                    </p>
+                                </div>
+                            </div>
+                        )
+                    }
+                </Card>
+            </div>
+        </div>
+    </Section>
+
+    <!-- Titolo Progetto -->
+    <Section class="bg-amber-50 pt-8 pb-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 text-gray-700">
+                    {entry.data.title.replace(highlightText || "", "")}
+                    <span class="text-orange-500">{highlightText}</span>
+                </h1>
+                <p class="text-gray-600 text-lg">
+                    {entry.data.description}
+                </p>
+            </div>
+        </div>
+    </Section>
+
+    <!-- Sezione Obiettivo con 4 Card -->
+    <Section class="bg-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <h2
+                    class="text-3xl md:text-4xl font-bold mb-12 text-orange-400"
+                >
+                    Qual è stato l'obiettivo?
+                </h2>
+
+                {
+                    objectives.length > 0 && (
+                        <p class="text-gray-700 text-lg mb-12 leading-relaxed">
+                            Realizzare un design capace di comunicare sicurezza
+                            e competenza in ambito tech. Ogni elemento è stato
+                            scelto nell'equilibrio sull'equilibrio cromatico e
+                            sul messaggio da trasmettere.
+                        </p>
+                    )
+                }
+
+                <!-- Griglia 4 card numerate -->
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+                >
+                    {
+                        objectives.length > 0 ? (
+                            objectives.map(
+                                (
+                                    objective: {
+                                        title: string;
+                                        description: string;
+                                        color?: string;
+                                    },
+                                    index: number,
+                                ) => {
+                                    const color = objective.color || "blue";
+                                    const colorClass =
+                                        colorClasses[
+                                            color as keyof typeof colorClasses
+                                        ];
+                                    const bgOpacity =
+                                        color === "blue"
+                                            ? "text-blue-100"
+                                            : color === "purple"
+                                              ? "text-purple-100"
+                                              : color === "orange"
+                                                ? "text-orange-100"
+                                                : "text-indigo-100";
+
+                                    return (
+                                        <Card
+                                            variant="shadow-md"
+                                            class="p-6 bg-white relative"
+                                        >
+                                            <div
+                                                class={`absolute top-4 right-4 text-6xl font-bold ${bgOpacity} opacity-50`}
+                                            >
+                                                {index + 1}
+                                            </div>
+                                            <h3
+                                                class={`text-lg font-bold mb-3 ${colorClass.split(" ")[0]}`}
+                                            >
+                                                {objective.title}
+                                            </h3>
+                                            <p class="text-gray-700 text-sm leading-relaxed">
+                                                {objective.description}
+                                            </p>
+                                        </Card>
+                                    );
+                                },
+                            )
+                        ) : (
+                            <p class="text-gray-500 col-span-full text-center py-8">
+                                Nessun obiettivo specificato per questo
+                                progetto.
+                            </p>
+                        )
+                    }
+                </div>
+            </div>
+        </div>
+    </Section>
+
+    <!-- Sezione Risultato Finale -->
+    <Section class="bg-orange-50 py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold mb-8 text-orange-400">
+                    {results.title || "Risultato finale"}
+                </h2>
+
+                <div
+                    class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+                >
+                    <!-- Colonna Testo -->
+                    <div class="space-y-4">
+                        {
+                            results.paragraphs &&
+                            results.paragraphs.length > 0 ? (
+                                results.paragraphs.map((paragraph: string) => (
+                                    <p
+                                        class="text-gray-700 leading-relaxed"
+                                        set:html={paragraph
+                                            .replace(
+                                                /\*\*(.*?)\*\*/g,
+                                                '<strong class="text-gray-900">$1</strong>',
+                                            )
+                                            .replace(
+                                                /\*\*blu elettrico\*\*/gi,
+                                                '<strong class="text-blue-600">blu elettrico</strong>',
+                                            )}
+                                    />
+                                ))
+                            ) : (
+                                <p class="text-gray-500">
+                                    Nessun risultato specificato per questo
+                                    progetto.
+                                </p>
+                            )
+                        }
+
+                        {
+                            results.figmaLink && (
+                                <p class="text-gray-600 italic text-sm mt-6">
+                                    🔗{" "}
+                                    <a
+                                        href={results.figmaLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="text-primary hover:underline"
+                                    >
+                                        Guarda il progetto completo su Figma
+                                    </a>
+                                </p>
+                            )
+                        }
+                    </div>
+
+                    <!-- Colonna Immagine -->
+                    <div>
+                        <Card
+                            variant="shadow-xl"
+                            class="overflow-hidden rounded-3xl"
+                        >
+                            {
+                                images.result ? (
+                                    <img
+                                        src={images.result}
+                                        alt="Risultato finale"
+                                        class="w-full aspect-square object-cover"
+                                    />
+                                ) : (
+                                    <div class="aspect-square bg-linear-to-br from-gray-100 to-gray-300 flex items-center justify-center p-8">
+                                        <div class="text-center">
+                                            <ExternalLink
+                                                size={64}
+                                                class="mx-auto mb-4 opacity-20 text-gray-500"
+                                            />
+                                            <p class="text-xl font-medium text-gray-400">
+                                                Immagine risultato
+                                            </p>
+                                        </div>
+                                    </div>
+                                )
+                            }
+                        </Card>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Section>
+
+    <!-- Sezione Riflessioni -->
+    <Section class="bg-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold mb-8 text-orange-400">
+                    {reflections.title || "Riflessioni"}
+                </h2>
+
+                <div class="prose prose-lg prose-gray max-w-none">
+                    {
+                        reflections.content &&
+                        reflections.content.length > 0 ? (
+                            reflections.content.map((paragraph: string) => (
+                                <p
+                                    class="text-gray-700 leading-relaxed mb-4"
+                                    set:html={paragraph.replace(
+                                        /\*\*(.*?)\*\*/g,
+                                        '<strong class="text-gray-900">$1</strong>',
+                                    )}
+                                />
+                            ))
+                        ) : (
+                            <p class="text-gray-500">
+                                Nessuna riflessione specificata per questo
+                                progetto.
+                            </p>
+                        )
+                    }
+                </div>
+
+                <!-- Contenuto Markdown Completo -->
+                <div
+                    class="prose prose-lg prose-gray max-w-none prose-headings:text-gray-800 prose-a:text-primary prose-strong:text-gray-900 mt-12"
+                >
+                    <Content />
+                </div>
+            </div>
+        </div>
+    </Section>
+
+    <!-- CTA Section -->
+    <Section class="bg-pink-50 py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                    <span class="text-gray-700">Creiamo qualcosa </span>
+                    <span class="text-pink-500">insieme</span>
+                </h2>
+                <p class="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
+                    Sono sempre alla ricerca di nuovi progetti entusiasmanti e
+                    collaborazioni interessanti. Per qualsiasi opportunità, non
+                    esitare a contattarmi.
+                </p>
+
+                <!-- Contact Cards -->
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-12"
+                >
+                    <!-- Scrivimi -->
+                    <Card
+                        variant="shadow-md"
+                        class="p-6 text-left bg-white hover:shadow-lg transition-shadow"
+                    >
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center shrink-0"
+                            >
+                                <Mail size={24} class="text-pink-600" />
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 mb-2">
+                                    Scrivimi
+                                </h3>
+                                <p class="text-gray-600 text-sm mb-3">
+                                    Puoi inviarmi un'email in qualsiasi momento
+                                </p>
+                                <a
+                                    href="mailto:valentinageusa@example.com"
+                                    class="text-pink-500 hover:text-pink-600 text-sm font-medium"
+                                >
+                                    valentinageusa@example.com
+                                </a>
+                            </div>
+                        </div>
+                    </Card>
+
+                    <!-- Parliamone -->
+                    <Card
+                        variant="shadow-md"
+                        class="p-6 text-left bg-white hover:shadow-lg transition-shadow"
+                    >
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center shrink-0"
+                            >
+                                <ExternalLink
+                                    size={24}
+                                    class="text-purple-600"
+                                />
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 mb-2">
+                                    Parliamone
+                                </h3>
+                                <p class="text-gray-600 text-sm mb-3">
+                                    Mi piacerebbe conoscere il tuo progetto
+                                </p>
+                                <a
+                                    href="/contact"
+                                    class="text-purple-500 hover:text-purple-600 text-sm font-medium"
+                                >
+                                    Disponibile per collaborazioni freelance
+                                </a>
+                            </div>
+                        </div>
+                    </Card>
+                </div>
+
+                <!-- Social Links -->
+                <div
+                    class="flex justify-center items-center gap-6 text-gray-400"
+                >
+                    <span class="text-sm">Rimaniamo in contatto</span>
+                    <div class="flex gap-4">
+                        <a
+                            href="https://instagram.com"
+                            target="_blank"
+                            class="hover:text-pink-500 transition-colors"
+                        >
+                            <svg
+                                class="w-6 h-6"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
+                                ></path>
+                            </svg>
+                        </a>
+                        <a
+                            href="https://linkedin.com"
+                            target="_blank"
+                            class="hover:text-purple-500 transition-colors"
+                        >
+                            <svg
+                                class="w-6 h-6"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
+                                ></path>
+                            </svg>
+                        </a>
+                    </div>
+                    <span class="text-2xl">✨</span>
+                </div>
+            </div>
+        </div>
+    </Section>
+
+    <!-- Footer -->
+    <footer class="bg-pink-100 py-8">
+        <div class="container mx-auto px-4">
+            <div class="text-center text-gray-600 text-sm space-y-2">
+                <p>
+                    © {new Date().getFullYear()} Valentina Geusa - All rights reserved
+                </p>
+                <div>
+                    <a
+                        href="/privacy-policy"
+                        class="hover:text-primary transition-colors mx-2"
+                        >Privacy Policy</a
+                    >
+                    <span>•</span>
+                    <a
+                        href="/cookie-policy"
+                        class="hover:text-primary transition-colors mx-2"
+                        >Cookie Policy</a
+                    >
+                </div>
+                <p class="text-xs">
+                    Designed with <span class="text-red-500">❤️</span> by Valentina
+                    Geusa
+                </p>
+            </div>
+        </div>
+    </footer>
+</PageLayout>
+
+<style>
+    .aspect-video {
+        aspect-ratio: 16 / 9;
+    }
+
+    .aspect-square {
+        aspect-ratio: 1 / 1;
+    }
+</style>
