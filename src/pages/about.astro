@@ -1,10 +1,12 @@
 ---
+import { Image } from "astro:assets";
 import Hero from "@/components/Hero.astro";
 import Ellipses from "@/components/ui/Ellipses.astro";
 import Section from "@/components/ui/Section.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
 import Card from "@/components/ui/Card.astro";
 import { Sparkles, Heart, Palette, Code } from "lucide-astro";
+import valentinaImage from "@/assets/valentina.jpg";
 
 const pageTitle = "Su di me";
 ---
@@ -29,23 +31,18 @@ const pageTitle = "Su di me";
             <div
                 class="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto mb-16 items-center"
             >
-                <!-- Immagine Placeholder - Sinistra -->
+                <!-- Immagine - Sinistra -->
                 <div class="order-2 lg:order-1">
-                    <div
-                        class="aspect-square bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden"
-                    >
-                        <div class="text-center text-gray-400 p-8">
-                            <Palette
-                                size={64}
-                                class="mx-auto mb-4 opacity-50"
-                            />
-                            <p class="text-lg font-medium">
-                                Inserisci qui la tua immagine
-                            </p>
-                            <p class="text-sm mt-2">
-                                Placeholder per foto profilo
-                            </p>
-                        </div>
+                    <div class="rounded-lg overflow-hidden shadow-lg">
+                        <Image
+                            src={valentinaImage}
+                            alt="Valentina Geusa - Graphic & Web Designer"
+                            width={600}
+                            height={600}
+                            class="w-full h-full object-cover"
+                            loading="eager"
+                            quality={85}
+                        />
                     </div>
                 </div>
 
