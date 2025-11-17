@@ -4,6 +4,9 @@
     --color-primary: #ffc1e8;
     --color-secondary: #c89eff;
     --color-tertiary: #fff1df;
+    --color-primary-dark: #ff62c2;
+    --default-font-family: "Poppins", sans-serif;
+    --color-gray: rgba(0, 0, 0, 0.5);
 }
 
 @import "./components/index.css";
