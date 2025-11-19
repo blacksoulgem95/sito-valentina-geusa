@@ -2,71 +2,21 @@
 import PageLayout from "@/layouts/PageLayout.astro";
 import Section from "@/components/ui/Section.astro";
 import Card from "@/components/ui/Card.astro";
+import Input from "@/components/ui/Input.astro";
+import Textarea from "@/components/ui/Textarea.astro";
 import { Mail, Send, MessageCircle, Heart } from "lucide-astro";
+import Hero from "@/components/Hero.astro";
 
 const pageTitle = "Contattami";
 ---
 
 <PageLayout pageTitle={pageTitle}>
-    <!-- Hero Section con decorazioni -->
-    <Section class="bg-pink-50 py-16 relative overflow-hidden">
-        <!-- Decorazioni di sfondo -->
-        <div class="absolute inset-0 pointer-events-none">
-            <div
-                class="absolute top-10 left-10 w-64 h-64 bg-pink-200 opacity-30 rounded-full blur-3xl"
-            >
-            </div>
-            <div
-                class="absolute top-20 right-20 w-48 h-48 bg-purple-200 opacity-30 rounded-full blur-3xl"
-            >
-            </div>
-            <div
-                class="absolute bottom-20 left-1/3 w-56 h-56 bg-pink-200 opacity-30 rounded-full blur-3xl"
-            >
-            </div>
-
-            <!-- Decorazioni emoji -->
-            <div class="absolute top-8 left-[15%] text-6xl opacity-80">💌</div>
-            <div class="absolute top-12 right-[20%] text-6xl opacity-80">
-                ✨
-            </div>
-            <div class="absolute top-32 right-[35%] text-6xl opacity-80">
-                💖
-            </div>
-            <div class="absolute top-20 left-[25%] text-3xl opacity-80">🌸</div>
-        </div>
-
-        <div class="container mx-auto px-4 relative z-10">
-            <!-- Breadcrumb/Navigation -->
-            <div class="mb-8 text-center">
-                <a
-                    href="/"
-                    class="text-gray-600 hover:text-primary transition-colors mx-2"
-                    >Chi sono</a
-                >
-                <span class="text-gray-400">•</span>
-                <a
-                    href="/portfolio"
-                    class="text-gray-600 hover:text-primary transition-colors mx-2"
-                    >Portfolio</a
-                >
-                <span class="text-gray-400">•</span>
-                <span class="text-primary font-medium mx-2">Contatti</span>
-            </div>
-
-            <!-- Titolo -->
-            <div class="max-w-4xl mx-auto text-center">
-                <h1 class="text-4xl md:text-5xl font-bold mb-4">
-                    <span class="text-gray-800">Creiamo qualcosa </span>
-                    <span class="text-pink-500">insieme</span>
-                </h1>
-                <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-                    Hai un progetto in mente? Sono sempre aperta a nuove
-                    opportunità e collaborazioni creative. Parliamone! ✨
-                </p>
-            </div>
-        </div>
-    </Section>
+    <Hero>
+        <Fragment slot="title">
+            <span class="text-gray-800">Creiamo qualcosa </span>
+            <span class="text-pink-500">insieme</span>
+        </Fragment>
+    </Hero>
 
     <!-- Sezione Form Contatto -->
     <Section class="bg-white py-16">
@@ -211,12 +161,11 @@ const pageTitle = "Contattami";
                                         Nome <span class="text-pink-500">*</span
                                         >
                                     </label>
-                                    <input
+                                    <Input
                                         type="text"
                                         id="name"
                                         name="name"
                                         required
-                                        class="form-input"
                                         placeholder="Il tuo nome"
                                     />
                                 </div>
@@ -230,13 +179,13 @@ const pageTitle = "Contattami";
                                             >*</span
                                         >
                                     </label>
-                                    <input
+                                    <Input
                                         type="email"
                                         id="email"
                                         name="email"
                                         required
-                                        class="form-input"
                                         placeholder="la.tua@email.com"
+                                        autocomplete="email"
                                     />
                                 </div>
 
@@ -247,11 +196,10 @@ const pageTitle = "Contattami";
                                     >
                                         Oggetto
                                     </label>
-                                    <input
+                                    <Input
                                         type="text"
                                         id="subject"
                                         name="subject"
-                                        class="form-input"
                                         placeholder="Di cosa vorresti parlare?"
                                     />
                                 </div>
@@ -265,14 +213,14 @@ const pageTitle = "Contattami";
                                             >*</span
                                         >
                                     </label>
-                                    <textarea
+                                    <Textarea
                                         id="message"
                                         name="message"
-                                        rows="6"
+                                        rows={6}
                                         required
-                                        class="form-input"
                                         placeholder="Parlami del tuo progetto, delle tue idee o semplicemente di cosa hai bisogno..."
-                                    ></textarea>
+                                        resize="none"
+                                    />
                                 </div>
 
                                 <div class="flex items-start gap-3">
@@ -361,12 +309,11 @@ const pageTitle = "Contattami";
                                 >
                                     Nome
                                 </label>
-                                <input
+                                <Input
                                     type="text"
                                     id="newsletter-name"
                                     name="name"
                                     required
-                                    class="form-input"
                                     placeholder="Il tuo nome"
                                 />
                             </div>
@@ -377,13 +324,13 @@ const pageTitle = "Contattami";
                                 >
                                     Email
                                 </label>
-                                <input
+                                <Input
                                     type="email"
                                     id="newsletter-email"
                                     name="email"
                                     required
-                                    class="form-input"
                                     placeholder="la.tua@email.com"
+                                    autocomplete="email"
                                 />
                             </div>
                         </div>

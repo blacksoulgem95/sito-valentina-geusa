@@ -6,26 +6,16 @@ import Section from "@/components/ui/Section.astro";
 import PageLayout from "@/layouts/PageLayout.astro";
 import Card from "@/components/ui/Card.astro";
 import { Sparkles, Heart, Palette, Code } from "lucide-astro";
+import AboutCard from "@/components/ui/about/Card.astro";
 import valentinaImage from "@/assets/valentina.jpg";
 
 const pageTitle = "Su di me";
 ---
 
 <PageLayout pageTitle={pageTitle}>
-    <Hero title="Su di me" />
+    <Hero />
 
-    <section class="flex mt-3 flex-col justify-center items-center">
-        <p class="text-center max-w-2xl">
-            Sono Valentina, graphic & web designer con la passione per la
-            creatività e il design funzionale.
-        </p>
-    </section>
-
-    <div class="flex justify-center items-center mt-10">
-        <Ellipses class="" />
-    </div>
-
-    <Section class="section-primary mt-11 py-16">
+    <Section class="bg-transparent mt-11 py-16">
         <div class="container mx-auto px-4">
             <!-- Sezione con immagine e testo -->
             <div
@@ -51,24 +41,91 @@ const pageTitle = "Su di me";
                     <h2
                         class="text-3xl md:text-4xl font-bold text-gray-800 mb-6"
                     >
-                        Chi sono
+                        Su di <span
+                            class="bg-gradient-to-b
+                            from-secondary
+                            to-primary-to
+                          bg-clip-text
+                          text-transparent"
+                            >me</span
+                        >
                     </h2>
                     <div class="space-y-4 text-gray-700 text-lg">
                         <p>
-                            Ciao! Sono Valentina Geusa, una graphic & web
-                            designer appassionata di creatività e innovazione
-                            digitale.
+                            Ciao! Sono Valentina, <b
+                                class="text-secondary-to-alt"
+                                >graphic designer</b
+                            > e
+                            <b class="text-secondary">illustratrice</b>. La mia
+                            passione per la grafica è nata quando avevo appena
+                            12 anni: trascorrevo interi pomeriggi a creare
+                            template e grafiche per forum e blog, sperimentando
+                            con colori e forme senza rendermi conto che stavo
+                            già costruendo le basi di quello che sarebbe stato
+                            il mio domani!
                         </p>
                         <p>
-                            Il mio lavoro si concentra sulla creazione di
-                            identità visive uniche, design web accattivanti e
-                            contenuti social che catturano l'attenzione.
+                            Dopo aver seguito un corso di formazione in graphic
+                            design, ho deciso di trasformare questa passione in
+                            una strada professionale. Anche se i miei lavori
+                            "ufficiali" sono ancora pochi, porto con me anni di
+                            esercizio personale e tanta voglia di crescere e
+                            sperimentare.
                         </p>
                         <p>
-                            Amo trasformare idee in progetti concreti,
-                            combinando estetica e funzionalità per offrire
-                            soluzioni su misura per ogni cliente.
+                            Oltre alla grafica, coltivo anche il disegno sia
+                            digitale che tradizionale, unendo le due cose per
+                            dare vita a progetti visivi unici, che raccontano
+                            storie e trasmettono emozioni.
                         </p>
+                        <p>
+                            Mi piace lavorare con palette armoniose, dettagli
+                            curati e soluzioni creative che sappiano dare
+                            un'identità chiara e personale a chi sceglie di
+                            affidarsi a me.
+                        </p>
+
+                        <div class="relative max-w-5xl w-full mx-auto mt-3">
+                            <!-- Etichetta "Cosa amo?" -->
+                            <div class="absolute -top-6 left-0">
+                                <div
+                                    class="absolute left-0 top-0
+                                            bg-[#FFC4E8]
+                                            border border-[rgba(255,112,202,0.64)]
+                                            rounded-[26.3602px]
+                                            px-4 py-2
+                                            whitespace-nowrap
+                                            text-[#A84773] font-medium"
+                                >
+                                    Cosa amo?
+                                </div>
+                            </div>
+
+                            <!-- Cards -->
+                            <div
+                                class="mt-8 flex flex-col md:flex-row items-center md:items-stretch gap-6 justify-between"
+                            >
+                                <!-- Card 1 -->
+                                <AboutCard>
+                                    <Fragment slot="icon">icon</Fragment>
+                                    <Fragment slot="text"
+                                        >Sans Serif Font</Fragment
+                                    >
+                                </AboutCard>
+                                <AboutCard>
+                                    <Fragment slot="icon">icon</Fragment>
+                                    <Fragment slot="text"
+                                        >Palette colori pastello</Fragment
+                                    >
+                                </AboutCard>
+                                <AboutCard>
+                                    <Fragment slot="icon">icon</Fragment>
+                                    <Fragment slot="text"
+                                        >Disegno grafico e tradizionale</Fragment
+                                    >
+                                </AboutCard>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

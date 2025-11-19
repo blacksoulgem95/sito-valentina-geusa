@@ -1,12 +1,28 @@
 @import "tailwindcss";
+@import "./variables.css";
 
 @theme {
-    --color-primary: #ffc1e8;
-    --color-secondary: #c89eff;
-    --color-tertiary: #fff1df;
-    --color-primary-dark: #ff62c2;
-    --default-font-family: "Poppins", sans-serif;
+    --color-primary: var(--primary-color);
+    --color-primary-to: var(--primary-color-to);
+    --color-primary-dark: var(--primary-dark-color);
+    --color-primary-hover: var(--primary-hover-color);
+    --color-primary-text: var(--primary-text-color);
+    --color-primary-hover-text: var(--primary-hover-text-color);
+    --color-secondary: var(--secondary-color);
+    --color-secondary-text: var(--secondary-text-color);
+    --color-tertiary: var(--tertiary-color);
+    --color-tertiary-text: var(--tertiary-text-color);
+    --color-success: var(--success-color);
+    --color-success-text: var(--success-text-color);
+    --color-danger: var(--danger-color);
+    --color-danger-text: var(--danger-text-color);
+    --color-warning: var(--warning-color);
+    --color-warning-text: var(--warning-text-color);
+    --color-info: var(--info-color);
+    --color-info-text: var(--info-text-color);
+    --color-text: var(--text-color);
     --color-gray: rgba(0, 0, 0, 0.5);
+    --default-font-family: "Poppins", sans-serif;
 }
 
 @import "./components/index.css";
@@ -14,4 +30,8 @@
 body {
     display: flex;
     flex-direction: column;
+}
+
+.text-secondary-to-alt {
+    @apply bg-gradient-to-b from-secondary to-primary-to bg-clip-text text-transparent;
 }

@@ -18,7 +18,11 @@ const pageTitle = "Home";
 ---
 
 <PageLayout pageTitle={pageTitle}>
-    <Hero title="Valentina Geusa<br />Graphic & Web Designer" />
+    <Hero>
+        <Fragment slot="title">
+            Valentina Geusa<br />Graphic & Web Designer
+        </Fragment>
+    </Hero>
 
     <section class="flex mt-3 flex-col justify-justify-center items-center">
         <p>

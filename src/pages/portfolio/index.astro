@@ -67,7 +67,9 @@ const typeConfig = {
 ---
 
 <PageLayout pageTitle={pageTitle}>
-    <Hero title="Portfolio" />
+    <Hero>
+        <Fragment slot="title">Portfolio</Fragment>
+    </Hero>
 
     <section class="flex mt-3 flex-col justify-center items-center relative">
         <!-- Decorazioni torte -->

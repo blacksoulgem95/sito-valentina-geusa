@@ -1,0 +1,25 @@
+---
+
+---
+
+<div
+    class="bg-white
+            border border-primary
+            rounded-2xl
+            p-6
+            flex flex-col items-center text-center shadow-sm"
+>
+    <!-- Icona placeholder -->
+    <div class="mb-4">
+        <div
+            class="w-14 h-14 bg-gray-200 rounded-full flex items-center justify-center text-gray-400"
+        >
+            <slot name="icon" />
+        </div>
+    </div>
+
+    <!-- Testo card -->
+    <div class="text-gray-600 text-lg font-medium">
+        <slot name="text" />
+    </div>
+</div>
