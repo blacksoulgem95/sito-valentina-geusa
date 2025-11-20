@@ -3,6 +3,12 @@
     align-items: center;
     padding: 2rem;
     &.section-primary {
-        background: #ff89d321;
+        background: var(--color-primary);
+    }
+    &.section-secondary {
+        background: var(--color-secondary);
+    }
+    &.section-tertiary {
+        background: var(--color-tertiary);
     }
 }

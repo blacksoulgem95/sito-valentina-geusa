@@ -8,6 +8,9 @@ import Card from "@/components/ui/Card.astro";
 import { Sparkles, Heart, Palette, Code } from "lucide-astro";
 import AboutCard from "@/components/ui/about/Card.astro";
 import valentinaImage from "@/assets/valentina.jpg";
+import Ellipses from "@/components/ui/Ellipses.astro";
+import Section from "@/components/ui/Section.astro";
+import TeoriaColore from "@/assets/about/teoria-colore.svg";
 
 const pageTitle = "Su di me";
 ---
@@ -90,12 +93,12 @@ const pageTitle = "Su di me";
                             <div class="absolute -top-6 left-0">
                                 <div
                                     class="absolute left-0 top-0
-                                            bg-[#FFC4E8]
-                                            border border-[rgba(255,112,202,0.64)]
-                                            rounded-[26.3602px]
-                                            px-4 py-2
-                                            whitespace-nowrap
-                                            text-[#A84773] font-medium"
+                                     bg-[#FFC4E8]
+                                     border border-[rgba(255,112,202,0.64)]
+                                     rounded-[26.3602px]
+                                     px-4 py-2
+                                     whitespace-nowrap
+                                     text-[#A84773] font-medium"
                                 >
                                     Cosa amo?
                                 </div>
@@ -103,122 +106,233 @@ const pageTitle = "Su di me";
 
                             <!-- Cards -->
                             <div
-                                class="mt-8 flex flex-col md:flex-row items-center md:items-stretch gap-6 justify-between"
+                                class="mt-8 flex flex-col md:flex-row gap-6 items-stretch"
                             >
-                                <!-- Card 1 -->
-                                <AboutCard>
-                                    <Fragment slot="icon">icon</Fragment>
-                                    <Fragment slot="text"
-                                        >Sans Serif Font</Fragment
-                                    >
-                                </AboutCard>
-                                <AboutCard>
-                                    <Fragment slot="icon">icon</Fragment>
-                                    <Fragment slot="text"
-                                        >Palette colori pastello</Fragment
-                                    >
-                                </AboutCard>
-                                <AboutCard>
-                                    <Fragment slot="icon">icon</Fragment>
-                                    <Fragment slot="text"
-                                        >Disegno grafico e tradizionale</Fragment
-                                    >
-                                </AboutCard>
+                                <div class="flex-1 flex">
+                                    <AboutCard>
+                                        <Fragment slot="icon">
+                                            <Image
+                                                src={import(
+                                                    "@/assets/about/font.png"
+                                                )}
+                                                alt="Font icon"
+                                                width={48}
+                                                height={48}
+                                            />
+                                        </Fragment>
+                                        <Fragment slot="text"
+                                            >Sans Serif Font</Fragment
+                                        >
+                                    </AboutCard>
+                                </div>
+
+                                <div class="flex-1 flex">
+                                    <AboutCard>
+                                        <Fragment slot="icon">
+                                            <Image
+                                                src={import(
+                                                    "@/assets/about/palette.png"
+                                                )}
+                                                alt="Palette icon"
+                                                width={48}
+                                                height={48}
+                                            />
+                                        </Fragment>
+                                        <Fragment slot="text"
+                                            >Palette colori pastello</Fragment
+                                        >
+                                    </AboutCard>
+                                </div>
+
+                                <div class="flex-1 flex">
+                                    <AboutCard>
+                                        <Fragment slot="icon">
+                                            <Image
+                                                src={import(
+                                                    "@/assets/about/heart.png"
+                                                )}
+                                                alt="Heart icon"
+                                                width={48}
+                                                height={48}
+                                            />
+                                        </Fragment>
+                                        <Fragment slot="text"
+                                            >Disegno grafico e tradizionale</Fragment
+                                        >
+                                    </AboutCard>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Cards Competenze -->
-            <div class="max-w-6xl mx-auto mb-16">
-                <h2
-                    class="text-3xl md:text-4xl font-bold text-gray-800 mb-8 text-center"
-                >
-                    Cosa faccio
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <Card
-                        variant="shadow-md"
-                        size="spacious"
-                        class="text-center"
-                    >
-                        <div class="flex flex-col items-center">
-                            <div class="form-header-icon mb-4">
-                                <Palette size={48} />
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-3">
-                                Graphic Design
-                            </h3>
-                            <p class="text-gray">
-                                Creo identità visive, loghi e illustrazioni che
-                                raccontano storie uniche.
-                            </p>
-                        </div>
-                    </Card>
-
-                    <Card
-                        variant="shadow-md"
-                        size="spacious"
-                        class="text-center"
-                    >
-                        <div class="flex flex-col items-center">
-                            <div class="form-header-icon mb-4">
-                                <Code size={48} />
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-3">
-                                Web Design
-                            </h3>
-                            <p class="text-gray">
-                                Realizzo siti web moderni, responsive e
-                                ottimizzati per ogni dispositivo.
-                            </p>
-                        </div>
-                    </Card>
-
-                    <Card
-                        variant="shadow-md"
-                        size="spacious"
-                        class="text-center"
-                    >
-                        <div class="flex flex-col items-center">
-                            <div class="form-header-icon mb-4">
-                                <Heart size={48} />
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-3">
-                                Social Content
-                            </h3>
-                            <p class="text-gray">
-                                Progetto contenuti social coinvolgenti che
-                                valorizzano il tuo brand.
-                            </p>
-                        </div>
-                    </Card>
-                </div>
-            </div>
-
-            <!-- CTA Finale -->
-            <div class="text-center">
-                <div class="flex justify-center items-center gap-4 mb-6">
-                    <Sparkles size={32} class="text-yellow-400" />
-                    <h3 class="text-2xl font-bold text-gray-800">
-                        Lavoriamo insieme!
-                    </h3>
-                    <Sparkles size={32} class="text-yellow-400" />
-                </div>
-                <p class="text-gray text-lg mb-8 max-w-2xl mx-auto">
-                    Hai un progetto in mente? Sono sempre aperta a nuove
-                    opportunità e collaborazioni creative.
-                </p>
-                <div class="flex justify-center items-center gap-4">
-                    <a href="/contact" class="btn btn-primary">Contattami</a>
-                    <a href="/" class="btn btn-primary btn-outline"
-                        >Torna alla Home</a
-                    >
-                </div>
+            <div class="flex justify-center mb-10">
+                <Ellipses />
             </div>
         </div>
     </Section>
+
+    <Section class="section-tertiary">
+        <div class="mt-38 flex justify-center items-center flex-col text-gray">
+            <h3 class="text-4xl font-bold">
+                Skills & <span class="text-secondary-to-alt">Expertise</span>
+            </h3>
+            <p>
+                Ogni giorno scopro nuovi modi per crescere, imparare e
+                trasformare idee in design
+            </p>
+        </div>
+        <div class="mt-2 flex justify-center items-stretch flex-wrap gap-3">
+            <AboutCard class="justify-start">
+                <Fragment slot="icon">
+                    <div class="flex justify-start text-left">
+                        <div class="aspect-square p-4 rounded-md bg-tertiary">
+                            <TeoriaColore />
+                        </div>
+                    </div>
+                </Fragment>
+                <Fragment slot="text">
+                    <div class="flex justify-start gap-1 flex-col text-left">
+                        <p class="text-primary">Teoria del colore</p>
+                        <p>Creazione di palette cromatiche armoniose</p>
+                    </div>
+                </Fragment>
+            </AboutCard>
+
+            <AboutCard>
+                <Fragment slot="icon">
+                    <div class="aspect-square p-2 rounded-md">
+                        <TeoriaColore />
+                    </div>
+                </Fragment>
+                <Fragment slot="text">
+                    <p class="text-primary">Illustrazione</p>
+                    <p>Disegno digitale e tradizionale</p>
+                </Fragment>
+            </AboutCard>
+
+            <AboutCard>
+                <Fragment slot="icon">
+                    <div class="aspect-square p-2 rounded-md">
+                        <TeoriaColore />
+                    </div>
+                </Fragment>
+                <Fragment slot="text">
+                    <p class="text-primary">Progettazione del layout</p>
+                    <p>Organizzazione degli elementi visivi</p>
+                </Fragment>
+            </AboutCard>
+
+            <AboutCard>
+                <Fragment slot="icon">
+                    <div class="aspect-square p-2 rounded-md">
+                        <TeoriaColore />
+                    </div>
+                </Fragment>
+                <Fragment slot="text">
+                    <p class="text-primary">Tipografia</p>
+                    <p>Composizioni tipografiche curate</p>
+                </Fragment>
+            </AboutCard>
+
+            <AboutCard>
+                <Fragment slot="icon">
+                    <div class="aspect-square p-2 rounded-md">
+                        <TeoriaColore />
+                    </div>
+                </Fragment>
+                <Fragment slot="text">
+                    <p class="text-primary">Fotoritocco</p>
+                    <p>Modifica ed esaltazione delle immagini</p>
+                </Fragment>
+            </AboutCard>
+
+            <AboutCard>
+                <Fragment slot="icon">
+                    <div class="aspect-square p-2 rounded-md">
+                        <TeoriaColore />
+                    </div>
+                </Fragment>
+                <Fragment slot="text">
+                    <p class="text-primary">Branding</p>
+                    <p>Creazione di identità visive</p>
+                </Fragment>
+            </AboutCard>
+        </div>
+    </Section>
+
+    <!-- Cards Competenze -->
+    <div class="max-w-6xl mx-auto mb-16">
+        <h2
+            class="text-3xl md:text-4xl font-bold text-gray-800 mb-8 text-center"
+        >
+            Cosa faccio
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card variant="shadow-md" size="spacious" class="text-center">
+                <div class="flex flex-col items-center">
+                    <div class="form-header-icon mb-4">
+                        <Palette size={48} />
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">
+                        Graphic Design
+                    </h3>
+                    <p class="text-gray">
+                        Creo identità visive, loghi e illustrazioni che
+                        raccontano storie uniche.
+                    </p>
+                </div>
+            </Card>
+
+            <Card variant="shadow-md" size="spacious" class="text-center">
+                <div class="flex flex-col items-center">
+                    <div class="form-header-icon mb-4">
+                        <Code size={48} />
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">
+                        Web Design
+                    </h3>
+                    <p class="text-gray">
+                        Realizzo siti web moderni, responsive e ottimizzati per
+                        ogni dispositivo.
+                    </p>
+                </div>
+            </Card>
+
+            <Card variant="shadow-md" size="spacious" class="text-center">
+                <div class="flex flex-col items-center">
+                    <div class="form-header-icon mb-4">
+                        <Heart size={48} />
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">
+                        Social Content
+                    </h3>
+                    <p class="text-gray">
+                        Progetto contenuti social coinvolgenti che valorizzano
+                        il tuo brand.
+                    </p>
+                </div>
+            </Card>
+        </div>
+    </div>
+
+    <!-- CTA Finale -->
+    <div class="text-center">
+        <div class="flex justify-center items-center gap-4 mb-6">
+            <Sparkles size={32} class="text-yellow-400" />
+            <h3 class="text-2xl font-bold text-gray-800">Lavoriamo insieme!</h3>
+            <Sparkles size={32} class="text-yellow-400" />
+        </div>
+        <p class="text-gray text-lg mb-8 max-w-2xl mx-auto">
+            Hai un progetto in mente? Sono sempre aperta a nuove opportunità e
+            collaborazioni creative.
+        </p>
+        <div class="flex justify-center items-center gap-4">
+            <a href="/contact" class="btn btn-primary">Contattami</a>
+            <a href="/" class="btn btn-primary btn-outline">Torna alla Home</a>
+        </div>
+    </div>
 </PageLayout>
 
 <style>
