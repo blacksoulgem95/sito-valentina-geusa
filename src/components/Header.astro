@@ -2,6 +2,9 @@
 import logo from "@/assets/logo.svg";
 ---
 
+<!-- Mobile Menu Toggle (must be sibling of mobile-menu for CSS) -->
+<input type="checkbox" id="mobile-menu-toggle" class="mobile-menu-toggle" />
+
 <div class="navbar">
     <div class="navbar-start">
         <div class="navbar-item">
@@ -24,19 +27,17 @@ import logo from "@/assets/logo.svg";
         </div>
     </div>
     <div class="navbar-end">
-        <div class="navbar-item">
+        <div class="navbar-item navbar-item-desktop">
             <a class="btn btn-primary btn-sm" href="/contact">Scrivimi</a>
         </div>
+        <!-- Mobile Menu Button -->
+        <label for="mobile-menu-toggle" class="mobile-menu-button">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </label>
     </div>
 </div>
-
-<!-- Mobile Menu Toggle -->
-<input type="checkbox" id="mobile-menu-toggle" class="mobile-menu-toggle" />
-<label for="mobile-menu-toggle" class="mobile-menu-button">
-    <span class="hamburger-line"></span>
-    <span class="hamburger-line"></span>
-    <span class="hamburger-line"></span>
-</label>
 
 <!-- Mobile Menu -->
 <div class="mobile-menu">
