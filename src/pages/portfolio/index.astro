@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getPortfolioItems } from '@/lib/firebase/firestore-server';
 import Hero from "@/components/Hero.astro";
 import Ellipses from "@/components/ui/Ellipses.astro";
 import Section from "@/components/ui/Section.astro";
@@ -9,25 +9,25 @@ import { Sparkles, ExternalLink, ArrowRight } from "lucide-astro";
 
 const pageTitle = "Portfolio";
 
-// Recupera tutti i progetti dal backend
-const allProjects = await getCollection("portfolio");
+// Recupera tutti i progetti da Firestore
+const allProjects = await getPortfolioItems();
 
 // Raggruppa i progetti per tipo
 const projectsByType = {
-    "ui-ux": allProjects.filter((p: any) => p.data.type === "ui-ux"),
+    "ui-ux": allProjects.filter((p: any) => p.type === "ui-ux"),
     "brand-identity": allProjects.filter(
-        (p: any) => p.data.type === "brand-identity",
+        (p: any) => p.type === "brand-identity",
     ),
-    editorial: allProjects.filter((p: any) => p.data.type === "editorial"),
+    editorial: allProjects.filter((p: any) => p.type === "editorial"),
     illustration: allProjects.filter(
-        (p: any) => p.data.type === "illustration",
+        (p: any) => p.type === "illustration",
     ),
 };
 
 // Ordina ogni gruppo per order
 Object.keys(projectsByType).forEach((key) => {
     projectsByType[key as keyof typeof projectsByType].sort(
-        (a: any, b: any) => a.data.order - b.data.order,
+        (a: any, b: any) => (a.order || 0) - (b.order || 0),
     );
 });
 
@@ -130,7 +130,7 @@ const typeConfig = {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
                             {projectsByType["ui-ux"].map((project: any) => (
                                 <a
-                                    href={`/portfolio/${project.slug}`}
+                                    href={`/${project.slug}`}
                                     class="portfolio-card-link"
                                 >
                                     <Card
@@ -141,18 +141,26 @@ const typeConfig = {
                                         <div
                                             class={`aspect-video flex items-center justify-center relative ${typeConfig["ui-ux"].color}`}
                                         >
-                                            <div class="text-center p-8">
-                                                <ExternalLink
-                                                    size={48}
-                                                    class="mx-auto mb-4 opacity-30 text-gray-400"
+                                            {project.featuredImage ? (
+                                                <img
+                                                    src={project.featuredImage}
+                                                    alt={project.title}
+                                                    class="w-full h-full object-cover"
                                                 />
-                                                <p class="text-2xl font-bold text-gray-300 uppercase tracking-wider">
-                                                    {project.data.status ===
-                                                    "in-progress"
-                                                        ? "IN PROGRESS"
-                                                        : "Completato"}
-                                                </p>
-                                            </div>
+                                            ) : (
+                                                <div class="text-center p-8">
+                                                    <ExternalLink
+                                                        size={48}
+                                                        class="mx-auto mb-4 opacity-30 text-gray-400"
+                                                    />
+                                                    <p class="text-2xl font-bold text-gray-300 uppercase tracking-wider">
+                                                        {project.status ===
+                                                        "in-progress"
+                                                            ? "IN PROGRESS"
+                                                            : "Completato"}
+                                                    </p>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div class="p-6">
@@ -160,14 +168,14 @@ const typeConfig = {
                                                 <span
                                                     class={`inline-block px-3 py-1 rounded-full text-sm font-medium ${typeConfig["ui-ux"].badgeColor}`}
                                                 >
-                                                    {project.data.category}
+                                                    {project.category || "UI/UX"}
                                                 </span>
                                             </div>
                                             <h4 class="text-xl font-bold text-gray-800 mb-2">
-                                                {project.data.title}
+                                                {project.title}
                                             </h4>
-                                            <p class="text-gray-600 mb-4">
-                                                {project.data.description}
+                                            <p class="text-gray-600 mb-4 line-clamp-3">
+                                                {project.body?.substring(0, 150) || project.title}
                                             </p>
                                             <div class="flex items-center text-primary font-medium text-sm">
                                                 Vedi progetto
@@ -209,7 +217,7 @@ const typeConfig = {
                             {projectsByType["brand-identity"].map(
                                 (project: any) => (
                                     <a
-                                        href={`/portfolio/${project.slug}`}
+                                        href={`/${project.slug}`}
                                         class="portfolio-card-link"
                                     >
                                         <Card
@@ -220,18 +228,26 @@ const typeConfig = {
                                             <div
                                                 class={`aspect-video flex items-center justify-center relative ${typeConfig["brand-identity"].color}`}
                                             >
-                                                <div class="text-center p-8">
-                                                    <ExternalLink
-                                                        size={48}
-                                                        class="mx-auto mb-4 opacity-30 text-gray-400"
+                                                {project.featuredImage ? (
+                                                    <img
+                                                        src={project.featuredImage}
+                                                        alt={project.title}
+                                                        class="w-full h-full object-cover"
                                                     />
-                                                    <p class="text-2xl font-bold text-gray-300 uppercase tracking-wider">
-                                                        {project.data.status ===
-                                                        "in-progress"
-                                                            ? "IN PROGRESS"
-                                                            : "Completato"}
-                                                    </p>
-                                                </div>
+                                                ) : (
+                                                    <div class="text-center p-8">
+                                                        <ExternalLink
+                                                            size={48}
+                                                            class="mx-auto mb-4 opacity-30 text-gray-400"
+                                                        />
+                                                        <p class="text-2xl font-bold text-gray-300 uppercase tracking-wider">
+                                                            {project.status ===
+                                                            "in-progress"
+                                                                ? "IN PROGRESS"
+                                                                : "Completato"}
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
 
                                             <div class="p-6">
@@ -239,14 +255,14 @@ const typeConfig = {
                                                     <span
                                                         class={`inline-block px-3 py-1 rounded-full text-sm font-medium ${typeConfig["brand-identity"].badgeColor}`}
                                                     >
-                                                        {project.data.category}
+                                                        {project.category || "Brand Identity"}
                                                     </span>
                                                 </div>
                                                 <h4 class="text-xl font-bold text-gray-800 mb-2">
-                                                    {project.data.title}
+                                                    {project.title}
                                                 </h4>
-                                                <p class="text-gray-600 mb-4">
-                                                    {project.data.description}
+                                                <p class="text-gray-600 mb-4 line-clamp-3">
+                                                    {project.body?.substring(0, 150) || project.title}
                                                 </p>
                                                 <div class="flex items-center text-primary font-medium text-sm">
                                                     Vedi progetto
@@ -288,7 +304,7 @@ const typeConfig = {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
                             {projectsByType["editorial"].map((project: any) => (
                                 <a
-                                    href={`/portfolio/${project.slug}`}
+                                    href={`/${project.slug}`}
                                     class="portfolio-card-link"
                                 >
                                     <Card
@@ -299,18 +315,26 @@ const typeConfig = {
                                         <div
                                             class={`aspect-video flex items-center justify-center relative ${typeConfig["editorial"].color}`}
                                         >
-                                            <div class="text-center p-8">
-                                                <ExternalLink
-                                                    size={48}
-                                                    class="mx-auto mb-4 opacity-30 text-gray-400"
+                                            {project.featuredImage ? (
+                                                <img
+                                                    src={project.featuredImage}
+                                                    alt={project.title}
+                                                    class="w-full h-full object-cover"
                                                 />
-                                                <p class="text-2xl font-bold text-gray-300 uppercase tracking-wider">
-                                                    {project.data.status ===
-                                                    "in-progress"
-                                                        ? "IN PROGRESS"
-                                                        : "Completato"}
-                                                </p>
-                                            </div>
+                                            ) : (
+                                                <div class="text-center p-8">
+                                                    <ExternalLink
+                                                        size={48}
+                                                        class="mx-auto mb-4 opacity-30 text-gray-400"
+                                                    />
+                                                    <p class="text-2xl font-bold text-gray-300 uppercase tracking-wider">
+                                                        {project.status ===
+                                                        "in-progress"
+                                                            ? "IN PROGRESS"
+                                                            : "Completato"}
+                                                    </p>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div class="p-6">
@@ -318,14 +342,14 @@ const typeConfig = {
                                                 <span
                                                     class={`inline-block px-3 py-1 rounded-full text-sm font-medium ${typeConfig["editorial"].badgeColor}`}
                                                 >
-                                                    {project.data.category}
+                                                    {project.category || "Editorial"}
                                                 </span>
                                             </div>
                                             <h4 class="text-xl font-bold text-gray-800 mb-2">
-                                                {project.data.title}
+                                                {project.title}
                                             </h4>
-                                            <p class="text-gray-600 mb-4">
-                                                {project.data.description}
+                                            <p class="text-gray-600 mb-4 line-clamp-3">
+                                                {project.body?.substring(0, 150) || project.title}
                                             </p>
                                             <div class="flex items-center text-primary font-medium text-sm">
                                                 Vedi progetto
@@ -367,7 +391,7 @@ const typeConfig = {
                             {projectsByType["illustration"].map(
                                 (project: any) => (
                                     <a
-                                        href={`/portfolio/${project.slug}`}
+                                        href={`/${project.slug}`}
                                         class="portfolio-card-link"
                                     >
                                         <Card
@@ -378,18 +402,26 @@ const typeConfig = {
                                             <div
                                                 class={`aspect-video flex items-center justify-center relative ${typeConfig["illustration"].color}`}
                                             >
-                                                <div class="text-center p-8">
-                                                    <ExternalLink
-                                                        size={48}
-                                                        class="mx-auto mb-4 opacity-30 text-gray-400"
+                                                {project.featuredImage ? (
+                                                    <img
+                                                        src={project.featuredImage}
+                                                        alt={project.title}
+                                                        class="w-full h-full object-cover"
                                                     />
-                                                    <p class="text-2xl font-bold text-gray-300 uppercase tracking-wider">
-                                                        {project.data.status ===
-                                                        "in-progress"
-                                                            ? "IN PROGRESS"
-                                                            : "Completato"}
-                                                    </p>
-                                                </div>
+                                                ) : (
+                                                    <div class="text-center p-8">
+                                                        <ExternalLink
+                                                            size={48}
+                                                            class="mx-auto mb-4 opacity-30 text-gray-400"
+                                                        />
+                                                        <p class="text-2xl font-bold text-gray-300 uppercase tracking-wider">
+                                                            {project.status ===
+                                                            "in-progress"
+                                                                ? "IN PROGRESS"
+                                                                : "Completato"}
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
 
                                             <div class="p-6">
@@ -397,14 +429,14 @@ const typeConfig = {
                                                     <span
                                                         class={`inline-block px-3 py-1 rounded-full text-sm font-medium ${typeConfig["illustration"].badgeColor}`}
                                                     >
-                                                        {project.data.category}
+                                                        {project.category || "Illustrazioni"}
                                                     </span>
                                                 </div>
                                                 <h4 class="text-xl font-bold text-gray-800 mb-2">
-                                                    {project.data.title}
+                                                    {project.title}
                                                 </h4>
-                                                <p class="text-gray-600 mb-4">
-                                                    {project.data.description}
+                                                <p class="text-gray-600 mb-4 line-clamp-3">
+                                                    {project.body?.substring(0, 150) || project.title}
                                                 </p>
                                                 <div class="flex items-center text-primary font-medium text-sm">
                                                     Vedi progetto
@@ -488,6 +520,13 @@ const typeConfig = {
     .portfolio-card-link:hover .portfolio-card {
         transform: translateY(-4px);
         box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     /* Decorazioni torte animate */

@@ -1,0 +1,60 @@
+---
+import { getPortfolioItem, getPortfolioItems } from '@/lib/firebase/firestore-server';
+import IllustrationDetailLayout from '@/components/portfolio/IllustrationDetailLayout.astro';
+import StandardProjectLayout from '@/components/portfolio/StandardProjectLayout.astro';
+import ContentWrapper from '@/components/portfolio/ContentWrapper.astro';
+import type { PortfolioItem } from '@/lib/firebase/firestore-server';
+
+export async function getStaticPaths() {
+  const items = await getPortfolioItems();
+  return items.map((item) => ({
+    params: { slug: item.slug },
+    props: { item },
+  }));
+}
+
+interface Props {
+  item: PortfolioItem;
+}
+
+const { item } = Astro.props;
+
+if (!item) {
+  return Astro.redirect('/');
+}
+
+// Convert Firestore item to a format compatible with the existing layouts
+// We'll create a mock entry object that matches the CollectionEntry structure
+const mockEntry = {
+  slug: item.slug,
+  data: {
+    title: item.title,
+    description: item.body.substring(0, 200) + '...',
+    type: item.type || 'ui-ux',
+    category: item.category || 'Progetto',
+    status: item.status || 'completed',
+    featured: item.featured || false,
+    order: item.order || 0,
+    image: item.featuredImage,
+    client: item.client,
+    year: item.year,
+    tags: item.tags,
+    link: item.link,
+    images: item.images,
+    objectives: item.objectives,
+    results: item.results,
+    reflections: item.reflections,
+    illustration: item.illustration,
+  },
+};
+
+const isIllustration = item.type === 'illustration';
+---
+
+{
+  isIllustration ? (
+    <IllustrationDetailLayout entry={mockEntry} Content={ContentWrapper} ContentProps={{ body: item.body }} />
+  ) : (
+    <StandardProjectLayout entry={mockEntry} Content={ContentWrapper} ContentProps={{ body: item.body }} />
+  )
+}

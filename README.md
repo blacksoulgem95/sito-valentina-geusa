@@ -165,6 +165,46 @@ Modifica:
 ### Schema Contenuti
 Modifica: `src/content/config.ts`
 
+## 📧 Form Contatti
+
+Il sito include un form contatti integrato con **Mailgun** per l'invio delle email.
+
+### Configurazione
+
+Crea un file `.env` nella root del progetto con le seguenti variabili:
+
+```env
+# Mailgun Configuration
+# Ottieni le credenziali da https://app.mailgun.com/
+MAILGUN_DOMAIN=your-domain.mailgun.org
+MAILGUN_API_KEY=your-mailgun-api-key
+
+# Email destinatario per i messaggi del form contatti
+CONTACT_EMAIL=valentinageusadesign@gmail.com
+```
+
+### Setup Mailgun
+
+1. Crea un account su [Mailgun](https://www.mailgun.com/)
+2. Verifica il tuo dominio o usa il dominio sandbox per test
+3. Ottieni l'API Key dalla dashboard
+4. Aggiungi le credenziali al file `.env`
+
+### Endpoint API
+
+Il form contatti utilizza l'endpoint `/api/contact` che:
+- Valida i dati del form (nome, email, messaggio obbligatori)
+- Verifica l'accettazione della privacy policy
+- Invia l'email tramite Mailgun
+- Restituisce risposte JSON per gestione errori/successo
+
+### Form Disponibili
+
+- **Componente Contact** (`src/components/Contact.astro`) - Form compatto con layout a 2 colonne
+- **Pagina Contact** (`src/pages/contact.astro`) - Form completo con tutti i campi
+
+Entrambi i form utilizzano la stessa API endpoint e sono uniformati.
+
 ## 🚀 Deploy
 
 ```sh
@@ -174,6 +214,8 @@ npm run build
 # Deploy su Firebase
 firebase deploy
 ```
+
+**Nota**: Assicurati di configurare le variabili d'ambiente anche nell'ambiente di produzione (Firebase Functions o altro servizio).
 
 ## 📄 License
 

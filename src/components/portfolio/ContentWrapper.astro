@@ -1,0 +1,9 @@
+---
+interface Props {
+  body: string;
+}
+
+const { body } = Astro.props;
+---
+
+<div class="prose prose-lg prose-gray max-w-none prose-headings:text-gray-800 prose-a:text-primary prose-strong:text-gray-900" set:html={body} />

@@ -211,6 +211,11 @@ import Textarea from "./ui/Textarea.astro";
                 } else {
                     messageDiv.className = 'error-message md:col-span-2';
                     messageDiv.textContent = `❌ ${result.error || 'Si è verificato un errore. Riprova più tardi.'}`;
+                    
+                    // Rimuovi il messaggio dopo 5 secondi
+                    setTimeout(() => {
+                        messageDiv.classList.add('hidden');
+                    }, 5000);
                 }
             }
 
@@ -220,6 +225,11 @@ import Textarea from "./ui/Textarea.astro";
                 messageDiv.classList.remove('hidden');
                 messageDiv.className = 'error-message md:col-span-2';
                 messageDiv.textContent = '❌ Si è verificato un errore. Prova a scrivermi direttamente via email.';
+                
+                // Rimuovi il messaggio dopo 5 secondi
+                setTimeout(() => {
+                    messageDiv.classList.add('hidden');
+                }, 5000);
             }
         } finally {
             // Ripristina il pulsante

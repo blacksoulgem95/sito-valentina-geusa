@@ -63,9 +63,9 @@ export const POST: APIRoute = async ({ request }) => {
         }
 
         // Configurazione Mailgun
-        const mailgunDomain = import.meta.env.MAILGUN_DOMAIN;
-        const mailgunApiKey = import.meta.env.MAILGUN_API_KEY;
-        const recipientEmail = import.meta.env.CONTACT_EMAIL || 'valentinageusadesign@gmail.com';
+        const mailgunDomain = process.env.MAILGUN_DOMAIN;
+        const mailgunApiKey = process.env.MAILGUN_API_KEY;
+        const recipientEmail = process.env.CONTACT_EMAIL;
 
         if (!mailgunDomain || !mailgunApiKey) {
             console.error('Mailgun credentials mancanti');

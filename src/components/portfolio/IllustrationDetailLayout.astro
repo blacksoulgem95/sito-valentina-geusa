@@ -6,18 +6,19 @@ import Card from "@/components/ui/Card.astro";
 import { Mail, ExternalLink } from "lucide-astro";
 
 interface Props {
-    entry: CollectionEntry<"portfolio">;
-    Content: any;
+    entry: CollectionEntry<"portfolio"> | any;
+    Content?: any;
+    ContentProps?: any;
 }
 
-const { entry, Content } = Astro.props;
+const { entry, Content, ContentProps } = Astro.props;
 
-// Dati dinamici dal frontmatter
-const illustration = entry.data.illustration || {};
-const images = entry.data.images || {};
+// Dati dinamici dal frontmatter (supporta sia CollectionEntry che oggetti Firestore)
+const illustration = entry.data?.illustration || entry.illustration || {};
+const images = entry.data?.images || entry.images || {};
 ---
 
-<PageLayout pageTitle={entry.data.title}>
+<PageLayout pageTitle={entryTitle}>
     <!-- Hero Section con decorazioni -->
     <Section class="bg-pink-50 py-16 relative overflow-hidden">
         <!-- Decorazioni di sfondo -->
@@ -101,7 +102,7 @@ const images = entry.data.images || {};
                                         class="mx-auto mb-4 opacity-20 text-gray-600"
                                     />
                                     <p class="text-2xl font-bold text-gray-600 uppercase tracking-wider">
-                                        {entry.data.title}
+                                        {entryTitle}
                                     </p>
                                 </div>
                             </div>
@@ -119,7 +120,7 @@ const images = entry.data.images || {};
                     <span class="text-pink-500">tradizionali</span>
                 </h1>
                 <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-                    {illustration.subtitle || entry.data.description}
+                    {illustration.subtitle || entryDescription}
                 </p>
             </div>
         </div>
@@ -246,7 +247,11 @@ const images = entry.data.images || {};
                 <div
                     class="prose prose-lg prose-gray max-w-none prose-headings:text-gray-800 prose-a:text-primary prose-strong:text-gray-800 mt-12"
                 >
-                    <Content />
+                    {Content && ContentProps ? (
+                        <Content {...ContentProps} />
+                    ) : Content ? (
+                        <Content />
+                    ) : null}
                 </div>
             </div>
         </div>
