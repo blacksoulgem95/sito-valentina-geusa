@@ -24,7 +24,14 @@ export const DELETE: APIRoute = async ({ request, url }) => {
       );
     }
 
-    const bucket = adminStorage.bucket();
+    const storageBucket = process.env.FIREBASE_STORAGE_BUCKET || import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
+    if (!storageBucket) {
+      return new Response(
+        JSON.stringify({ error: 'Storage bucket non configurato' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    const bucket = adminStorage.bucket(storageBucket);
     await bucket.file(fullPath).delete();
 
     return new Response(

@@ -25,7 +25,14 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const bucket = adminStorage.bucket();
+    const storageBucket = process.env.FIREBASE_STORAGE_BUCKET || import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
+    if (!storageBucket) {
+      return new Response(
+        JSON.stringify({ error: 'Storage bucket non configurato' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    const bucket = adminStorage.bucket(storageBucket);
     const uploadPromises = files.map(async (file) => {
       const fileName = `${Date.now()}-${file.name}`;
       const filePath = folder ? `${folder}/${fileName}` : fileName;

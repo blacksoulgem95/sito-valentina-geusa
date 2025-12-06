@@ -19,7 +19,14 @@ export const GET: APIRoute = async ({ request, url }) => {
     const maxResultsParam = urlObj.searchParams.get('maxResults');
     const maxResults = maxResultsParam ? parseInt(maxResultsParam, 10) : 1000;
 
-    const bucket = adminStorage.bucket();
+    const storageBucket = process.env.FIREBASE_STORAGE_BUCKET || import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
+    if (!storageBucket) {
+      return new Response(
+        JSON.stringify({ error: 'Storage bucket non configurato' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    const bucket = adminStorage.bucket(storageBucket);
     
     // List files with optional folder prefix
     const [files] = await bucket.getFiles({
