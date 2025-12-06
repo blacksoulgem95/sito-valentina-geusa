@@ -1,23 +1,17 @@
 ---
-import { getPortfolioItem, getPortfolioItems } from '@/lib/firebase/firestore-server';
+import { getPortfolioItem } from '@/lib/firebase/firestore-server';
 import IllustrationDetailLayout from '@/components/portfolio/IllustrationDetailLayout.astro';
 import StandardProjectLayout from '@/components/portfolio/StandardProjectLayout.astro';
 import ContentWrapper from '@/components/portfolio/ContentWrapper.astro';
 import type { PortfolioItem } from '@/lib/firebase/firestore-server';
 
-export async function getStaticPaths() {
-  const items = await getPortfolioItems();
-  return items.map((item) => ({
-    params: { slug: item.slug },
-    props: { item },
-  }));
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect('/');
 }
 
-interface Props {
-  item: PortfolioItem;
-}
-
-const { item } = Astro.props;
+const item = await getPortfolioItem(slug);
 
 if (!item) {
   return Astro.redirect('/');

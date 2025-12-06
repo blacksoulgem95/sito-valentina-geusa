@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import ReactMarkdown from 'react-markdown';
-import { ImageIcon } from '@heroicons/react/24/outline';
+import { PhotoIcon } from '@heroicons/react/24/outline';
 import ImagePickerModal from './ImagePickerModal';
 
 interface MarkdownEditorProps {
@@ -69,7 +69,7 @@ export default function MarkdownEditor({
             onClick={() => setShowImagePicker(true)}
             className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
           >
-            <ImageIcon className="w-4 h-4 mr-2" />
+            <PhotoIcon className="w-4 h-4 mr-2" />
             Inserisci immagine
           </button>
         </div>

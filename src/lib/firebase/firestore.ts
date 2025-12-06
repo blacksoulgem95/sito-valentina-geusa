@@ -113,3 +113,6 @@ export const portfolioCollection = 'portfolio';
 export const blogCollection = 'blog';
 export const blogCategoriesCollection = 'blog_categories';
 export const pagesCollection = 'pages';
+
+// Re-export Timestamp for convenience
+export { Timestamp };

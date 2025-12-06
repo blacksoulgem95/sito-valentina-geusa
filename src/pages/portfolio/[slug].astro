@@ -1,22 +1,16 @@
 ---
-import { getCollection } from "astro:content";
+import { getEntry } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import IllustrationDetailLayout from "@/components/portfolio/IllustrationDetailLayout.astro";
 import StandardProjectLayout from "@/components/portfolio/StandardProjectLayout.astro";
 
-export async function getStaticPaths() {
-    const portfolioEntries = await getCollection("portfolio");
-    return portfolioEntries.map((entry: any) => ({
-        params: { slug: entry.slug },
-        props: { entry },
-    }));
+const { slug } = Astro.params;
+
+if (!slug) {
+    return Astro.redirect('/portfolio');
 }
 
-interface Props {
-    entry: CollectionEntry<"portfolio">;
-}
-
-const { entry } = Astro.props;
+const entry = await getEntry("portfolio", slug);
 const { Content } = await entry.render();
 
 // Verifica se è di tipo illustration
