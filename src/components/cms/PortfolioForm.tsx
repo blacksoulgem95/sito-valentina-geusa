@@ -52,7 +52,7 @@ export default function PortfolioForm() {
       setFormData(item);
     } catch (error: any) {
       toast.error(error.message || 'Elemento non trovato');
-      navigate('portfolio');
+      navigate('/portfolio');
     } finally {
       setLoading(false);
     }
@@ -107,7 +107,7 @@ export default function PortfolioForm() {
         } as PortfolioItem);
         toast.success('Elemento creato');
       }
-      navigate('portfolio');
+      navigate('/portfolio');
     } catch (error: any) {
       toast.error(error.message || 'Errore durante il salvataggio');
     } finally {

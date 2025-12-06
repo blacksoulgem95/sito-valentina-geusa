@@ -66,6 +66,7 @@ export default function MarkdownEditor({
       <div className="bg-gray-50 border-b border-gray-200 px-4 py-2 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <button
+            type="button"
             onClick={() => setShowImagePicker(true)}
             className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
           >
@@ -75,6 +76,7 @@ export default function MarkdownEditor({
         </div>
         <div className="flex items-center space-x-2">
           <button
+            type="button"
             onClick={() => setShowPreview(false)}
             className={`px-3 py-1.5 text-sm font-medium rounded-md ${
               !showPreview
@@ -85,6 +87,7 @@ export default function MarkdownEditor({
             Editor
           </button>
           <button
+            type="button"
             onClick={() => setShowPreview(true)}
             className={`px-3 py-1.5 text-sm font-medium rounded-md ${
               showPreview

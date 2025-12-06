@@ -13,13 +13,16 @@ async function verifyAuth(request: Request) {
 
 export const GET: APIRoute = async ({ params }) => {
   try {
-    const { slug } = params;
-    if (!slug) {
+    const { slug: slugParts } = params;
+    if (!slugParts || (Array.isArray(slugParts) && slugParts.length === 0)) {
       return new Response(
         JSON.stringify({ error: 'Slug mancante' }),
         { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
+
+    // Join slug parts with slashes to handle nested paths like "legal/dati-societari"
+    const slug = Array.isArray(slugParts) ? slugParts.join('/') : slugParts;
 
     const doc = await adminDb.collection('pages').doc(slug).get();
     
@@ -47,13 +50,16 @@ export const PUT: APIRoute = async ({ request, params }) => {
   try {
     await verifyAuth(request);
     
-    const { slug } = params;
-    if (!slug) {
+    const { slug: slugParts } = params;
+    if (!slugParts || (Array.isArray(slugParts) && slugParts.length === 0)) {
       return new Response(
         JSON.stringify({ error: 'Slug mancante' }),
         { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
+
+    // Join slug parts with slashes to handle nested paths
+    const slug = Array.isArray(slugParts) ? slugParts.join('/') : slugParts;
 
     const data = await request.json();
     const { slug: _, ...updateData } = data;
@@ -64,7 +70,7 @@ export const PUT: APIRoute = async ({ request, params }) => {
     if (!doc.exists) {
       return new Response(
         JSON.stringify({ error: 'Pagina non trovata' }),
-        { status: 404, headers: { 'Content-Type': 'application/json' } }
+        { status: 404, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -96,13 +102,16 @@ export const DELETE: APIRoute = async ({ request, params }) => {
   try {
     await verifyAuth(request);
     
-    const { slug } = params;
-    if (!slug) {
+    const { slug: slugParts } = params;
+    if (!slugParts || (Array.isArray(slugParts) && slugParts.length === 0)) {
       return new Response(
         JSON.stringify({ error: 'Slug mancante' }),
         { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
+
+    // Join slug parts with slashes to handle nested paths
+    const slug = Array.isArray(slugParts) ? slugParts.join('/') : slugParts;
 
     await adminDb.collection('pages').doc(slug).delete();
 

@@ -49,7 +49,7 @@ export default function PagesForm() {
       setFormData(item);
     } catch (error: any) {
       toast.error(error.message || 'Pagina non trovata');
-      navigate('pages');
+      navigate('/pages');
     } finally {
       setLoading(false);
     }
@@ -61,8 +61,9 @@ export default function PagesForm() {
       return;
     }
 
-    if (!isValidSlug(formData.slug)) {
-      setSlugError('Lo slug può contenere solo lettere minuscole, numeri e trattini');
+    // For pages, allow slashes for nested paths (e.g., "legal/dati-societari")
+    if (!isValidSlug(formData.slug, true)) {
+      setSlugError('Lo slug può contenere solo lettere minuscole, numeri, trattini e slash (es: legal/dati-societari)');
       return;
     }
 
@@ -104,7 +105,7 @@ export default function PagesForm() {
         } as Page);
         toast.success('Pagina creata');
       }
-      navigate('pages');
+      navigate('/pages');
     } catch (error: any) {
       toast.error(error.message || 'Errore durante il salvataggio');
     } finally {
@@ -150,12 +151,17 @@ export default function PagesForm() {
             <input
               type="text"
               value={formData.slug}
-              onChange={(e) =>
+              onChange={(e) => {
+                const value = e.target.value;
+                // If user manually types a slash, preserve it; otherwise generate slug
+                const newSlug = value.includes('/') 
+                  ? value.split('/').map(part => generateSlug(part)).filter(p => p).join('/')
+                  : generateSlug(value);
                 setFormData((prev) => ({
                   ...prev,
-                  slug: generateSlug(e.target.value),
-                }))
-              }
+                  slug: newSlug,
+                }));
+              }}
               className={`mt-1 block w-full border rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 ${
                 slugError
                   ? 'border-red-300 focus:border-red-500'
@@ -172,6 +178,9 @@ export default function PagesForm() {
             {formData.slug && !slugError && (
               <p className="mt-1 text-sm text-gray-500">
                 URL: /{formData.slug}
+                {formData.slug.includes('/') && (
+                  <span className="ml-2 text-xs text-gray-400">(percorso annidato)</span>
+                )}
               </p>
             )}
           </div>
