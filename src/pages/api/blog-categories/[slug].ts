@@ -10,6 +10,38 @@ async function verifyAuth(request: Request) {
   await adminAuth.verifyIdToken(idToken);
 }
 
+export const GET: APIRoute = async ({ params }) => {
+  try {
+    const { slug } = params;
+    if (!slug) {
+      return new Response(
+        JSON.stringify({ error: 'Slug mancante' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const doc = await adminDb.collection('blog_categories').doc(slug).get();
+    
+    if (!doc.exists) {
+      return new Response(
+        JSON.stringify({ error: 'Categoria non trovata' }),
+        { status: 404, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    return new Response(
+      JSON.stringify({ slug: doc.id, ...doc.data() }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
+  } catch (error: any) {
+    console.error('Error fetching blog category:', error);
+    return new Response(
+      JSON.stringify({ error: error.message || 'Errore nel recupero della categoria' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+};
+
 export const PUT: APIRoute = async ({ request, params }) => {
   try {
     await verifyAuth(request);

@@ -56,6 +56,10 @@ class BlogCategoryService {
     return api.get<BlogCategory[]>('/blog-categories');
   }
 
+  async getBySlug(slug: string): Promise<BlogCategory> {
+    return api.get<BlogCategory>(`/blog-categories/${slug}`);
+  }
+
   async create(category: BlogCategory): Promise<{ slug: string; message: string }> {
     return api.post<{ slug: string; message: string }>('/blog-categories', category);
   }
@@ -66,6 +70,15 @@ class BlogCategoryService {
 
   async delete(slug: string): Promise<{ message: string }> {
     return api.delete<{ message: string }>(`/blog-categories/${slug}`);
+  }
+
+  async checkSlugExists(slug: string, excludeSlug?: string): Promise<boolean> {
+    try {
+      const category = await this.getBySlug(slug);
+      return excludeSlug ? category.slug !== excludeSlug : true;
+    } catch {
+      return false;
+    }
   }
 }
 
