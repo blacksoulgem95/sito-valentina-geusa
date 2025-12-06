@@ -66,8 +66,7 @@ import Textarea from "./ui/Textarea.astro";
             </div>
 
             <form
-                action="/api/contact"
-                method="post"
+                id="contact-form-component"
                 class="grid grid-cols-1 md:grid-cols-2 gap-4"
             >
                 <!-- Colonna sinistra - 3 input -->
@@ -75,12 +74,14 @@ import Textarea from "./ui/Textarea.astro";
                     <Input
                         type="text"
                         name="nome"
+                        id="contact-nome"
                         placeholder="Nome*"
                         required
                     />
                     <Input
                         type="email"
                         name="email"
+                        id="contact-email"
                         placeholder="Email*"
                         required
                         autocomplete="email"
@@ -88,6 +89,7 @@ import Textarea from "./ui/Textarea.astro";
                     <Input
                         type="tel"
                         name="telefono"
+                        id="contact-telefono"
                         placeholder="Telefono"
                         autocomplete="tel"
                     />
@@ -99,17 +101,38 @@ import Textarea from "./ui/Textarea.astro";
                 >
                     <Textarea
                         name="messaggio"
+                        id="contact-messaggio"
                         placeholder="Messaggio*"
                         required
                         class="flex-1"
                         resize="none"
                     />
+                    <div class="flex items-start gap-3">
+                        <input
+                            type="checkbox"
+                            id="contact-privacy"
+                            name="privacy"
+                            required
+                            class="mt-1 w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                        />
+                        <label
+                            for="contact-privacy"
+                            class="text-sm text-gray-600"
+                        >
+                            Accetto la <a
+                                href="/privacy-policy"
+                                class="text-primary hover:underline"
+                                >Privacy Policy</a
+                            > e autorizzo il trattamento dei miei dati
+                        </label>
+                    </div>
                     <div class="flex justify-end">
-                        <button type="submit" class="form-submit">
+                        <button type="submit" class="form-submit" id="contact-submit-btn">
                             Invia
                         </button>
                     </div>
                 </div>
+                <div id="contact-form-message" class="hidden md:col-span-2"></div>
             </form>
         </Card>
     </div>
@@ -141,3 +164,106 @@ import Textarea from "./ui/Textarea.astro";
         </div>
     </div>
 </div>
+
+<script>
+    const contactForm = document.getElementById('contact-form-component') as HTMLFormElement | null;
+    const submitButton = document.getElementById('contact-submit-btn') as HTMLButtonElement | null;
+    const messageDiv = document.getElementById('contact-form-message');
+
+    contactForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!contactForm || !submitButton) return;
+
+        const formData = new FormData(contactForm);
+        const originalButtonText = submitButton.textContent;
+
+        // Disabilita il pulsante durante l'invio
+        submitButton.disabled = true;
+        submitButton.textContent = 'Invio in corso...';
+
+        // Rimuovi messaggi precedenti
+        if (messageDiv) {
+            messageDiv.className = 'hidden md:col-span-2';
+            messageDiv.textContent = '';
+        }
+
+        try {
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+
+            if (messageDiv) {
+                messageDiv.classList.remove('hidden');
+                
+                if (result.success) {
+                    messageDiv.className = 'success-message md:col-span-2';
+                    messageDiv.textContent = '✅ Messaggio inviato con successo! Ti risponderò al più presto. 💌';
+                    contactForm.reset();
+                    
+                    // Rimuovi il messaggio dopo 5 secondi
+                    setTimeout(() => {
+                        messageDiv.classList.add('hidden');
+                    }, 5000);
+                } else {
+                    messageDiv.className = 'error-message md:col-span-2';
+                    messageDiv.textContent = `❌ ${result.error || 'Si è verificato un errore. Riprova più tardi.'}`;
+                }
+            }
+
+        } catch (error) {
+            console.error('Errore:', error);
+            if (messageDiv) {
+                messageDiv.classList.remove('hidden');
+                messageDiv.className = 'error-message md:col-span-2';
+                messageDiv.textContent = '❌ Si è verificato un errore. Prova a scrivermi direttamente via email.';
+            }
+        } finally {
+            // Ripristina il pulsante
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText || 'Invia';
+            }
+        }
+    });
+</script>
+
+<style>
+    .success-message {
+        padding: 1rem;
+        background-color: #d1fae5;
+        border: 2px solid #6ee7b7;
+        border-radius: 0.5rem;
+        color: #065f46;
+        font-weight: 500;
+        text-align: center;
+        margin-top: 1rem;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    .error-message {
+        padding: 1rem;
+        background-color: #fee2e2;
+        border: 2px solid #fca5a5;
+        border-radius: 0.5rem;
+        color: #991b1b;
+        font-weight: 500;
+        text-align: center;
+        margin-top: 1rem;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>

@@ -140,19 +140,7 @@ const pageTitle = "Contattami";
                             <form
                                 class="space-y-6"
                                 id="contact-form"
-                                name="contact"
-                                method="POST"
-                                data-netlify="true"
-                                netlify-honeypot="bot-field"
                             >
-                                <!-- Campo honeypot nascosto -->
-                                <input type="hidden" name="bot-field" />
-                                <input
-                                    type="hidden"
-                                    name="form-name"
-                                    value="contact"
-                                />
-
                                 <div>
                                     <label
                                         for="name"
@@ -164,7 +152,7 @@ const pageTitle = "Contattami";
                                     <Input
                                         type="text"
                                         id="name"
-                                        name="name"
+                                        name="nome"
                                         required
                                         placeholder="Il tuo nome"
                                     />
@@ -199,7 +187,7 @@ const pageTitle = "Contattami";
                                     <Input
                                         type="text"
                                         id="subject"
-                                        name="subject"
+                                        name="oggetto"
                                         placeholder="Di cosa vorresti parlare?"
                                     />
                                 </div>
@@ -215,7 +203,7 @@ const pageTitle = "Contattami";
                                     </label>
                                     <Textarea
                                         id="message"
-                                        name="message"
+                                        name="messaggio"
                                         rows={6}
                                         required
                                         placeholder="Parlami del tuo progetto, delle tue idee o semplicemente di cosa hai bisogno..."
@@ -246,6 +234,7 @@ const pageTitle = "Contattami";
 
                                 <button
                                     type="submit"
+                                    id="contact-submit-button"
                                     class="btn btn-primary w-full flex items-center justify-center gap-2 text-lg py-3"
                                 >
                                     <Send size={20} />
@@ -567,6 +556,18 @@ const pageTitle = "Contattami";
         animation: slideDown 0.3s ease-out;
     }
 
+    .error-message {
+        padding: 1rem;
+        background-color: #fee2e2;
+        border: 2px solid #fca5a5;
+        border-radius: 0.5rem;
+        color: #991b1b;
+        font-weight: 500;
+        text-align: center;
+        margin-top: 1rem;
+        animation: slideDown 0.3s ease-out;
+    }
+
     @keyframes slideDown {
         from {
             opacity: 0;
@@ -585,32 +586,38 @@ const pageTitle = "Contattami";
         "contact-form",
     ) as HTMLFormElement | null;
 
+    const submitButton = document.getElementById(
+        "contact-submit-button",
+    ) as HTMLButtonElement | null;
+
     contactForm?.addEventListener("submit", async (e) => {
         e.preventDefault();
 
+        if (!contactForm || !submitButton) return;
+
         const formData = new FormData(contactForm);
-        const submitButton = contactForm.querySelector(
-            'button[type="submit"]',
-        ) as HTMLButtonElement;
+        const originalButtonHTML = submitButton.innerHTML;
 
         // Disabilita il pulsante durante l'invio
-        if (submitButton) {
-            submitButton.disabled = true;
-            submitButton.innerHTML =
-                '<span class="inline-block animate-spin mr-2">⏳</span> Invio in corso...';
+        submitButton.disabled = true;
+        submitButton.innerHTML =
+            '<span class="inline-block animate-spin mr-2">⏳</span> Invio in corso...';
+
+        // Rimuovi messaggi precedenti
+        const existingMessage = contactForm.querySelector('.success-message, .error-message');
+        if (existingMessage) {
+            existingMessage.remove();
         }
 
         try {
-            // Se usi Netlify Forms
-            const response = await fetch("/", {
+            const response = await fetch("/api/contact", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: new URLSearchParams(formData as any).toString(),
+                body: formData,
             });
 
-            if (response.ok) {
+            const result = await response.json();
+
+            if (result.success) {
                 // Mostra messaggio di successo
                 const successMessage = document.createElement("div");
                 successMessage.className = "success-message";
@@ -625,17 +632,33 @@ const pageTitle = "Contattami";
                 setTimeout(() => {
                     successMessage.remove();
                 }, 5000);
+            } else {
+                // Mostra messaggio di errore
+                const errorMessage = document.createElement("div");
+                errorMessage.className = "error-message";
+                errorMessage.innerHTML = `❌ ${result.error || 'Si è verificato un errore. Riprova più tardi.'}`;
+                contactForm.appendChild(errorMessage);
+
+                setTimeout(() => {
+                    errorMessage.remove();
+                }, 5000);
             }
         } catch (error) {
-            alert(
-                "Si è verificato un errore. Prova a scrivermi direttamente via email.",
-            );
+            console.error('Errore:', error);
+            const errorMessage = document.createElement("div");
+            errorMessage.className = "error-message";
+            errorMessage.innerHTML =
+                "❌ Si è verificato un errore. Prova a scrivermi direttamente via email.";
+            contactForm.appendChild(errorMessage);
+
+            setTimeout(() => {
+                errorMessage.remove();
+            }, 5000);
         } finally {
             // Ripristina il pulsante
             if (submitButton) {
                 submitButton.disabled = false;
-                submitButton.innerHTML =
-                    '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg> Invia messaggio';
+                submitButton.innerHTML = originalButtonHTML;
             }
         }
     });
