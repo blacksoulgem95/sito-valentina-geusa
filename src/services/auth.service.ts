@@ -18,6 +18,14 @@ export interface GoogleLoginResponse {
   idToken: string;
 }
 
+export interface ChangePasswordResponse {
+  message: string;
+  user?: User;
+  idToken?: string;
+  refreshToken?: string;
+  requiresReauth?: boolean;
+}
+
 class AuthService {
   async loginWithEmail(email: string, password: string): Promise<LoginResponse> {
     const response = await api.post<LoginResponse>('/auth/login', {
@@ -39,6 +47,19 @@ class AuthService {
       api.setAuthToken(response.idToken);
     }
     
+    return response;
+  }
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<ChangePasswordResponse> {
+    const response = await api.post<ChangePasswordResponse>('/auth/change-password', {
+      currentPassword,
+      newPassword,
+    });
+
+    if (response.idToken) {
+      api.setAuthToken(response.idToken);
+    }
+
     return response;
   }
 
