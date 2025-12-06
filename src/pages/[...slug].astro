@@ -1,10 +1,6 @@
 ---
-import { getPage, getPortfolioItem } from '@/lib/firebase/firestore-server';
-import IllustrationDetailLayout from '@/components/portfolio/IllustrationDetailLayout.astro';
-import StandardProjectLayout from '@/components/portfolio/StandardProjectLayout.astro';
-import ContentWrapper from '@/components/portfolio/ContentWrapper.astro';
+import { getPage } from '@/lib/firebase/firestore-server';
 import PageLayout from '@/layouts/PageLayout.astro';
-import type { PortfolioItem } from '@/lib/firebase/firestore-server';
 
 const { slug: slugParts } = Astro.params;
 
@@ -15,171 +11,114 @@ if (!slugParts || (Array.isArray(slugParts) && slugParts.length === 0)) {
 // Join slug parts with slashes to handle nested paths like "legal/dati-societari"
 const slug = Array.isArray(slugParts) ? slugParts.join('/') : slugParts;
 
-// First check if it's a static page
+// Check if it's a static page
 const page = await getPage(slug);
 
-let isPage = false;
-let pageTitle = '';
-let pageBody = '';
-let mockEntry: any = null;
-let isIllustration = false;
-let itemBody = '';
-
-if (page) {
-  isPage = true;
-  pageTitle = page.seoTitle || page.title;
-  pageBody = page.body;
-} else {
-  // If not a page, check if it's a portfolio item
-  // Portfolio items don't support slashes, so only check if slug has no slashes
-  if (!slug.includes('/')) {
-    const item = await getPortfolioItem(slug);
-
-    if (item) {
-      itemBody = item.body;
-      isIllustration = item.type === 'illustration';
-
-      // Convert Firestore item to a format compatible with the existing layouts
-      mockEntry = {
-        slug: item.slug,
-        data: {
-          title: item.title,
-          description: item.body.substring(0, 200) + '...',
-          type: item.type || 'ui-ux',
-          category: item.category || 'Progetto',
-          status: item.status || 'completed',
-          featured: item.featured || false,
-          order: item.order || 0,
-          image: item.featuredImage,
-          client: item.client,
-          year: item.year,
-          tags: item.tags,
-          link: item.link,
-          images: item.images,
-          objectives: item.objectives,
-          results: item.results,
-          reflections: item.reflections,
-          illustration: item.illustration,
-        },
-      };
-    }
-  }
-
-  // If no page and no portfolio item found, redirect to home
-  if (!isPage && !mockEntry) {
-    return Astro.redirect('/');
-  }
+// If page not found, return 404
+if (!page) {
+  return Astro.redirect('/404');
 }
+
+const pageTitle = page.seoTitle || page.title;
+const pageBody = page.body;
 ---
 
-{isPage ? (
-  <PageLayout pageTitle={pageTitle}>
-    <article class="container mx-auto px-4 py-12 max-w-4xl">
-      <header class="mb-8">
-        <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-          {page?.title}
-        </h1>
-      </header>
+<PageLayout pageTitle={pageTitle}>
+  <article class="container mx-auto px-4 py-12 max-w-4xl">
+    <header class="mb-8">
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+        {page.title}
+      </h1>
+    </header>
 
-      <div class="prose prose-lg max-w-none">
-        <div set:html={pageBody} />
-      </div>
-    </article>
-  </PageLayout>
-) : (
-  mockEntry && (
-    isIllustration ? (
-      <IllustrationDetailLayout entry={mockEntry} Content={ContentWrapper} ContentProps={{ body: itemBody }} />
-    ) : (
-      <StandardProjectLayout entry={mockEntry} Content={ContentWrapper} ContentProps={{ body: itemBody }} />
-    )
-  )
-)}
+    <div class="prose prose-lg max-w-none">
+      <div set:html={pageBody} />
+    </div>
+  </article>
+</PageLayout>
 
-{isPage && (
-  <style>
-    .prose {
-      color: #374151;
-    }
+<style>
+  .prose {
+    color: #374151;
+  }
 
-    .prose h1,
-    .prose h2,
-    .prose h3,
-    .prose h4 {
-      color: #1f2937;
-      font-weight: 700;
-      margin-top: 2em;
-      margin-bottom: 1em;
-    }
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4 {
+    color: #1f2937;
+    font-weight: 700;
+    margin-top: 2em;
+    margin-bottom: 1em;
+  }
 
-    .prose h2 {
-      font-size: 2em;
-    }
+  .prose h2 {
+    font-size: 2em;
+  }
 
-    .prose h3 {
-      font-size: 1.5em;
-    }
+  .prose h3 {
+    font-size: 1.5em;
+  }
 
-    .prose p {
-      margin-bottom: 1.5em;
-      line-height: 1.75;
-    }
+  .prose p {
+    margin-bottom: 1.5em;
+    line-height: 1.75;
+  }
 
-    .prose a {
-      color: #ec4899;
-      text-decoration: underline;
-    }
+  .prose a {
+    color: #ec4899;
+    text-decoration: underline;
+  }
 
-    .prose a:hover {
-      color: #be185d;
-    }
+  .prose a:hover {
+    color: #be185d;
+  }
 
-    .prose img {
-      margin: 2em 0;
-      border-radius: 0.5rem;
-      max-width: 100%;
-      height: auto;
-    }
+  .prose img {
+    margin: 2em 0;
+    border-radius: 0.5rem;
+    max-width: 100%;
+    height: auto;
+  }
 
-    .prose code {
-      background-color: #f3f4f6;
-      padding: 0.2em 0.4em;
-      border-radius: 0.25rem;
-      font-size: 0.875em;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    }
+  .prose code {
+    background-color: #f3f4f6;
+    padding: 0.2em 0.4em;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
 
-    .prose pre {
-      background-color: #1f2937;
-      color: #f9fafb;
-      padding: 1em;
-      border-radius: 0.5rem;
-      overflow-x: auto;
-      margin: 1.5em 0;
-    }
+  .prose pre {
+    background-color: #1f2937;
+    color: #f9fafb;
+    padding: 1em;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1.5em 0;
+  }
 
-    .prose pre code {
-      background-color: transparent;
-      padding: 0;
-      color: inherit;
-    }
+  .prose pre code {
+    background-color: transparent;
+    padding: 0;
+    color: inherit;
+  }
 
-    .prose ul,
-    .prose ol {
-      margin: 1.5em 0;
-      padding-left: 1.625em;
-    }
+  .prose ul,
+  .prose ol {
+    margin: 1.5em 0;
+    padding-left: 1.625em;
+  }
 
-    .prose li {
-      margin: 0.5em 0;
-    }
+  .prose li {
+    margin: 0.5em 0;
+  }
 
-    .prose blockquote {
-      border-left: 4px solid #ec4899;
-      padding-left: 1em;
-      margin: 1.5em 0;
-      font-style: italic;
-      color: #6b7280;
-    }
-  </style>
-)}
+  .prose blockquote {
+    border-left: 4px solid #ec4899;
+    padding-left: 1em;
+    margin: 1.5em 0;
+    font-style: italic;
+    color: #6b7280;
+  }
+</style>
