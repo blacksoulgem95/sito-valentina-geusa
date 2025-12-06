@@ -101,37 +101,60 @@ env:
   # IMPORTANTE: Queste variabili contengono informazioni sensibili
   # Dovrebbero essere configurate come SECRET in Cloud Secret Manager
   # Vedi apphosting.md per le istruzioni complete
-  
+  #
+  # CONFIGURAZIONE MAILGUN EUROPA:
+  # Questo progetto usa Mailgun Europa, quindi l'endpoint è:
+  # https://api.eu.mailgun.net/v3/
+  #
+  # Se usi Mailgun USA, cambia MAILGUN_BASE_URL a:
+  # https://api.mailgun.net/v3/
+
+  # Base URL per Mailgun (default: Europa)
+  - variable: MAILGUN_BASE_URL
+    value: https://api.eu.mailgun.net/v3/
+    availability:
+      - RUNTIME
+
   # Esempio con valori diretti (NON RACCOMANDATO per produzione):
-  # - variable: MAILGUN_DOMAIN
-  #   value: your_mailgun_domain.com
-  #   availability:
-  #     - RUNTIME
+  - variable: MAILGUN_DOMAIN
+    value: vicedomini.cloud
+    availability:
+      - RUNTIME
   
+  - variable: MAILGUN_API_KEY
+    secret: MAILGUN_API_KEY
+
+  - variable: CONTACT_EMAIL
+    secret: CONTACT_EMAIL
   # Esempio con Secret Manager (RACCOMANDATO):
+  # Per settare una variabile come secret:
+  # 1. Crea il secret con: firebase apphosting:secrets:set NOME_SECRET --project sito-valentina-geusa
+  # 2. Inserisci il valore quando richiesto
+  # 3. Scommenta e usa la configurazione qui sotto, sostituendo NOME_SECRET con il nome del secret creato
+  #
   # - variable: MAILGUN_DOMAIN
   #   secret: mailgun-domain-secret
   #   availability:
   #     - RUNTIME
-  
+  #
   # - variable: MAILGUN_API_KEY
   #   secret: mailgun-api-key-secret
   #   availability:
   #     - RUNTIME
-  
+  #
   # - variable: CONTACT_EMAIL
   #   secret: contact-email-secret
   #   availability:
   #     - RUNTIME
 
-# Script personalizzati (opzionale)
-# App Hosting rileva automaticamente Astro, ma puoi sovrascrivere se necessario
-# scripts:
-#   buildCommand: npm run build
-#   runCommand: node dist/server/entry.mjs
+  # Script personalizzati (opzionale)
+  # App Hosting rileva automaticamente Astro, ma puoi sovrascrivere se necessario
+  # scripts:
+  #   buildCommand: npm run build
+  #   runCommand: node dist/server/entry.mjs
 
-# Configurazione output build (opzionale)
-# App Hosting ottimizza automaticamente, ma puoi specificare cosa includere
-# outputFiles:
-#   serverApp:
-#     include: [dist, public]
+  # Configurazione output build (opzionale)
+  # App Hosting ottimizza automaticamente, ma puoi specificare cosa includere
+  # outputFiles:
+  #   serverApp:
+  #     include: [dist, public]

@@ -66,9 +66,17 @@ export const POST: APIRoute = async ({ request }) => {
         const mailgunDomain = process.env.MAILGUN_DOMAIN;
         const mailgunApiKey = process.env.MAILGUN_API_KEY;
         const recipientEmail = process.env.CONTACT_EMAIL;
+        // Base URL per Mailgun: usa endpoint Europa di default
+        // Per Mailgun USA usa: https://api.mailgun.net/v3/
+        // Per Mailgun Europa usa: https://api.eu.mailgun.net/v3/
+        const mailgunBaseUrl = process.env.MAILGUN_BASE_URL || 'https://api.eu.mailgun.net/v3/';
 
-        if (!mailgunDomain || !mailgunApiKey) {
-            console.error('Mailgun credentials mancanti');
+        if (!mailgunDomain || !mailgunApiKey || !recipientEmail) {
+            console.error('Mailgun credentials mancanti:', {
+                hasDomain: !!mailgunDomain,
+                hasApiKey: !!mailgunApiKey,
+                hasRecipientEmail: !!recipientEmail
+            });
             return new Response(
                 JSON.stringify({ 
                     success: false, 
@@ -101,13 +109,13 @@ ${messaggioStr}
 Questo messaggio è stato inviato dal form contatti del sito web.
         `.trim();
 
-        // Invia email tramite Mailgun
-        const mailgunUrl = `https://api.mailgun.net/v3/${mailgunDomain}/messages`;
+        // Invia email tramite Mailgun (usa endpoint Europa)
+        const mailgunUrl = `${mailgunBaseUrl}${mailgunDomain}/messages`;
         
         // Mailgun richiede FormData o URLSearchParams
         const mailgunParams = new URLSearchParams();
         mailgunParams.append('from', `Form Contatti <noreply@${mailgunDomain}>`);
-        mailgunParams.append('to', recipientEmail);
+        mailgunParams.append('to', recipientEmail || '');
         mailgunParams.append('subject', subject);
         mailgunParams.append('text', emailBody);
         mailgunParams.append('h:Reply-To', emailStr);
