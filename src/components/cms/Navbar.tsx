@@ -9,6 +9,7 @@ import {
   PhotoIcon,
   ArrowRightOnRectangleIcon,
   LinkIcon,
+  Cog6ToothIcon,
 } from '@heroicons/react/24/outline';
 
 export default function Navbar() {
@@ -34,6 +35,7 @@ export default function Navbar() {
     { path: '/pages', label: 'Pagine', icon: DocumentTextIcon },
     { path: '/files', label: 'File', icon: PhotoIcon },
     { path: '/social-links', label: 'Link Social', icon: LinkIcon },
+    { path: '/settings', label: 'Impostazioni', icon: Cog6ToothIcon },
   ];
 
   return (
