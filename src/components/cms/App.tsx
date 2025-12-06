@@ -37,7 +37,7 @@ export default function CMSApp() {
                 <Route path="pages/:slug" element={<PagesForm />} />
                 <Route path="files" element={<FilesManager />} />
                 <Route path="social-links" element={<SocialLinksManager />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
+                <Route path="*" element={<Navigate to="" replace />} />
               </Routes>
             </Layout>
           }

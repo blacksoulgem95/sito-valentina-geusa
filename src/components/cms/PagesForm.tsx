@@ -49,7 +49,7 @@ export default function PagesForm() {
       setFormData(item);
     } catch (error: any) {
       toast.error(error.message || 'Pagina non trovata');
-      navigate('/vgadm/pages');
+      navigate('pages');
     } finally {
       setLoading(false);
     }
@@ -104,7 +104,7 @@ export default function PagesForm() {
         } as Page);
         toast.success('Pagina creata');
       }
-      navigate('/vgadm/pages');
+      navigate('pages');
     } catch (error: any) {
       toast.error(error.message || 'Errore durante il salvataggio');
     } finally {

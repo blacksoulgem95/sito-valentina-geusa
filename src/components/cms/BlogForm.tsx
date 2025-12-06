@@ -63,7 +63,7 @@ export default function BlogForm() {
       setFormData(item);
     } catch (error: any) {
       toast.error(error.message || 'Articolo non trovato');
-      navigate('/vgadm/blog');
+      navigate('blog');
     } finally {
       setLoading(false);
     }
@@ -118,7 +118,7 @@ export default function BlogForm() {
         } as BlogPost);
         toast.success('Articolo creato');
       }
-      navigate('/vgadm/blog');
+      navigate('blog');
     } catch (error: any) {
       toast.error(error.message || 'Errore durante il salvataggio');
     } finally {

@@ -25,26 +25,33 @@ export default function Layout({ children }: LayoutProps) {
         setUser(user);
         setLoading(false);
         
-        if (!user && location.pathname !== '/login') {
+        // Only redirect to login if user is not authenticated and not already on login page
+        const isLoginPage = location.pathname === '/login' || location.pathname.endsWith('/login');
+        if (!user && !isLoginPage) {
           navigate('/login');
         }
       } catch (error) {
         console.error('Auth check error:', error);
         setUser(null);
         setLoading(false);
-        if (location.pathname !== '/login') {
+        // Only redirect if not on login page
+        const isLoginPage = location.pathname === '/login' || location.pathname.endsWith('/login');
+        if (!isLoginPage) {
           navigate('/login');
         }
       }
     };
 
-    // Check immediately and then periodically
-    checkAuth(); // Initial check
-    
-    // Only set interval if we're not on login page
-    if (location.pathname !== '/login') {
-      const interval = setInterval(checkAuth, 60000); // Check every minute
-      return () => clearInterval(interval);
+    // Only check auth if initialized
+    if (initialized) {
+      checkAuth(); // Initial check
+      
+      // Only set interval if we're not on login page
+      const isLoginPage = location.pathname === '/login' || location.pathname.endsWith('/login');
+      if (!isLoginPage) {
+        const interval = setInterval(checkAuth, 60000); // Check every minute
+        return () => clearInterval(interval);
+      }
     }
   }, [initialized, location.pathname, navigate, setUser, setLoading, initialize]);
 
@@ -56,8 +63,10 @@ export default function Layout({ children }: LayoutProps) {
     );
   }
 
-  if (!user && location.pathname !== '/login') {
-    return null;
+  // Only block rendering if user is not authenticated and not on login page
+  const isLoginPage = location.pathname === '/login' || location.pathname.endsWith('/login');
+  if (!user && !isLoginPage) {
+    return null; // Will redirect via useEffect
   }
 
   return (
