@@ -5,27 +5,15 @@ import {
   TrashIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import {
-  getDocuments,
-  createDocument,
-  updateDocument,
-  deleteDocument,
-  checkSlugExists,
-  blogCategoriesCollection,
-} from '@/lib/firebase/firestore';
+import { blogCategoryService, type BlogCategory } from '@/services/blog.service';
 import { generateSlug, isValidSlug } from '@/lib/utils/slug';
 import { toast } from 'react-hot-toast';
 
-interface Category {
-  slug: string;
-  name: string;
-}
-
 export default function BlogCategories() {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [editingCategory, setEditingCategory] = useState<BlogCategory | null>(null);
   const [formData, setFormData] = useState({ name: '', slug: '' });
   const [slugError, setSlugError] = useState('');
 
@@ -49,10 +37,10 @@ export default function BlogCategories() {
   const loadCategories = async () => {
     setLoading(true);
     try {
-      const data = await getDocuments<Category>(blogCategoriesCollection, []);
+      const data = await blogCategoryService.getAll();
       setCategories(data);
     } catch (error: any) {
-      toast.error('Errore nel caricamento delle categorie');
+      toast.error(error.message || 'Errore nel caricamento delle categorie');
     } finally {
       setLoading(false);
     }
@@ -70,12 +58,9 @@ export default function BlogCategories() {
     }
 
     try {
-      const exists = await checkSlugExists(
-        blogCategoriesCollection,
-        formData.slug,
-        editingCategory?.slug
-      );
-      if (exists) {
+      // Check if slug exists by trying to get it
+      const existing = categories.find(c => c.slug === formData.slug);
+      if (existing && existing.slug !== editingCategory?.slug) {
         setSlugError('Questo slug è già in uso');
       } else {
         setSlugError('');
@@ -94,23 +79,23 @@ export default function BlogCategories() {
 
     try {
       if (editingCategory) {
-        await updateDocument(blogCategoriesCollection, editingCategory.slug, formData);
+        await blogCategoryService.update(editingCategory.slug, formData);
         toast.success('Categoria aggiornata');
       } else {
-        await createDocument(blogCategoriesCollection, {
+        await blogCategoryService.create({
           ...formData,
           slug: formData.slug,
-        } as any);
+        });
         toast.success('Categoria creata');
       }
       resetForm();
       loadCategories();
     } catch (error: any) {
-      toast.error('Errore durante il salvataggio');
+      toast.error(error.message || 'Errore durante il salvataggio');
     }
   };
 
-  const handleEdit = (category: Category) => {
+  const handleEdit = (category: BlogCategory) => {
     setEditingCategory(category);
     setFormData({ name: category.name, slug: category.slug });
     setShowForm(true);
@@ -120,11 +105,11 @@ export default function BlogCategories() {
     if (!confirm('Sei sicuro di voler eliminare questa categoria?')) return;
 
     try {
-      await deleteDocument(blogCategoriesCollection, slug);
+      await blogCategoryService.delete(slug);
       toast.success('Categoria eliminata');
       loadCategories();
     } catch (error: any) {
-      toast.error('Errore durante l\'eliminazione');
+      toast.error(error.message || 'Errore durante l\'eliminazione');
     }
   };
 

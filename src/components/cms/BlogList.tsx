@@ -5,16 +5,11 @@ import {
   PencilIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
-import {
-  getDocuments,
-  deleteDocument,
-  blogCollection,
-} from '@/lib/firebase/firestore';
+import { blogService, type BlogPost } from '@/services/blog.service';
 import { toast } from 'react-hot-toast';
-import { FirestoreEntity } from '@/lib/firebase/firestore';
 
 export default function BlogList() {
-  const [items, setItems] = useState<FirestoreEntity[]>([]);
+  const [items, setItems] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,10 +19,10 @@ export default function BlogList() {
   const loadItems = async () => {
     setLoading(true);
     try {
-      const data = await getDocuments<FirestoreEntity>(blogCollection, []);
+      const data = await blogService.getAllPosts();
       setItems(data);
     } catch (error: any) {
-      toast.error('Errore nel caricamento del blog');
+      toast.error(error.message || 'Errore nel caricamento del blog');
     } finally {
       setLoading(false);
     }
@@ -37,11 +32,11 @@ export default function BlogList() {
     if (!confirm('Sei sicuro di voler eliminare questo articolo?')) return;
 
     try {
-      await deleteDocument(blogCollection, slug);
+      await blogService.deletePost(slug);
       toast.success('Articolo eliminato');
       loadItems();
     } catch (error: any) {
-      toast.error('Errore durante l\'eliminazione');
+      toast.error(error.message || 'Errore durante l\'eliminazione');
     }
   };
 

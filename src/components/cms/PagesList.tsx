@@ -5,16 +5,11 @@ import {
   PencilIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
-import {
-  getDocuments,
-  deleteDocument,
-  pagesCollection,
-} from '@/lib/firebase/firestore';
+import { pagesService, type Page } from '@/services/pages.service';
 import { toast } from 'react-hot-toast';
-import { FirestoreEntity } from '@/lib/firebase/firestore';
 
 export default function PagesList() {
-  const [items, setItems] = useState<FirestoreEntity[]>([]);
+  const [items, setItems] = useState<Page[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,10 +19,10 @@ export default function PagesList() {
   const loadItems = async () => {
     setLoading(true);
     try {
-      const data = await getDocuments<FirestoreEntity>(pagesCollection, []);
+      const data = await pagesService.getAll();
       setItems(data);
     } catch (error: any) {
-      toast.error('Errore nel caricamento delle pagine');
+      toast.error(error.message || 'Errore nel caricamento delle pagine');
     } finally {
       setLoading(false);
     }
@@ -37,11 +32,11 @@ export default function PagesList() {
     if (!confirm('Sei sicuro di voler eliminare questa pagina?')) return;
 
     try {
-      await deleteDocument(pagesCollection, slug);
+      await pagesService.delete(slug);
       toast.success('Pagina eliminata');
       loadItems();
     } catch (error: any) {
-      toast.error('Errore durante l\'eliminazione');
+      toast.error(error.message || 'Errore durante l\'eliminazione');
     }
   };
 

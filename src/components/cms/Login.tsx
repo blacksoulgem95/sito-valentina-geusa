@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginWithEmail, loginWithGoogle } from '@/lib/firebase/auth';
+import { authService } from '@/services/auth.service';
+import { getGoogleIdToken } from '@/lib/firebase/google-auth';
 import { toast } from 'react-hot-toast';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
@@ -15,7 +16,7 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      await loginWithEmail(email, password);
+      await authService.loginWithEmail(email, password);
       toast.success('Login effettuato con successo!');
       navigate('/');
     } catch (error: any) {
@@ -28,7 +29,10 @@ export default function Login() {
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
-      await loginWithGoogle();
+      // Ottieni ID token da Google usando Firebase SDK client-side
+      const idToken = await getGoogleIdToken();
+      // Passa il token all'API
+      await authService.loginWithGoogle(idToken);
       toast.success('Login effettuato con successo!');
       navigate('/');
     } catch (error: any) {

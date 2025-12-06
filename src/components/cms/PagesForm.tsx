@@ -1,23 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  getDocument,
-  createDocument,
-  updateDocument,
-  checkSlugExists,
-  pagesCollection,
-} from '@/lib/firebase/firestore';
+import { pagesService, type Page } from '@/services/pages.service';
 import { generateSlug, isValidSlug } from '@/lib/utils/slug';
 import { toast } from 'react-hot-toast';
 import MarkdownEditor from './MarkdownEditor';
-import { FirestoreEntity, Timestamp } from '@/lib/firebase/firestore';
 
 export default function PagesForm() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const isEditing = !!slug;
 
-  const [formData, setFormData] = useState<Partial<FirestoreEntity>>({
+  const [formData, setFormData] = useState<Partial<Page>>({
     title: '',
     slug: '',
     body: '',
@@ -52,15 +45,11 @@ export default function PagesForm() {
     if (!slug) return;
     setLoading(true);
     try {
-      const item = await getDocument<FirestoreEntity>(pagesCollection, slug);
-      if (item) {
-        setFormData(item);
-      } else {
-        toast.error('Pagina non trovata');
-        navigate('/vgadm/pages');
-      }
+      const item = await pagesService.getBySlug(slug);
+      setFormData(item);
     } catch (error: any) {
-      toast.error('Errore nel caricamento');
+      toast.error(error.message || 'Pagina non trovata');
+      navigate('/vgadm/pages');
     } finally {
       setLoading(false);
     }
@@ -79,8 +68,7 @@ export default function PagesForm() {
 
     setCheckingSlug(true);
     try {
-      const exists = await checkSlugExists(
-        pagesCollection,
+      const exists = await pagesService.checkSlugExists(
         formData.slug,
         isEditing ? slug : undefined
       );
@@ -106,28 +94,19 @@ export default function PagesForm() {
 
     setLoading(true);
     try {
-      const now = Timestamp.now();
-      const data: Partial<FirestoreEntity> = {
-        ...formData,
-        updatedAt: now,
-        publishedAt: formData.published
-          ? formData.publishedAt || now
-          : null,
-      };
-
       if (isEditing) {
-        await updateDocument(pagesCollection, slug!, data);
+        await pagesService.update(slug!, formData);
         toast.success('Pagina aggiornata');
       } else {
-        await createDocument(pagesCollection, {
-          ...data,
-          slug: formData.slug,
-        } as any);
+        await pagesService.create({
+          ...formData,
+          slug: formData.slug!,
+        } as Page);
         toast.success('Pagina creata');
       }
       navigate('/vgadm/pages');
     } catch (error: any) {
-      toast.error('Errore durante il salvataggio');
+      toast.error(error.message || 'Errore durante il salvataggio');
     } finally {
       setLoading(false);
     }

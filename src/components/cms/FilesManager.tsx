@@ -5,7 +5,7 @@ import {
   DocumentDuplicateIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
-import { listFiles, deleteFile, uploadMultipleFiles, StorageFile } from '@/lib/firebase/storage';
+import { storageService, type StorageFile } from '@/services/storage.service';
 import { toast } from 'react-hot-toast';
 
 export default function FilesManager() {
@@ -31,7 +31,7 @@ export default function FilesManager() {
   const loadFiles = async () => {
     setLoading(true);
     try {
-      const allFiles = await listFiles('', 500);
+      const allFiles = await storageService.listFiles('', 500);
       setFiles(allFiles);
       
       const uniqueFolders = Array.from(
@@ -39,7 +39,7 @@ export default function FilesManager() {
       ) as string[];
       setFolders(uniqueFolders);
     } catch (error: any) {
-      toast.error('Errore nel caricamento dei file');
+      toast.error(error.message || 'Errore nel caricamento dei file');
     } finally {
       setLoading(false);
     }
@@ -71,12 +71,12 @@ export default function FilesManager() {
     try {
       const fileArray = Array.from(filesToUpload);
       const basePath = folderInput.trim() ? folderInput.trim() : '';
-      await uploadMultipleFiles(fileArray, basePath);
+      await storageService.uploadFiles(fileArray, basePath);
       toast.success(`${fileArray.length} file caricati con successo`);
       setFolderInput('');
       loadFiles();
     } catch (error: any) {
-      toast.error('Errore durante il caricamento');
+      toast.error(error.message || 'Errore durante il caricamento');
     } finally {
       setUploading(false);
     }
@@ -86,11 +86,11 @@ export default function FilesManager() {
     if (!confirm(`Sei sicuro di voler eliminare ${file.name}?`)) return;
 
     try {
-      await deleteFile(file.fullPath);
+      await storageService.deleteFile(file.fullPath);
       toast.success('File eliminato');
       loadFiles();
     } catch (error: any) {
-      toast.error('Errore durante l\'eliminazione');
+      toast.error(error.message || 'Errore durante l\'eliminazione');
     }
   };
 

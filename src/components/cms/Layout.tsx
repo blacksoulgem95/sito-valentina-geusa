@@ -1,7 +1,7 @@
 import { ReactNode, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
-import { onAuthChange } from '@/lib/firebase/auth';
+import { authService } from '@/services/auth.service';
 import { Toaster } from 'react-hot-toast';
 
 interface LayoutProps {
@@ -18,16 +18,29 @@ export default function Layout({ children }: LayoutProps) {
       initialize();
     }
 
-    const unsubscribe = onAuthChange((user) => {
-      setUser(user);
-      setLoading(false);
-      
-      if (!user && location.pathname !== '/login') {
-        navigate('/login');
+    // Check authentication periodically
+    const checkAuth = async () => {
+      try {
+        const user = await authService.getCurrentUser();
+        setUser(user);
+        setLoading(false);
+        
+        if (!user && location.pathname !== '/login') {
+          navigate('/login');
+        }
+      } catch (error) {
+        setUser(null);
+        setLoading(false);
+        if (location.pathname !== '/login') {
+          navigate('/login');
+        }
       }
-    });
+    };
 
-    return () => unsubscribe();
+    const interval = setInterval(checkAuth, 60000); // Check every minute
+    checkAuth(); // Initial check
+
+    return () => clearInterval(interval);
   }, [initialized, location.pathname, navigate, setUser, setLoading, initialize]);
 
   if (loading || !initialized) {

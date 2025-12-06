@@ -1,23 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  getDocument,
-  createDocument,
-  updateDocument,
-  checkSlugExists,
-  portfolioCollection,
-} from '@/lib/firebase/firestore';
+import { portfolioService, type PortfolioItem } from '@/services/portfolio.service';
 import { generateSlug, isValidSlug } from '@/lib/utils/slug';
 import { toast } from 'react-hot-toast';
 import MarkdownEditor from './MarkdownEditor';
-import { FirestoreEntity, Timestamp } from '@/lib/firebase/firestore';
 
 export default function PortfolioForm() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const isEditing = !!slug;
 
-  const [formData, setFormData] = useState<Partial<FirestoreEntity>>({
+  const [formData, setFormData] = useState<Partial<PortfolioItem>>({
     title: '',
     slug: '',
     body: '',
@@ -55,15 +48,11 @@ export default function PortfolioForm() {
     if (!slug) return;
     setLoading(true);
     try {
-      const item = await getDocument<FirestoreEntity>(portfolioCollection, slug);
-      if (item) {
-        setFormData(item);
-      } else {
-        toast.error('Elemento non trovato');
-        navigate('/vgadm/portfolio');
-      }
+      const item = await portfolioService.getBySlug(slug);
+      setFormData(item);
     } catch (error: any) {
-      toast.error('Errore nel caricamento');
+      toast.error(error.message || 'Elemento non trovato');
+      navigate('/vgadm/portfolio');
     } finally {
       setLoading(false);
     }
@@ -82,8 +71,7 @@ export default function PortfolioForm() {
 
     setCheckingSlug(true);
     try {
-      const exists = await checkSlugExists(
-        portfolioCollection,
+      const exists = await portfolioService.checkSlugExists(
         formData.slug,
         isEditing ? slug : undefined
       );
@@ -109,28 +97,19 @@ export default function PortfolioForm() {
 
     setLoading(true);
     try {
-      const now = Timestamp.now();
-      const data: Partial<FirestoreEntity> = {
-        ...formData,
-        updatedAt: now,
-        publishedAt: formData.published
-          ? formData.publishedAt || now
-          : null,
-      };
-
       if (isEditing) {
-        await updateDocument(portfolioCollection, slug!, data);
+        await portfolioService.update(slug!, formData);
         toast.success('Elemento aggiornato');
       } else {
-        await createDocument(portfolioCollection, {
-          ...data,
-          slug: formData.slug,
-        } as any);
+        await portfolioService.create({
+          ...formData,
+          slug: formData.slug!,
+        } as PortfolioItem);
         toast.success('Elemento creato');
       }
       navigate('/vgadm/portfolio');
     } catch (error: any) {
-      toast.error('Errore durante il salvataggio');
+      toast.error(error.message || 'Errore durante il salvataggio');
     } finally {
       setLoading(false);
     }

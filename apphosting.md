@@ -57,6 +57,21 @@ firebase apphosting:backends:create --project sito-valentina-geusa
 
 ### Variabili Firebase (PUBLIC_)
 
+**Perché sono necessarie anche su App Hosting?**
+
+Anche se App Hosting è parte dello stesso progetto Firebase, le variabili d'ambiente Firebase sono **necessarie** perché:
+
+1. **Client-side (Browser)**: Il browser deve connettersi direttamente a Firebase per:
+   - Autenticazione (login/logout nel CMS)
+   - Firestore (lettura dati pubblici)
+   - Storage (upload/download file)
+
+2. **Server-side (SSR)**: L'app usa Firebase SDK standard (non Admin SDK) anche lato server per leggere i dati durante il rendering SSR.
+
+3. **Build-time**: Alcune configurazioni potrebbero essere necessarie durante il build.
+
+**Nota**: In futuro, potresti semplificare usando Firebase Admin SDK per il server-side, che usa Application Default Credentials e non richiede variabili d'ambiente. Ma questo richiederebbe una refactor del codice server-side.
+
 Le variabili Firebase con prefisso `PUBLIC_` sono accessibili sia lato client che server. Possono essere configurate direttamente in `apphosting.yaml` o tramite la console.
 
 **Metodo 1: File `apphosting.yaml` (per sviluppo/test)**

@@ -5,16 +5,11 @@ import {
   PencilIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
-import {
-  getDocuments,
-  deleteDocument,
-  portfolioCollection,
-} from '@/lib/firebase/firestore';
+import { portfolioService, type PortfolioItem } from '@/services/portfolio.service';
 import { toast } from 'react-hot-toast';
-import { FirestoreEntity } from '@/lib/firebase/firestore';
 
 export default function PortfolioList() {
-  const [items, setItems] = useState<FirestoreEntity[]>([]);
+  const [items, setItems] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,13 +19,10 @@ export default function PortfolioList() {
   const loadItems = async () => {
     setLoading(true);
     try {
-      const data = await getDocuments<FirestoreEntity>(
-        portfolioCollection,
-        []
-      );
+      const data = await portfolioService.getAll();
       setItems(data);
     } catch (error: any) {
-      toast.error('Errore nel caricamento del portfolio');
+      toast.error(error.message || 'Errore nel caricamento del portfolio');
     } finally {
       setLoading(false);
     }
@@ -40,11 +32,11 @@ export default function PortfolioList() {
     if (!confirm('Sei sicuro di voler eliminare questo elemento?')) return;
 
     try {
-      await deleteDocument(portfolioCollection, slug);
+      await portfolioService.delete(slug);
       toast.success('Elemento eliminato');
       loadItems();
     } catch (error: any) {
-      toast.error('Errore durante l\'eliminazione');
+      toast.error(error.message || 'Errore durante l\'eliminazione');
     }
   };
 

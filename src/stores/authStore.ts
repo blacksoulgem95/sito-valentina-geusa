@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-import { User } from 'firebase/auth';
-import { getCurrentUser } from '@/lib/firebase/auth';
+import { authService, type User } from '@/services/auth.service';
 
 interface AuthState {
   user: User | null;
@@ -8,7 +7,7 @@ interface AuthState {
   initialized: boolean;
   setUser: (user: User | null) => void;
   setLoading: (loading: boolean) => void;
-  initialize: () => void;
+  initialize: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => {
@@ -18,10 +17,14 @@ export const useAuthStore = create<AuthState>((set) => {
     initialized: false,
     setUser: (user) => set({ user, loading: false, initialized: true }),
     setLoading: (loading) => set({ loading }),
-    initialize: () => {
+    initialize: async () => {
       if (typeof window !== 'undefined') {
-        const user = getCurrentUser();
-        set({ user, loading: false, initialized: true });
+        try {
+          const user = await authService.getCurrentUser();
+          set({ user, loading: false, initialized: true });
+        } catch (error) {
+          set({ user: null, loading: false, initialized: true });
+        }
       }
     },
   };

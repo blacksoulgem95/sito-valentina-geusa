@@ -20,6 +20,13 @@ env:
   # ============================================
   # Variabili Firebase (PUBLIC_ per client-side)
   # ============================================
+  # NOTA: Queste variabili sono necessarie SOLO per:
+  # 1. Login Google - Firebase SDK client-side per ottenere ID token da Google
+  # 2. Eventuali altri usi client-side di Firebase SDK
+  #
+  # Il server-side ora usa Firebase Admin SDK con Application Default Credentials (ADC),
+  # quindi NON richiede queste variabili. ADC è configurato automaticamente su App Hosting.
+  #
   # Queste variabili sono disponibili sia in BUILD che in RUNTIME
   - variable: PUBLIC_FIREBASE_API_KEY
     value: your_firebase_api_key_here

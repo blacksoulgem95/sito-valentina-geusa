@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Dialog } from '@headlessui/react';
 import { XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { listFiles, StorageFile } from '@/lib/firebase/storage';
+import { storageService, type StorageFile } from '@/services/storage.service';
 import { toast } from 'react-hot-toast';
 
 interface ImagePickerModalProps {
@@ -35,7 +35,7 @@ export default function ImagePickerModal({
   const loadFiles = async () => {
     setLoading(true);
     try {
-      const allFiles = await listFiles('', 500);
+      const allFiles = await storageService.listFiles('', 500);
       setFiles(allFiles);
       
       // Extract unique folders
@@ -44,7 +44,7 @@ export default function ImagePickerModal({
       ) as string[];
       setFolders(uniqueFolders);
     } catch (error: any) {
-      toast.error('Errore nel caricamento dei file');
+      toast.error(error.message || 'Errore nel caricamento dei file');
       console.error(error);
     } finally {
       setLoading(false);

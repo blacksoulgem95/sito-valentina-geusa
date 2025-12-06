@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { logout } from '@/lib/firebase/auth';
+import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'react-hot-toast';
 import {
@@ -17,7 +17,8 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await authService.logout();
+      useAuthStore.getState().setUser(null);
       toast.success('Logout effettuato');
       navigate('/login');
     } catch (error: any) {

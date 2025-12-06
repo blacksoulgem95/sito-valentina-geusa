@@ -1,30 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  getDocument,
-  createDocument,
-  updateDocument,
-  checkSlugExists,
-  getDocuments,
-  blogCollection,
-  blogCategoriesCollection,
-} from '@/lib/firebase/firestore';
+import { blogService, blogCategoryService, type BlogPost, type BlogCategory } from '@/services/blog.service';
 import { generateSlug, isValidSlug } from '@/lib/utils/slug';
 import { toast } from 'react-hot-toast';
 import MarkdownEditor from './MarkdownEditor';
-import { FirestoreEntity, Timestamp } from '@/lib/firebase/firestore';
-
-interface BlogCategory {
-  slug: string;
-  name: string;
-}
 
 export default function BlogForm() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const isEditing = !!slug;
 
-  const [formData, setFormData] = useState<Partial<FirestoreEntity>>({
+  const [formData, setFormData] = useState<Partial<BlogPost>>({
     title: '',
     slug: '',
     body: '',
@@ -62,7 +48,7 @@ export default function BlogForm() {
 
   const loadCategories = async () => {
     try {
-      const data = await getDocuments<BlogCategory>(blogCategoriesCollection, []);
+      const data = await blogCategoryService.getAll();
       setCategories(data);
     } catch (error) {
       console.error('Error loading categories:', error);
@@ -73,15 +59,11 @@ export default function BlogForm() {
     if (!slug) return;
     setLoading(true);
     try {
-      const item = await getDocument<FirestoreEntity>(blogCollection, slug);
-      if (item) {
-        setFormData(item);
-      } else {
-        toast.error('Articolo non trovato');
-        navigate('/vgadm/blog');
-      }
+      const item = await blogService.getPostBySlug(slug);
+      setFormData(item);
     } catch (error: any) {
-      toast.error('Errore nel caricamento');
+      toast.error(error.message || 'Articolo non trovato');
+      navigate('/vgadm/blog');
     } finally {
       setLoading(false);
     }
@@ -100,8 +82,7 @@ export default function BlogForm() {
 
     setCheckingSlug(true);
     try {
-      const exists = await checkSlugExists(
-        blogCollection,
+      const exists = await blogService.checkSlugExists(
         formData.slug,
         isEditing ? slug : undefined
       );
@@ -127,28 +108,19 @@ export default function BlogForm() {
 
     setLoading(true);
     try {
-      const now = Timestamp.now();
-      const data: Partial<FirestoreEntity> = {
-        ...formData,
-        updatedAt: now,
-        publishedAt: formData.published
-          ? formData.publishedAt || now
-          : null,
-      };
-
       if (isEditing) {
-        await updateDocument(blogCollection, slug!, data);
+        await blogService.updatePost(slug!, formData);
         toast.success('Articolo aggiornato');
       } else {
-        await createDocument(blogCollection, {
-          ...data,
-          slug: formData.slug,
-        } as any);
+        await blogService.createPost({
+          ...formData,
+          slug: formData.slug!,
+        } as BlogPost);
         toast.success('Articolo creato');
       }
       navigate('/vgadm/blog');
     } catch (error: any) {
-      toast.error('Errore durante il salvataggio');
+      toast.error(error.message || 'Errore durante il salvataggio');
     } finally {
       setLoading(false);
     }
