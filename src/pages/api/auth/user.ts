@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { adminAuth } from '@/lib/firebase/admin';
+import { getCorsHeaders, withCors } from '@/lib/api/cors';
 
 export const GET: APIRoute = async ({ request }) => {
   try {
@@ -8,7 +9,7 @@ export const GET: APIRoute = async ({ request }) => {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return new Response(
         JSON.stringify({ error: 'Token di autenticazione mancante' }),
-        { status: 401, headers: { 'Content-Type': 'application/json' } }
+        { status: 401, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -31,14 +32,21 @@ export const GET: APIRoute = async ({ request }) => {
       }),
       {
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers: withCors({ 'Content-Type': 'application/json' }),
       }
     );
   } catch (error: any) {
     console.error('Get user error:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore durante la verifica del token' }),
-      { status: 401, headers: { 'Content-Type': 'application/json' } }
+      { status: 401, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   }
+};
+
+export const OPTIONS: APIRoute = async () => {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(),
+  });
 };

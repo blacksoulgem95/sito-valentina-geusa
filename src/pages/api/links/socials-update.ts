@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { adminDb, adminAuth } from '@/lib/firebase/admin';
+import { getCorsHeaders, withCors } from '@/lib/api/cors';
 
 async function verifyAuth(request: Request) {
   const authHeader = request.headers.get('Authorization');
@@ -32,7 +33,14 @@ export const PUT: APIRoute = async ({ request }) => {
     console.error('Error updating social links:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore nell\'aggiornamento dei link social' }),
-      { status: error.message === 'Non autenticato' ? 401 : 500, headers: { 'Content-Type': 'application/json' } }
+      { status: error.message === 'Non autenticato' ? 401 : 500, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   }
+};
+
+export const OPTIONS: APIRoute = async () => {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(),
+  });
 };

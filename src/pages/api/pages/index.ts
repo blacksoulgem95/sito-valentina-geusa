@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { adminDb, adminAuth } from '@/lib/firebase/admin';
+import { getCorsHeaders, withCors } from '@/lib/api/cors';
 
 async function verifyAuth(request: Request) {
   const authHeader = request.headers.get('Authorization');
@@ -31,7 +32,7 @@ export const GET: APIRoute = async ({ request }) => {
 
     return new Response(JSON.stringify(items), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: withCors({ 'Content-Type': 'application/json' }),
     });
   } catch (error: any) {
     console.error('Error fetching pages:', error);
@@ -52,7 +53,7 @@ export const POST: APIRoute = async ({ request }) => {
     if (!slug) {
       return new Response(
         JSON.stringify({ error: 'Slug è obbligatorio' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -60,7 +61,7 @@ export const POST: APIRoute = async ({ request }) => {
     if (existingDoc.exists) {
       return new Response(
         JSON.stringify({ error: 'Uno slug con questo nome esiste già' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -79,7 +80,14 @@ export const POST: APIRoute = async ({ request }) => {
     console.error('Error creating page:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore nella creazione della pagina' }),
-      { status: error.message === 'Non autenticato' ? 401 : 500, headers: { 'Content-Type': 'application/json' } }
+      { status: error.message === 'Non autenticato' ? 401 : 500, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   }
+};
+
+export const OPTIONS: APIRoute = async () => {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(),
+  });
 };

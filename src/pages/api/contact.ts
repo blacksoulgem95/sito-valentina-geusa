@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { getCorsHeaders, withCors } from '@/lib/api/cors';
 
 export const POST: APIRoute = async ({ request }) => {
     try {
@@ -28,7 +29,7 @@ export const POST: APIRoute = async ({ request }) => {
                 }),
                 { 
                     status: 400,
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: withCors({ 'Content-Type': 'application/json' })
                 }
             );
         }
@@ -43,7 +44,7 @@ export const POST: APIRoute = async ({ request }) => {
                 }),
                 { 
                     status: 400,
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: withCors({ 'Content-Type': 'application/json' })
                 }
             );
         }
@@ -57,7 +58,7 @@ export const POST: APIRoute = async ({ request }) => {
                 }),
                 { 
                     status: 400,
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: withCors({ 'Content-Type': 'application/json' })
                 }
             );
         }
@@ -84,7 +85,7 @@ export const POST: APIRoute = async ({ request }) => {
                 }),
                 { 
                     status: 500,
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: withCors({ 'Content-Type': 'application/json' })
                 }
             );
         }
@@ -143,7 +144,7 @@ Questo messaggio è stato inviato dal form contatti del sito web.
                 }),
                 { 
                     status: 500,
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: withCors({ 'Content-Type': 'application/json' })
                 }
             );
         }
@@ -172,5 +173,12 @@ Questo messaggio è stato inviato dal form contatti del sito web.
             }
         );
     }
+};
+
+export const OPTIONS: APIRoute = async () => {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(),
+  });
 };
 

@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { adminStorage, adminAuth } from '@/lib/firebase/admin';
+import { getCorsHeaders, withCors } from '@/lib/api/cors';
 
 async function verifyAuth(request: Request) {
   const authHeader = request.headers.get('Authorization');
@@ -20,7 +21,7 @@ export const DELETE: APIRoute = async ({ request, url }) => {
     if (!fullPath) {
       return new Response(
         JSON.stringify({ error: 'Path del file mancante' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -28,7 +29,7 @@ export const DELETE: APIRoute = async ({ request, url }) => {
     if (!storageBucket) {
       return new Response(
         JSON.stringify({ error: 'Storage bucket non configurato' }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
+        { status: 500, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
     const bucket = adminStorage.bucket(storageBucket);
@@ -36,13 +37,20 @@ export const DELETE: APIRoute = async ({ request, url }) => {
 
     return new Response(
       JSON.stringify({ message: 'File eliminato con successo' }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
+      { status: 200, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   } catch (error: any) {
     console.error('Error deleting file:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore durante l\'eliminazione del file' }),
-      { status: error.message === 'Non autenticato' ? 401 : 500, headers: { 'Content-Type': 'application/json' } }
+      { status: error.message === 'Non autenticato' ? 401 : 500, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   }
+};
+
+export const OPTIONS: APIRoute = async () => {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(),
+  });
 };

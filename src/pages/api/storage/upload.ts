@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { adminStorage, adminAuth } from '@/lib/firebase/admin';
+import { getCorsHeaders, withCors } from '@/lib/api/cors';
 
 async function verifyAuth(request: Request) {
   const authHeader = request.headers.get('Authorization');
@@ -21,7 +22,7 @@ export const POST: APIRoute = async ({ request }) => {
     if (!files || files.length === 0) {
       return new Response(
         JSON.stringify({ error: 'Nessun file fornito' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -29,7 +30,7 @@ export const POST: APIRoute = async ({ request }) => {
     if (!storageBucket) {
       return new Response(
         JSON.stringify({ error: 'Storage bucket non configurato' }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
+        { status: 500, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
     const bucket = adminStorage.bucket(storageBucket);
@@ -63,13 +64,20 @@ export const POST: APIRoute = async ({ request }) => {
 
     return new Response(
       JSON.stringify({ files: uploadedFiles }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
+      { status: 200, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   } catch (error: any) {
     console.error('Error uploading files:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore durante l\'upload dei file' }),
-      { status: error.message === 'Non autenticato' ? 401 : 500, headers: { 'Content-Type': 'application/json' } }
+      { status: error.message === 'Non autenticato' ? 401 : 500, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   }
+};
+
+export const OPTIONS: APIRoute = async () => {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(),
+  });
 };

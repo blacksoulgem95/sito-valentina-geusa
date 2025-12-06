@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { adminDb } from '@/lib/firebase/admin';
+import { getCorsHeaders, withCors } from '@/lib/api/cors';
 
 export interface SocialLinks {
   instagram?: string;
@@ -29,7 +30,14 @@ export const GET: APIRoute = async () => {
     console.error('Error fetching social links:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore nel recupero dei link social' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      { status: 500, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   }
+};
+
+export const OPTIONS: APIRoute = async () => {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(),
+  });
 };

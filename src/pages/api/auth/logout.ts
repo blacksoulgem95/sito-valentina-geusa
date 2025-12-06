@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { getCorsHeaders, withCors } from '@/lib/api/cors';
 
 export const POST: APIRoute = async () => {
   // Logout is handled client-side by clearing the token
@@ -7,7 +8,14 @@ export const POST: APIRoute = async () => {
     JSON.stringify({ message: 'Logout effettuato con successo' }),
     {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: withCors({ 'Content-Type': 'application/json' }),
     }
   );
+};
+
+export const OPTIONS: APIRoute = async () => {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(),
+  });
 };

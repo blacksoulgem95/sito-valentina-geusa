@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { adminAuth } from '@/lib/firebase/admin';
+import { getCorsHeaders, withCors } from '@/lib/api/cors';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -9,7 +10,7 @@ export const POST: APIRoute = async ({ request }) => {
       console.error('Invalid Content-Type:', contentType);
       return new Response(
         JSON.stringify({ error: 'Richiesta nel formato errato' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -23,7 +24,7 @@ export const POST: APIRoute = async ({ request }) => {
         console.error('Empty request body');
         return new Response(
           JSON.stringify({ error: 'Richiesta nel formato errato' }),
-          { status: 400, headers: { 'Content-Type': 'application/json' } }
+          { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
         );
       }
       
@@ -33,7 +34,7 @@ export const POST: APIRoute = async ({ request }) => {
       console.error('Error parsing request body:', parseError);
       return new Response(
         JSON.stringify({ error: 'Richiesta nel formato errato' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -48,7 +49,7 @@ export const POST: APIRoute = async ({ request }) => {
       });
       return new Response(
         JSON.stringify({ error: 'Richiesta nel formato errato' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -56,7 +57,7 @@ export const POST: APIRoute = async ({ request }) => {
       console.error('Invalid email or password type');
       return new Response(
         JSON.stringify({ error: 'Richiesta nel formato errato' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -78,7 +79,7 @@ export const POST: APIRoute = async ({ request }) => {
         JSON.stringify({ 
           error: 'Configurazione server non valida. La Firebase API key non è configurata correttamente in App Hosting.' 
         }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
+        { status: 500, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -88,7 +89,7 @@ export const POST: APIRoute = async ({ request }) => {
       `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseApiKey}`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: withCors({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           email,
           password,
@@ -115,7 +116,7 @@ export const POST: APIRoute = async ({ request }) => {
           JSON.stringify({ 
             error: 'Configurazione server non valida. La Firebase API key non è valida. Verifica le variabili d\'ambiente in App Hosting.' 
           }),
-          { status: 500, headers: { 'Content-Type': 'application/json' } }
+          { status: 500, headers: withCors({ 'Content-Type': 'application/json' }) }
         );
       }
       
@@ -147,7 +148,7 @@ export const POST: APIRoute = async ({ request }) => {
       
       return new Response(
         JSON.stringify({ error: errorMessage }),
-        { status: statusCode, headers: { 'Content-Type': 'application/json' } }
+        { status: statusCode, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -167,14 +168,21 @@ export const POST: APIRoute = async ({ request }) => {
       }),
       {
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers: withCors({ 'Content-Type': 'application/json' }),
       }
     );
   } catch (error: any) {
     console.error('Login error:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore durante il login' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      { status: 500, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   }
+};
+
+export const OPTIONS: APIRoute = async () => {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(),
+  });
 };

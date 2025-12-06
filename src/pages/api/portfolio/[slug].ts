@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { adminDb, adminAuth } from '@/lib/firebase/admin';
+import { getCorsHeaders, withCors } from '@/lib/api/cors';
 
 async function verifyAuth(request: Request) {
   const authHeader = request.headers.get('Authorization');
@@ -17,7 +18,7 @@ export const GET: APIRoute = async ({ params }) => {
     if (!slug) {
       return new Response(
         JSON.stringify({ error: 'Slug mancante' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -26,7 +27,7 @@ export const GET: APIRoute = async ({ params }) => {
     if (!doc.exists) {
       return new Response(
         JSON.stringify({ error: 'Portfolio item non trovato' }),
-        { status: 404, headers: { 'Content-Type': 'application/json' } }
+        { status: 404, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -38,7 +39,7 @@ export const GET: APIRoute = async ({ params }) => {
     console.error('Error fetching portfolio item:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore nel recupero del portfolio item' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      { status: 500, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   }
 };
@@ -52,7 +53,7 @@ export const PUT: APIRoute = async ({ request, params }) => {
     if (!slug) {
       return new Response(
         JSON.stringify({ error: 'Slug mancante' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -65,7 +66,7 @@ export const PUT: APIRoute = async ({ request, params }) => {
     if (!doc.exists) {
       return new Response(
         JSON.stringify({ error: 'Portfolio item non trovato' }),
-        { status: 404, headers: { 'Content-Type': 'application/json' } }
+        { status: 404, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -88,7 +89,7 @@ export const PUT: APIRoute = async ({ request, params }) => {
     console.error('Error updating portfolio item:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore nell\'aggiornamento del portfolio item' }),
-      { status: error.message === 'Non autenticato' ? 401 : 500, headers: { 'Content-Type': 'application/json' } }
+      { status: error.message === 'Non autenticato' ? 401 : 500, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   }
 };
@@ -102,7 +103,7 @@ export const DELETE: APIRoute = async ({ request, params }) => {
     if (!slug) {
       return new Response(
         JSON.stringify({ error: 'Slug mancante' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -116,7 +117,14 @@ export const DELETE: APIRoute = async ({ request, params }) => {
     console.error('Error deleting portfolio item:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore nell\'eliminazione del portfolio item' }),
-      { status: error.message === 'Non autenticato' ? 401 : 500, headers: { 'Content-Type': 'application/json' } }
+      { status: error.message === 'Non autenticato' ? 401 : 500, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   }
+};
+
+export const OPTIONS: APIRoute = async () => {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(),
+  });
 };

@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { adminAuth } from '@/lib/firebase/admin';
+import { getCorsHeaders, withCors } from '@/lib/api/cors';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -8,7 +9,7 @@ export const POST: APIRoute = async ({ request }) => {
     if (!idToken) {
       return new Response(
         JSON.stringify({ error: 'ID token mancante' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -32,14 +33,21 @@ export const POST: APIRoute = async ({ request }) => {
       }),
       {
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers: withCors({ 'Content-Type': 'application/json' }),
       }
     );
   } catch (error: any) {
     console.error('Google login error:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore durante il login con Google' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      { status: 500, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   }
+};
+
+export const OPTIONS: APIRoute = async () => {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(),
+  });
 };

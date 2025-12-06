@@ -89,6 +89,12 @@ env:
     availability:
       - RUNTIME
 
+  # Dominio abilitato per CORS
+  - variable: DOMAIN
+    value: https://vallmars.it
+    availability:
+      - RUNTIME
+
   # Porta: Cloud Run imposta automaticamente PORT, ma possiamo specificarla
   # - variable: PORT
   #   value: "8080"

@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { adminDb, adminAuth } from '@/lib/firebase/admin';
+import { getCorsHeaders, withCors } from '@/lib/api/cors';
 
 // Helper to verify authentication
 async function verifyAuth(request: Request) {
@@ -39,7 +40,7 @@ export const GET: APIRoute = async ({ request }) => {
     console.error('Error fetching portfolio:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore nel recupero del portfolio' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      { status: 500, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   }
 };
@@ -77,13 +78,20 @@ export const POST: APIRoute = async ({ request }) => {
 
     return new Response(
       JSON.stringify({ slug, message: 'Portfolio item creato con successo' }),
-      { status: 201, headers: { 'Content-Type': 'application/json' } }
+      { status: 201, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   } catch (error: any) {
     console.error('Error creating portfolio item:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore nella creazione del portfolio item' }),
-      { status: error.message === 'Non autenticato' ? 401 : 500, headers: { 'Content-Type': 'application/json' } }
+      { status: error.message === 'Non autenticato' ? 401 : 500, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   }
+};
+
+export const OPTIONS: APIRoute = async () => {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(),
+  });
 };

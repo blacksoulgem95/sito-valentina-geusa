@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { adminDb, adminAuth } from '@/lib/firebase/admin';
+import { getCorsHeaders, withCors } from '@/lib/api/cors';
 
 async function verifyAuth(request: Request) {
   const authHeader = request.headers.get('Authorization');
@@ -16,7 +17,7 @@ export const GET: APIRoute = async ({ params }) => {
     if (!slug) {
       return new Response(
         JSON.stringify({ error: 'Slug mancante' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -25,19 +26,19 @@ export const GET: APIRoute = async ({ params }) => {
     if (!doc.exists) {
       return new Response(
         JSON.stringify({ error: 'Blog post non trovato' }),
-        { status: 404, headers: { 'Content-Type': 'application/json' } }
+        { status: 404, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
     return new Response(
       JSON.stringify({ slug: doc.id, ...doc.data() }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
+      { status: 200, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   } catch (error: any) {
     console.error('Error fetching blog post:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore nel recupero del blog post' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      { status: 500, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   }
 };
@@ -50,7 +51,7 @@ export const PUT: APIRoute = async ({ request, params }) => {
     if (!slug) {
       return new Response(
         JSON.stringify({ error: 'Slug mancante' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -63,7 +64,7 @@ export const PUT: APIRoute = async ({ request, params }) => {
     if (!doc.exists) {
       return new Response(
         JSON.stringify({ error: 'Blog post non trovato' }),
-        { status: 404, headers: { 'Content-Type': 'application/json' } }
+        { status: 404, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -80,13 +81,13 @@ export const PUT: APIRoute = async ({ request, params }) => {
 
     return new Response(
       JSON.stringify({ slug, message: 'Blog post aggiornato con successo' }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
+      { status: 200, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   } catch (error: any) {
     console.error('Error updating blog post:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore nell\'aggiornamento del blog post' }),
-      { status: error.message === 'Non autenticato' ? 401 : 500, headers: { 'Content-Type': 'application/json' } }
+      { status: error.message === 'Non autenticato' ? 401 : 500, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   }
 };
@@ -99,7 +100,7 @@ export const DELETE: APIRoute = async ({ request, params }) => {
     if (!slug) {
       return new Response(
         JSON.stringify({ error: 'Slug mancante' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
@@ -107,13 +108,20 @@ export const DELETE: APIRoute = async ({ request, params }) => {
 
     return new Response(
       JSON.stringify({ message: 'Blog post eliminato con successo' }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
+      { status: 200, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   } catch (error: any) {
     console.error('Error deleting blog post:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore nell\'eliminazione del blog post' }),
-      { status: error.message === 'Non autenticato' ? 401 : 500, headers: { 'Content-Type': 'application/json' } }
+      { status: error.message === 'Non autenticato' ? 401 : 500, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   }
+};
+
+export const OPTIONS: APIRoute = async () => {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(),
+  });
 };
