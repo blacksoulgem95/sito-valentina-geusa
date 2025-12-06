@@ -1,6 +1,7 @@
 // Server-side Firestore utilities for Astro
 import { getDocs, collection, query, where, orderBy, getDoc, doc } from 'firebase/firestore';
 import { db } from './config';
+import { adminDb } from './admin';
 
 export interface BlogPost {
   slug: string;
@@ -77,12 +78,33 @@ export interface Page {
 }
 
 // Get all published blog posts
+const isServer = typeof window === 'undefined';
+
+function getServerDb() {
+  return isServer ? adminDb : undefined;
+}
+
 export async function getBlogPosts(): Promise<BlogPost[]> {
-  if (typeof window !== 'undefined' || !db) {
+  const adminDbInstance = getServerDb();
+
+  if (!adminDbInstance && (typeof window !== 'undefined' || !db)) {
     return [];
   }
 
   try {
+    if (adminDbInstance) {
+      const snapshot = await adminDbInstance
+        .collection('blog')
+        .where('published', '==', true)
+        .orderBy('publishedAt', 'desc')
+        .get();
+
+      return snapshot.docs.map((doc) => ({
+        slug: doc.id,
+        ...doc.data(),
+      })) as BlogPost[];
+    }
+
     const q = query(
       collection(db, 'blog'),
       where('published', '==', true),
@@ -101,11 +123,24 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 
 // Get a single blog post by slug
 export async function getBlogPost(slug: string): Promise<BlogPost | null> {
-  if (typeof window !== 'undefined' || !db) {
+  const adminDbInstance = getServerDb();
+
+  if (!adminDbInstance && (typeof window !== 'undefined' || !db)) {
     return null;
   }
 
   try {
+    if (adminDbInstance) {
+      const docSnap = await adminDbInstance.collection('blog').doc(slug).get();
+      if (docSnap.exists && docSnap.data()?.published) {
+        return {
+          slug: docSnap.id,
+          ...docSnap.data(),
+        } as BlogPost;
+      }
+      return null;
+    }
+
     const docRef = doc(db, 'blog', slug);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists() && docSnap.data().published) {
@@ -123,11 +158,26 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
 
 // Get all published portfolio items
 export async function getPortfolioItems(): Promise<PortfolioItem[]> {
-  if (typeof window !== 'undefined' || !db) {
+  const adminDbInstance = getServerDb();
+
+  if (!adminDbInstance && (typeof window !== 'undefined' || !db)) {
     return [];
   }
 
   try {
+    if (adminDbInstance) {
+      const snapshot = await adminDbInstance
+        .collection('portfolio')
+        .where('published', '==', true)
+        .orderBy('updatedAt', 'desc')
+        .get();
+
+      return snapshot.docs.map((doc) => ({
+        slug: doc.id,
+        ...doc.data(),
+      })) as PortfolioItem[];
+    }
+
     const q = query(
       collection(db, 'portfolio'),
       where('published', '==', true),
@@ -146,11 +196,24 @@ export async function getPortfolioItems(): Promise<PortfolioItem[]> {
 
 // Get a single portfolio item by slug
 export async function getPortfolioItem(slug: string): Promise<PortfolioItem | null> {
-  if (typeof window !== 'undefined' || !db) {
+  const adminDbInstance = getServerDb();
+
+  if (!adminDbInstance && (typeof window !== 'undefined' || !db)) {
     return null;
   }
 
   try {
+    if (adminDbInstance) {
+      const docSnap = await adminDbInstance.collection('portfolio').doc(slug).get();
+      if (docSnap.exists && docSnap.data()?.published) {
+        return {
+          slug: docSnap.id,
+          ...docSnap.data(),
+        } as PortfolioItem;
+      }
+      return null;
+    }
+
     const docRef = doc(db, 'portfolio', slug);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists() && docSnap.data().published) {
@@ -168,11 +231,24 @@ export async function getPortfolioItem(slug: string): Promise<PortfolioItem | nu
 
 // Get a page by slug
 export async function getPage(slug: string): Promise<Page | null> {
-  if (typeof window !== 'undefined' || !db) {
+  const adminDbInstance = getServerDb();
+
+  if (!adminDbInstance && (typeof window !== 'undefined' || !db)) {
     return null;
   }
 
   try {
+    if (adminDbInstance) {
+      const docSnap = await adminDbInstance.collection('pages').doc(slug).get();
+      if (docSnap.exists && docSnap.data()?.published) {
+        return {
+          slug: docSnap.id,
+          ...docSnap.data(),
+        } as Page;
+      }
+      return null;
+    }
+
     const docRef = doc(db, 'pages', slug);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists() && docSnap.data().published) {
