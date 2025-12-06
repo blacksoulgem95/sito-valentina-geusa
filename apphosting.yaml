@@ -20,46 +20,62 @@ env:
   # ============================================
   # Variabili Firebase (PUBLIC_ per client-side)
   # ============================================
-  # NOTA: Queste variabili sono necessarie SOLO per:
-  # 1. Login Google - Firebase SDK client-side per ottenere ID token da Google
-  # 2. Eventuali altri usi client-side di Firebase SDK
+  # IMPORTANTE: Queste variabili sono NECESSARIE per:
+  # 1. Login con email/password - L'API usa Firebase Auth REST API che richiede l'API key
+  # 2. Login Google - Firebase SDK client-side per ottenere ID token da Google
+  # 3. Eventuali altri usi client-side di Firebase SDK
   #
-  # Il server-side ora usa Firebase Admin SDK con Application Default Credentials (ADC),
-  # quindi NON richiede queste variabili. ADC è configurato automaticamente su App Hosting.
+  # COME OTTENERE L'API KEY:
+  # 1. Vai su Firebase Console: https://console.firebase.google.com/
+  # 2. Seleziona il tuo progetto
+  # 3. Vai su Project Settings (icona ingranaggio) > General
+  # 4. Nella sezione "Your apps", trova la Web App
+  # 5. Copia il valore di "apiKey" dalla configurazione
+  # 6. Sostituisci "your_firebase_api_key_here" qui sotto con il valore reale
+  #
+  # ALTERNATIVA (Raccomandato per produzione):
+  # Configura le variabili direttamente nella Console Firebase:
+  # Firebase Console > App Hosting > [Nome Backend] > Settings > Environment variables
   #
   # Queste variabili sono disponibili sia in BUILD che in RUNTIME
   - variable: PUBLIC_FIREBASE_API_KEY
-    value: your_firebase_api_key_here
+    value: AIzaSyB0VZAdl5KazgCnELPaBSFylf3rTUj6BQk
     availability:
       - BUILD
       - RUNTIME
 
   - variable: PUBLIC_FIREBASE_AUTH_DOMAIN
-    value: your_project_id.firebaseapp.com
+    value: sito-valentina-geusa.firebaseapp.com
     availability:
       - BUILD
       - RUNTIME
 
   - variable: PUBLIC_FIREBASE_PROJECT_ID
-    value: your_project_id
+    value: sito-valentina-geusa
     availability:
       - BUILD
       - RUNTIME
 
   - variable: PUBLIC_FIREBASE_STORAGE_BUCKET
-    value: your_project_id.appspot.com
+    value: sito-valentina-geusa.firebasestorage.app
     availability:
       - BUILD
       - RUNTIME
 
   - variable: PUBLIC_FIREBASE_MESSAGING_SENDER_ID
-    value: your_messaging_sender_id
+    value: 36866585185
     availability:
       - BUILD
       - RUNTIME
 
   - variable: PUBLIC_FIREBASE_APP_ID
-    value: your_firebase_app_id
+    value: 1:36866585185:web:c52a1bf138190ae571b020
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: PUBLIC_FIREBASE_MEASUREMENT_ID
+    value: G-NP9ZZHDSZC
     availability:
       - BUILD
       - RUNTIME

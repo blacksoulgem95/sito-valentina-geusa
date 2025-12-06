@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '@/services/auth.service';
+import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'react-hot-toast';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
@@ -10,16 +11,55 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { setUser } = useAuthStore();
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validazione base
+    if (!email || !password) {
+      toast.error('Inserisci email e password');
+      return;
+    }
+
     setLoading(true);
+    toast.loading('Connessione al server...', { id: 'login' });
+    
     try {
-      await authService.loginWithEmail(email, password);
-      toast.success('Login effettuato con successo!');
-      navigate('/');
+      toast.loading('Verifica credenziali...', { id: 'login' });
+      const response = await authService.loginWithEmail(email, password);
+      
+      // Aggiorna lo store con l'utente
+      setUser(response.user);
+      toast.success('Login effettuato con successo!', { id: 'login' });
+      
+      // Piccolo delay per mostrare il messaggio di successo
+      setTimeout(() => {
+        navigate('/');
+      }, 500);
     } catch (error: any) {
-      toast.error(error.message || 'Errore durante il login');
+      console.error('Login error:', error);
+      
+      // Messaggi di errore più specifici
+      let errorMessage = 'Errore durante il login';
+      
+      if (error.message) {
+        if (error.message.includes('400')) {
+          errorMessage = 'Richiesta nel formato errato';
+        } else if (error.message.includes('401') || error.message.includes('403')) {
+          errorMessage = 'Credenziali non corrette';
+        } else if (error.message.includes('404')) {
+          errorMessage = 'Pagina non trovata';
+        } else if (error.message.includes('500')) {
+          errorMessage = 'Errore del server. Riprova più tardi';
+        } else if (error.message.includes('network') || error.message.includes('fetch')) {
+          errorMessage = 'Errore di connessione. Verifica la tua connessione internet';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      toast.error(errorMessage, { id: 'login' });
     } finally {
       setLoading(false);
     }

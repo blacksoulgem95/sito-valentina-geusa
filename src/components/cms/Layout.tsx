@@ -29,6 +29,7 @@ export default function Layout({ children }: LayoutProps) {
           navigate('/login');
         }
       } catch (error) {
+        console.error('Auth check error:', error);
         setUser(null);
         setLoading(false);
         if (location.pathname !== '/login') {
@@ -37,10 +38,14 @@ export default function Layout({ children }: LayoutProps) {
       }
     };
 
-    const interval = setInterval(checkAuth, 60000); // Check every minute
+    // Check immediately and then periodically
     checkAuth(); // Initial check
-
-    return () => clearInterval(interval);
+    
+    // Only set interval if we're not on login page
+    if (location.pathname !== '/login') {
+      const interval = setInterval(checkAuth, 60000); // Check every minute
+      return () => clearInterval(interval);
+    }
   }, [initialized, location.pathname, navigate, setUser, setLoading, initialize]);
 
   if (loading || !initialized) {
