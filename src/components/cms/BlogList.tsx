@@ -54,13 +54,13 @@ export default function BlogList() {
         <h1 className="text-3xl font-bold text-gray-900">Blog</h1>
         <div className="flex space-x-3">
           <Link
-            to="blog/categories"
+            to="/blog/categories"
             className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
           >
             Categorie
           </Link>
           <Link
-            to="blog/new"
+            to="/blog/new"
             className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700"
           >
             <PlusIcon className="w-5 h-5 mr-2" />
@@ -106,7 +106,7 @@ export default function BlogList() {
                   </div>
                   <div className="flex items-center space-x-2">
                     <Link
-                      to={`blog/${item.slug}`}
+                      to={`/blog/${item.slug}`}
                       className="text-gray-400 hover:text-gray-600"
                     >
                       <PencilIcon className="w-5 h-5" />
