@@ -15,7 +15,7 @@ export interface LoginResponse {
 
 export interface GoogleLoginResponse {
   user: User;
-  customToken: string;
+  idToken: string;
 }
 
 class AuthService {
@@ -34,12 +34,9 @@ class AuthService {
       idToken,
     });
     
-    // Exchange custom token for ID token if needed
-    // For now, we'll use the custom token
-    if (response.customToken) {
-      // You might need to exchange this with Firebase Auth SDK
-      // For simplicity, we'll store it
-      api.setAuthToken(response.customToken);
+    // Use the ID token returned from the server (already verified)
+    if (response.idToken) {
+      api.setAuthToken(response.idToken);
     }
     
     return response;

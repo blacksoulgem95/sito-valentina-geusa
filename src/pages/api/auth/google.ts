@@ -18,9 +18,8 @@ export const POST: APIRoute = async ({ request }) => {
     // Get user details
     const user = await adminAuth.getUser(decodedToken.uid);
 
-    // Create a custom token for the client
-    const customToken = await adminAuth.createCustomToken(decodedToken.uid);
-
+    // Return the verified ID token (not a custom token)
+    // Custom tokens cannot be verified with verifyIdToken()
     return new Response(
       JSON.stringify({
         user: {
@@ -29,7 +28,7 @@ export const POST: APIRoute = async ({ request }) => {
           displayName: user.displayName,
           photoURL: user.photoURL,
         },
-        customToken,
+        idToken,
       }),
       {
         status: 200,

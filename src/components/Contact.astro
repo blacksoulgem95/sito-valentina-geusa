@@ -1,7 +1,5 @@
 ---
 import {
-    Instagram,
-    Linkedin,
     Mail,
     MessageCircle,
     Sparkles,
@@ -9,6 +7,7 @@ import {
 import Card from "./ui/Card.astro";
 import Input from "./ui/Input.astro";
 import Textarea from "./ui/Textarea.astro";
+import SocialLinks from "./SocialLinks.astro";
 
 // Contact.astro
 ---
@@ -142,24 +141,7 @@ import Textarea from "./ui/Textarea.astro";
         <p class="text-gray mb-6">Tienimi in contatto</p>
         <div class="flex justify-center items-center gap-6">
             <Sparkles size={32} class="text-yellow-400" />
-            <a
-                href="https://instagram.com/vallmars"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="w-12 h-12 flex items-center justify-center rounded-full border-2 border-gray-300 hover:border-primary hover:bg-primary/10 transition-all"
-                aria-label="Instagram"
-            >
-                <Instagram size={24} />
-            </a>
-            <a
-                href="https://linkedin.com/in/valentinageusa"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="w-12 h-12 flex items-center justify-center rounded-full border-2 border-gray-300 hover:border-primary hover:bg-primary/10 transition-all"
-                aria-label="LinkedIn"
-            >
-                <Linkedin size={24} />
-            </a>
+            <SocialLinks variant="contact" />
             <Sparkles size={32} class="text-yellow-400" />
         </div>
     </div>
