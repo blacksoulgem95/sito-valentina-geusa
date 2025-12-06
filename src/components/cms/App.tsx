@@ -12,6 +12,7 @@ import PagesList from './PagesList';
 import PagesForm from './PagesForm';
 import FilesManager from './FilesManager';
 import SocialLinksManager from './SocialLinksManager';
+import AccountSettings from './AccountSettings';
 
 export default function CMSApp() {
   return (
@@ -37,6 +38,7 @@ export default function CMSApp() {
                 <Route path="pages/:slug" element={<PagesForm />} />
                 <Route path="files" element={<FilesManager />} />
                 <Route path="social-links" element={<SocialLinksManager />} />
+                <Route path="settings" element={<AccountSettings />} />
                 <Route path="*" element={<Navigate to="" replace />} />
               </Routes>
             </Layout>

@@ -1,6 +1,7 @@
 ---
 import { getPage } from '@/lib/firebase/firestore-server';
 import PageLayout from '@/layouts/PageLayout.astro';
+import { renderMarkdownToHtml } from '@/lib/utils/markdown';
 
 const { slug: slugParts } = Astro.params;
 
@@ -20,7 +21,7 @@ if (!page) {
 }
 
 const pageTitle = page.seoTitle || page.title;
-const pageBody = page.body;
+const pageBody = renderMarkdownToHtml(page.body);
 ---
 
 <PageLayout pageTitle={pageTitle}>

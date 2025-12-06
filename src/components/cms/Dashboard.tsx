@@ -9,25 +9,25 @@ export default function Dashboard() {
   const stats = [
     {
       name: 'Portfolio',
-      href: '/vgadm/portfolio',
+      href: '/portfolio',
       icon: FolderIcon,
       color: 'bg-pink-500',
     },
     {
       name: 'Blog',
-      href: '/vgadm/blog',
+      href: '/blog',
       icon: DocumentTextIcon,
       color: 'bg-purple-500',
     },
     {
       name: 'Pagine',
-      href: '/vgadm/pages',
+      href: '/pages',
       icon: DocumentTextIcon,
       color: 'bg-blue-500',
     },
     {
       name: 'File',
-      href: '/vgadm/files',
+      href: '/files',
       icon: PhotoIcon,
       color: 'bg-green-500',
     },
