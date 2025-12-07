@@ -71,18 +71,8 @@ const typeConfig = {
         <Fragment slot="title">Portfolio</Fragment>
     </Hero>
 
-    <section class="flex mt-3 flex-col justify-center items-center relative">
-        <!-- Decorazioni torte -->
-        <div class="absolute inset-0 pointer-events-none overflow-hidden">
-            <div class="cake-decoration cake-1">🍰</div>
-            <div class="cake-decoration cake-2">🍰</div>
-            <div class="cake-decoration cake-3">🍰</div>
-            <div class="cake-decoration cake-4">🍰</div>
-            <div class="cherry-decoration cherry-1">🍒</div>
-            <div class="cherry-decoration cherry-2">🍒</div>
-        </div>
-
-        <p class="text-center max-w-2xl relative z-10">
+    <section class="flex mt-3 flex-col justify-center items-center">
+        <p class="text-center max-w-2xl">
             Esplora i miei progetti creativi e le soluzioni che ho realizzato.
         </p>
     </section>
@@ -527,85 +517,5 @@ const typeConfig = {
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
-    }
-
-    /* Decorazioni torte animate */
-    .cake-decoration,
-    .cherry-decoration {
-        position: absolute;
-        font-size: 3rem;
-        animation: float 6s ease-in-out infinite;
-        opacity: 0.7;
-    }
-
-    .cake-1 {
-        top: 5%;
-        left: 10%;
-        animation-delay: 0s;
-        transform: rotate(-15deg);
-    }
-
-    .cake-2 {
-        top: 10%;
-        right: 8%;
-        animation-delay: 1s;
-        transform: rotate(20deg);
-    }
-
-    .cake-3 {
-        top: 50%;
-        left: 5%;
-        animation-delay: 2s;
-        transform: rotate(-10deg);
-        font-size: 2.5rem;
-    }
-
-    .cake-4 {
-        top: 40%;
-        right: 5%;
-        animation-delay: 3s;
-        transform: rotate(15deg);
-        font-size: 2.5rem;
-    }
-
-    .cherry-1 {
-        top: 15%;
-        left: 25%;
-        animation-delay: 1.5s;
-        font-size: 1.5rem;
-    }
-
-    .cherry-2 {
-        top: 45%;
-        right: 20%;
-        animation-delay: 2.5s;
-        font-size: 1.5rem;
-    }
-
-    @keyframes float {
-        0%,
-        100% {
-            transform: translateY(0px) rotate(var(--rotate, 0deg));
-        }
-        50% {
-            transform: translateY(-20px) rotate(var(--rotate, 0deg));
-        }
-    }
-
-    @media (max-width: 768px) {
-        .cake-decoration,
-        .cherry-decoration {
-            font-size: 2rem;
-        }
-
-        .cake-3,
-        .cake-4 {
-            font-size: 1.8rem;
-        }
-
-        .cherry-1,
-        .cherry-2 {
-            font-size: 1.2rem;
-        }
     }
 </style>
