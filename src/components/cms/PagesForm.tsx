@@ -153,13 +153,14 @@ export default function PagesForm() {
               value={formData.slug}
               onChange={(e) => {
                 const value = e.target.value;
-                // If user manually types a slash, preserve it; otherwise generate slug
-                const newSlug = value.includes('/') 
-                  ? value.split('/').map(part => generateSlug(part)).filter(p => p).join('/')
-                  : generateSlug(value);
+                // Allow free typing, only normalize to lowercase and remove invalid characters
+                // Preserve slashes and hyphens
+                const normalized = value
+                  .toLowerCase()
+                  .replace(/[^a-z0-9\/\-]/g, ''); // Only allow lowercase letters, numbers, slashes, and hyphens
                 setFormData((prev) => ({
                   ...prev,
-                  slug: newSlug,
+                  slug: normalized,
                 }));
               }}
               className={`mt-1 block w-full border rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 ${
