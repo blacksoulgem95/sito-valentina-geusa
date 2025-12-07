@@ -10,6 +10,11 @@ interface ImagePickerModalProps {
   onSelect: (url: string) => void;
 }
 
+const buildImageApiUrl = (fullPath: string): string => {
+  const segments = fullPath.split('/').map((segment) => encodeURIComponent(segment));
+  return `/api/image/${segments.join('/')}`;
+};
+
 export default function ImagePickerModal({
   isOpen,
   onClose,
@@ -78,7 +83,8 @@ export default function ImagePickerModal({
   };
 
   const handleSelect = (file: StorageFile) => {
-    onSelect(file.url);
+    const apiUrl = buildImageApiUrl(file.fullPath);
+    onSelect(apiUrl);
   };
 
   return (
@@ -134,20 +140,23 @@ export default function ImagePickerModal({
               </div>
             ) : (
               <div className="grid grid-cols-4 gap-4 max-h-96 overflow-y-auto">
-                {filteredFiles.map((file) => (
-                  <button
-                    key={file.fullPath}
-                    onClick={() => handleSelect(file)}
-                    className="group relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-pink-500 transition-colors"
-                  >
-                    <img
-                      src={file.url}
-                      alt={file.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-                  </button>
-                ))}
+                {filteredFiles.map((file) => {
+                  const imageUrl = buildImageApiUrl(file.fullPath);
+                  return (
+                    <button
+                      key={file.fullPath}
+                      onClick={() => handleSelect(file)}
+                      className="group relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-pink-500 transition-colors"
+                    >
+                      <img
+                        src={imageUrl}
+                        alt={file.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
