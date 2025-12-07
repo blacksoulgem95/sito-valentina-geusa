@@ -8,6 +8,7 @@ import Card from "./ui/Card.astro";
 import Input from "./ui/Input.astro";
 import Textarea from "./ui/Textarea.astro";
 import SocialLinks from "./SocialLinks.astro";
+import Turnstile from "./ui/Turnstile.astro";
 
 // Contact.astro
 ---
@@ -34,7 +35,7 @@ import SocialLinks from "./SocialLinks.astro";
             class="flex flex-col justify-center"
         >
             <div class="flex items-start gap-6">
-                <div class="form-header-icon flex-shrink-0">
+                <div class="form-header-icon shrink-0">
                     <Mail size={40} />
                 </div>
                 <div>
@@ -51,7 +52,7 @@ import SocialLinks from "./SocialLinks.astro";
         <!-- Card Form - Destra -->
         <Card variant="shadow-md" size="spacious">
             <div class="flex items-start gap-4 mb-6">
-                <div class="form-header-icon flex-shrink-0">
+                <div class="form-header-icon shrink-0">
                     <MessageCircle size={40} />
                 </div>
                 <div>
@@ -125,6 +126,7 @@ import SocialLinks from "./SocialLinks.astro";
                             > e autorizzo il trattamento dei miei dati
                         </label>
                     </div>
+                    <Turnstile id="contact-turnstile" />
                     <div class="flex justify-end">
                         <button type="submit" class="form-submit" id="contact-submit-btn">
                             Invia
@@ -157,6 +159,20 @@ import SocialLinks from "./SocialLinks.astro";
 
         if (!contactForm || !submitButton) return;
 
+        // Verifica che Turnstile sia completato
+        const turnstileTokenInput = document.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement;
+        if (!turnstileTokenInput || !turnstileTokenInput.value) {
+            if (messageDiv) {
+                messageDiv.classList.remove('hidden');
+                messageDiv.className = 'error-message md:col-span-2';
+                messageDiv.textContent = '❌ Completa la verifica di sicurezza prima di inviare.';
+                setTimeout(() => {
+                    messageDiv.classList.add('hidden');
+                }, 5000);
+            }
+            return;
+        }
+
         const formData = new FormData(contactForm);
         const originalButtonText = submitButton.textContent;
 
@@ -174,6 +190,7 @@ import SocialLinks from "./SocialLinks.astro";
             const response = await fetch('/api/contact', {
                 method: 'POST',
                 body: formData,
+                credentials: 'same-origin',
             });
 
             const result = await response.json();
@@ -185,6 +202,11 @@ import SocialLinks from "./SocialLinks.astro";
                     messageDiv.className = 'success-message md:col-span-2';
                     messageDiv.textContent = '✅ Messaggio inviato con successo! Ti risponderò al più presto. 💌';
                     contactForm.reset();
+                    
+                    // Reset Turnstile dopo invio riuscito
+                    if (typeof window.resetTurnstile === 'function') {
+                        window.resetTurnstile('contact-turnstile');
+                    }
                     
                     // Rimuovi il messaggio dopo 5 secondi
                     setTimeout(() => {

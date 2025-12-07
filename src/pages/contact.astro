@@ -7,6 +7,7 @@ import Textarea from "@/components/ui/Textarea.astro";
 import { Mail, Send, MessageCircle, Heart } from "lucide-astro";
 import Hero from "@/components/Hero.astro";
 import SocialLinks from "@/components/SocialLinks.astro";
+import Turnstile from "@/components/ui/Turnstile.astro";
 
 const pageTitle = "Contattami";
 ---
@@ -95,7 +96,7 @@ const pageTitle = "Contattami";
 
                     <!-- Colonna Destra - Form -->
                     <div>
-                        <Card variant="shadow-lg" class="p-8 bg-white">
+                        <Card variant="shadow-xl" class="p-8 bg-white">
                             <form
                                 class="space-y-6"
                                 id="contact-form"
@@ -191,6 +192,8 @@ const pageTitle = "Contattami";
                                     </label>
                                 </div>
 
+                                <Turnstile id="contact-page-turnstile" />
+
                                 <button
                                     type="submit"
                                     id="contact-submit-button"
@@ -231,7 +234,7 @@ const pageTitle = "Contattami";
                 </div>
 
                 <Card
-                    variant="shadow-lg"
+                    variant="shadow-xl"
                     class="p-8 bg-white max-w-2xl mx-auto"
                 >
                     <form
@@ -554,6 +557,19 @@ const pageTitle = "Contattami";
 
         if (!contactForm || !submitButton) return;
 
+        // Verifica che Turnstile sia completato
+        const turnstileTokenInput = document.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement;
+        if (!turnstileTokenInput || !turnstileTokenInput.value) {
+            const errorMessage = document.createElement("div");
+            errorMessage.className = "error-message";
+            errorMessage.innerHTML = "❌ Completa la verifica di sicurezza prima di inviare.";
+            contactForm.appendChild(errorMessage);
+            setTimeout(() => {
+                errorMessage.remove();
+            }, 5000);
+            return;
+        }
+
         const formData = new FormData(contactForm);
         const originalButtonHTML = submitButton.innerHTML;
 
@@ -572,6 +588,7 @@ const pageTitle = "Contattami";
             const response = await fetch("/api/contact", {
                 method: "POST",
                 body: formData,
+                credentials: 'same-origin',
             });
 
             const result = await response.json();
@@ -586,6 +603,11 @@ const pageTitle = "Contattami";
 
                 // Reset del form
                 contactForm.reset();
+
+                // Reset Turnstile dopo invio riuscito
+                if (typeof window.resetTurnstile === 'function') {
+                    window.resetTurnstile('contact-page-turnstile');
+                }
 
                 // Rimuovi il messaggio dopo 5 secondi
                 setTimeout(() => {

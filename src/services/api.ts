@@ -11,15 +11,23 @@ class ApiService {
     return localStorage.getItem('auth_token');
   }
 
-  private async request<T>(
+  /**
+   * Base fetch wrapper that handles common configurations
+   * including credentials, authentication, and error handling
+   */
+  private async fetchRequest<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
     const token = this.getAuthToken();
     const headers: HeadersInit = {
-      'Content-Type': 'application/json',
       ...options.headers,
     };
+
+    // Only set Content-Type for JSON requests (not for FormData)
+    if (!(options.body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
@@ -28,6 +36,7 @@ class ApiService {
     const response = await fetch(`${API_BASE}${endpoint}`, {
       ...options,
       headers,
+      credentials: 'same-origin',
     });
 
     if (!response.ok) {
@@ -37,7 +46,21 @@ class ApiService {
       throw new Error(error.error || 'Errore nella richiesta');
     }
 
-    return response.json();
+    // Handle empty responses (e.g., 204 No Content)
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    }
+    
+    // For non-JSON responses, return the response as-is
+    return response as unknown as T;
+  }
+
+  private async request<T>(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<T> {
+    return this.fetchRequest<T>(endpoint, options);
   }
 
   async get<T>(endpoint: string): Promise<T> {
@@ -80,27 +103,10 @@ class ApiService {
   }
 
   async postFormData<T>(endpoint: string, formData: FormData): Promise<T> {
-    const token = this.getAuthToken();
-    const headers: HeadersInit = {};
-
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const response = await fetch(`${API_BASE}${endpoint}`, {
+    return this.fetchRequest<T>(endpoint, {
       method: 'POST',
-      headers,
       body: formData,
     });
-
-    if (!response.ok) {
-      const error: ApiError = await response.json().catch(() => ({
-        error: `HTTP ${response.status}: ${response.statusText}`,
-      }));
-      throw new Error(error.error || 'Errore nella richiesta');
-    }
-
-    return response.json();
   }
 
   setAuthToken(token: string) {

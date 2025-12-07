@@ -181,6 +181,13 @@ MAILGUN_API_KEY=your-mailgun-api-key
 
 # Email destinatario per i messaggi del form contatti
 CONTACT_EMAIL=valentinageusadesign@gmail.com
+
+# Cloudflare Turnstile (CAPTCHA)
+# Ottieni le chiavi da https://dash.cloudflare.com/
+# Site Key: pubblica, usata nel frontend
+PUBLIC_TURNSTILE_SITE_KEY=your-turnstile-site-key
+# Secret Key: privata, usata nel backend per verificare i token
+TURNSTILE_SECRET_KEY=your-turnstile-secret-key
 ```
 
 ### Setup Mailgun
@@ -195,8 +202,23 @@ CONTACT_EMAIL=valentinageusadesign@gmail.com
 Il form contatti utilizza l'endpoint `/api/contact` che:
 - Valida i dati del form (nome, email, messaggio obbligatori)
 - Verifica l'accettazione della privacy policy
+- Verifica il token Cloudflare Turnstile (protezione anti-spam)
 - Invia l'email tramite Mailgun
 - Restituisce risposte JSON per gestione errori/successo
+
+### Setup Cloudflare Turnstile
+
+Il sito utilizza **Cloudflare Turnstile** per proteggere i form di contatto dallo spam.
+
+1. Crea un account su [Cloudflare Dashboard](https://dash.cloudflare.com/)
+2. Vai su **Turnstile** nella sidebar
+3. Crea un nuovo sito/widget
+4. Copia la **Site Key** (pubblica) e la **Secret Key** (privata)
+5. Aggiungi le chiavi al file `.env`:
+   - `PUBLIC_TURNSTILE_SITE_KEY` - per il frontend
+   - `TURNSTILE_SECRET_KEY` - per il backend (server-side)
+
+**Nota**: Se `TURNSTILE_SECRET_KEY` non è configurata, la verifica Turnstile viene disabilitata (utile per sviluppo locale).
 
 ### Form Disponibili
 

@@ -12,6 +12,7 @@ export const POST: APIRoute = async ({ request }) => {
         const messaggio = formData.get('messaggio') || formData.get('message');
         const oggetto = formData.get('subject') || formData.get('oggetto') || '';
         const privacy = formData.get('privacy');
+        const turnstileToken = formData.get('cf-turnstile-response');
 
         // Converti in stringhe per sicurezza
         const nomeStr = nome ? nome.toString() : '';
@@ -61,6 +62,58 @@ export const POST: APIRoute = async ({ request }) => {
                     headers: withCors({ 'Content-Type': 'application/json' })
                 }
             );
+        }
+
+        // Verifica Turnstile token
+        const turnstileSecretKey = process.env.TURNSTILE_SECRET_KEY;
+        if (turnstileSecretKey) {
+            if (!turnstileToken || typeof turnstileToken !== 'string') {
+                return new Response(
+                    JSON.stringify({ 
+                        success: false, 
+                        error: 'Verifica di sicurezza mancante. Ricarica la pagina e riprova.' 
+                    }),
+                    { 
+                        status: 400,
+                        headers: withCors({ 'Content-Type': 'application/json' })
+                    }
+                );
+            }
+
+            // Verifica il token con Cloudflare Turnstile
+            const turnstileVerifyUrl = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+            const verifyResponse = await fetch(turnstileVerifyUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    secret: turnstileSecretKey,
+                    response: turnstileToken,
+                    remoteip: request.headers.get('cf-connecting-ip') || 
+                             request.headers.get('x-forwarded-for') || 
+                             'unknown'
+                }).toString()
+            });
+
+            const verifyResult = await verifyResponse.json();
+
+            if (!verifyResult.success) {
+                console.error('Turnstile verification failed:', verifyResult);
+                return new Response(
+                    JSON.stringify({ 
+                        success: false, 
+                        error: 'Verifica di sicurezza fallita. Ricarica la pagina e riprova.' 
+                    }),
+                    { 
+                        status: 400,
+                        headers: withCors({ 'Content-Type': 'application/json' })
+                    }
+                );
+            }
+        } else {
+            // In sviluppo, se TURNSTILE_SECRET_KEY non è configurata, avvisa ma non blocca
+            console.warn('TURNSTILE_SECRET_KEY non configurata - la verifica Turnstile è disabilitata');
         }
 
         // Configurazione Mailgun

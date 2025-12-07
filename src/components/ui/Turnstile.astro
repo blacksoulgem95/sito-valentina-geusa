@@ -1,0 +1,108 @@
+---
+interface Props {
+    id?: string;
+    class?: string;
+    siteKey?: string;
+    theme?: 'light' | 'dark' | 'auto';
+    size?: 'normal' | 'compact';
+    tabindex?: number;
+}
+
+const {
+    id = 'cf-turnstile',
+    class: className = '',
+    siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '',
+    theme = 'auto',
+    size = 'normal',
+    tabindex = 0,
+} = Astro.props;
+
+if (!siteKey) {
+    console.warn('Turnstile: PUBLIC_TURNSTILE_SITE_KEY non configurata');
+}
+---
+
+<div
+    id={id}
+    class={`cf-turnstile ${className}`}
+    data-sitekey={siteKey}
+    data-theme={theme}
+    data-size={size}
+    data-tabindex={tabindex}
+></div>
+
+<script>
+    // Estendi l'interfaccia Window per includere le funzioni Turnstile
+    declare global {
+        interface Window {
+            getTurnstileToken?: (widgetId?: string) => string | null;
+            resetTurnstile?: (widgetId?: string) => void;
+            isTurnstileReady?: () => boolean;
+            turnstile?: any;
+        }
+    }
+
+    // Carica lo script di Cloudflare Turnstile se non è già caricato
+    if (!document.querySelector('script[src*="challenges.cloudflare.com"]')) {
+        const script = document.createElement('script');
+        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+    }
+
+    // Funzione per ottenere il token Turnstile
+    window.getTurnstileToken = function(widgetId: string = 'cf-turnstile'): string | null {
+        // Turnstile memorizza il token in un input hidden con name="cf-turnstile-response"
+        // Cerca l'input associato al widget specifico
+        const widget = document.getElementById(widgetId);
+        if (!widget) return null;
+        
+        // Turnstile crea un input hidden con il token
+        // Il widget ID è usato per identificare quale widget ha generato il token
+        const tokenInput = document.querySelector(`input[name="cf-turnstile-response"]`) as HTMLInputElement;
+        return tokenInput?.value || null;
+    };
+
+    // Funzione per resettare il widget Turnstile
+    window.resetTurnstile = function(widgetId: string = 'cf-turnstile'): void {
+        const widget = document.getElementById(widgetId);
+        if (widget && window.turnstile) {
+            try {
+                window.turnstile.reset(widgetId);
+            } catch (error) {
+                console.warn('Errore nel reset di Turnstile:', error);
+            }
+        }
+    };
+
+    // Funzione per verificare se Turnstile è pronto
+    window.isTurnstileReady = function(): boolean {
+        return typeof window.turnstile !== 'undefined';
+    };
+
+    // Attendi che Turnstile sia caricato prima di inizializzare
+    function initTurnstile() {
+        if (typeof window.turnstile !== 'undefined') {
+            // Turnstile si inizializza automaticamente quando trova elementi con class "cf-turnstile"
+            // Non serve fare nulla di più
+            return;
+        }
+        
+        // Se non è ancora caricato, riprova dopo un breve delay
+        setTimeout(initTurnstile, 100);
+    }
+
+    // Inizia l'inizializzazione quando il DOM è pronto
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTurnstile);
+    } else {
+        initTurnstile();
+    }
+</script>
+
+<style>
+    .cf-turnstile {
+        margin: 1rem 0;
+    }
+</style>
