@@ -174,6 +174,8 @@ import Turnstile from "./ui/Turnstile.astro";
         }
 
         const formData = new FormData(contactForm);
+        // Aggiungi esplicitamente il token Turnstile al FormData
+        formData.append('cf-turnstile-response', turnstileTokenInput.value);
         const originalButtonText = submitButton.textContent;
 
         // Disabilita il pulsante durante l'invio

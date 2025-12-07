@@ -126,12 +126,16 @@ env:
     value: vicedomini.cloud
     availability:
       - RUNTIME
-  
+
   - variable: MAILGUN_API_KEY
     secret: MAILGUN_API_KEY
 
   - variable: CONTACT_EMAIL
     secret: CONTACT_EMAIL
+  - variable: PUBLIC_TURNSTILE_SITE_KEY
+    secret: PUBLIC_TURNSTILE_SITE_KEY
+  - variable: TURNSTILE_SECRET_KEY
+    secret: TURNSTILE_SECRET_KEY
   # Esempio con Secret Manager (RACCOMANDATO):
   # Per settare una variabile come secret:
   # 1. Crea il secret con: firebase apphosting:secrets:set NOME_SECRET --project sito-valentina-geusa

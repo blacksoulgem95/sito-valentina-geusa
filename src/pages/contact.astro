@@ -571,6 +571,8 @@ const pageTitle = "Contattami";
         }
 
         const formData = new FormData(contactForm);
+        // Aggiungi esplicitamente il token Turnstile al FormData
+        formData.append('cf-turnstile-response', turnstileTokenInput.value);
         const originalButtonHTML = submitButton.innerHTML;
 
         // Disabilita il pulsante durante l'invio
