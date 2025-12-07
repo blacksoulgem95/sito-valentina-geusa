@@ -4,6 +4,7 @@ import { portfolioService, type PortfolioItem } from '@/services/portfolio.servi
 import { generateSlug, isValidSlug } from '@/lib/utils/slug';
 import { toast } from 'react-hot-toast';
 import MarkdownEditor from './MarkdownEditor';
+import ImagePickerModal from './ImagePickerModal';
 
 export default function PortfolioForm() {
   const { slug } = useParams<{ slug: string }>();
@@ -22,6 +23,7 @@ export default function PortfolioForm() {
   const [loading, setLoading] = useState(false);
   const [slugError, setSlugError] = useState('');
   const [checkingSlug, setCheckingSlug] = useState(false);
+  const [showFeaturedImagePicker, setShowFeaturedImagePicker] = useState(false);
 
   useEffect(() => {
     if (isEditing) {
@@ -115,6 +117,14 @@ export default function PortfolioForm() {
     }
   };
 
+  const handleFeaturedImageSelect = (url: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      featuredImage: url,
+    }));
+    setShowFeaturedImagePicker(false);
+  };
+
   if (loading && isEditing) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -183,18 +193,32 @@ export default function PortfolioForm() {
             <label className="block text-sm font-medium text-gray-700">
               Immagine principale
             </label>
-            <input
-              type="url"
-              value={formData.featuredImage || ''}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  featuredImage: e.target.value,
-                }))
-              }
-              placeholder="https://..."
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
-            />
+            <div className="mt-1 flex gap-2">
+              <input
+                type="url"
+                value={formData.featuredImage || ''}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    featuredImage: e.target.value,
+                  }))
+                }
+                placeholder="https://..."
+                className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
+              />
+              <button
+                type="button"
+                onClick={() => setShowFeaturedImagePicker(true)}
+                className="px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+              >
+                Scegli
+              </button>
+            </div>
+            {formData.featuredImage && (
+              <p className="mt-2 text-sm text-gray-500 truncate">
+                {formData.featuredImage}
+              </p>
+            )}
           </div>
 
           <div>
@@ -273,6 +297,13 @@ export default function PortfolioForm() {
           </button>
         </div>
       </form>
+      {showFeaturedImagePicker && (
+        <ImagePickerModal
+          isOpen={showFeaturedImagePicker}
+          onClose={() => setShowFeaturedImagePicker(false)}
+          onSelect={handleFeaturedImageSelect}
+        />
+      )}
     </div>
   );
 }
