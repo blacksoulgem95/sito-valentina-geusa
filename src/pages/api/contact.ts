@@ -30,7 +30,7 @@ export const POST: APIRoute = async ({ request }) => {
                 }),
                 { 
                     status: 400,
-                    headers: withCors({ 'Content-Type': 'application/json' })
+                    headers: withCors({ 'Content-Type': 'application/json' }, request)
                 }
             );
         }
@@ -45,7 +45,7 @@ export const POST: APIRoute = async ({ request }) => {
                 }),
                 { 
                     status: 400,
-                    headers: withCors({ 'Content-Type': 'application/json' })
+                    headers: withCors({ 'Content-Type': 'application/json' }, request)
                 }
             );
         }
@@ -59,7 +59,7 @@ export const POST: APIRoute = async ({ request }) => {
                 }),
                 { 
                     status: 400,
-                    headers: withCors({ 'Content-Type': 'application/json' })
+                    headers: withCors({ 'Content-Type': 'application/json' }, request)
                 }
             );
         }
@@ -75,7 +75,7 @@ export const POST: APIRoute = async ({ request }) => {
                     }),
                     { 
                         status: 400,
-                        headers: withCors({ 'Content-Type': 'application/json' })
+                        headers: withCors({ 'Content-Type': 'application/json' }, request)
                     }
                 );
             }
@@ -107,7 +107,7 @@ export const POST: APIRoute = async ({ request }) => {
                     }),
                     { 
                         status: 400,
-                        headers: withCors({ 'Content-Type': 'application/json' })
+                        headers: withCors({ 'Content-Type': 'application/json' }, request)
                     }
                 );
             }
@@ -138,7 +138,7 @@ export const POST: APIRoute = async ({ request }) => {
                 }),
                 { 
                     status: 500,
-                    headers: withCors({ 'Content-Type': 'application/json' })
+                    headers: withCors({ 'Content-Type': 'application/json' }, request)
                 }
             );
         }
@@ -197,7 +197,7 @@ Questo messaggio è stato inviato dal form contatti del sito web.
                 }),
                 { 
                     status: 500,
-                    headers: withCors({ 'Content-Type': 'application/json' })
+                    headers: withCors({ 'Content-Type': 'application/json' }, request)
                 }
             );
         }
@@ -209,7 +209,7 @@ Questo messaggio è stato inviato dal form contatti del sito web.
             }),
             { 
                 status: 200,
-                headers: { 'Content-Type': 'application/json' }
+                headers: withCors({ 'Content-Type': 'application/json' }, request)
             }
         );
 
@@ -222,16 +222,16 @@ Questo messaggio è stato inviato dal form contatti del sito web.
             }),
             { 
                 status: 500,
-                headers: { 'Content-Type': 'application/json' }
+                headers: withCors({ 'Content-Type': 'application/json' }, request)
             }
         );
     }
 };
 
-export const OPTIONS: APIRoute = async () => {
+export const OPTIONS: APIRoute = async ({ request }) => {
   return new Response(null, {
     status: 204,
-    headers: getCorsHeaders(),
+    headers: getCorsHeaders(request),
   });
 };
 
