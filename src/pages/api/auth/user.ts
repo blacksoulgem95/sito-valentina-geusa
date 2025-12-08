@@ -1,33 +1,30 @@
 import type { APIRoute } from 'astro';
-import { adminAuth } from '@/lib/firebase/admin';
+import { verifyAuthToken } from '@/lib/auth/jwt';
+import { db, schema } from '@/lib/db';
+import { eq } from 'drizzle-orm';
 import { getCorsHeaders, withCors } from '@/lib/api/cors';
 
 export const GET: APIRoute = async ({ request }) => {
   try {
-    const authHeader = request.headers.get('Authorization');
+    const payload = await verifyAuthToken(request);
     
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    // Get user details from database
+    const [user] = await db.select().from(schema.users).where(eq(schema.users.id, payload.userId)).limit(1);
+
+    if (!user) {
       return new Response(
-        JSON.stringify({ error: 'Token di autenticazione mancante' }),
-        { status: 401, headers: withCors({ 'Content-Type': 'application/json' }) }
+        JSON.stringify({ error: 'Utente non trovato' }),
+        { status: 404, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
-
-    const idToken = authHeader.split('Bearer ')[1];
-
-    // Verify the ID token
-    const decodedToken = await adminAuth.verifyIdToken(idToken);
-    
-    // Get user details
-    const user = await adminAuth.getUser(decodedToken.uid);
 
     return new Response(
       JSON.stringify({
         user: {
-          uid: user.uid,
+          uid: user.id.toString(),
           email: user.email,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
+          displayName: user.displayName || null,
+          photoURL: user.photoURL || null,
         },
       }),
       {

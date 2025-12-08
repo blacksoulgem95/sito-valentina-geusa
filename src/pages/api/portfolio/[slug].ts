@@ -1,15 +1,8 @@
 import type { APIRoute } from 'astro';
-import { adminDb, adminAuth } from '@/lib/firebase/admin';
+import { db, schema } from '@/lib/db';
+import { eq } from 'drizzle-orm';
+import { verifyAuthToken } from '@/lib/auth/jwt';
 import { getCorsHeaders, withCors } from '@/lib/api/cors';
-
-async function verifyAuth(request: Request) {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new Error('Non autenticato');
-  }
-  const idToken = authHeader.split('Bearer ')[1];
-  await adminAuth.verifyIdToken(idToken);
-}
 
 // GET: Get single portfolio item
 export const GET: APIRoute = async ({ params }) => {
@@ -22,9 +15,9 @@ export const GET: APIRoute = async ({ params }) => {
       );
     }
 
-    const doc = await adminDb.collection('portfolio').doc(slug).get();
+    const [item] = await db.select().from(schema.portfolioItems).where(eq(schema.portfolioItems.slug, slug)).limit(1);
     
-    if (!doc.exists) {
+    if (!item) {
       return new Response(
         JSON.stringify({ error: 'Portfolio item non trovato' }),
         { status: 404, headers: withCors({ 'Content-Type': 'application/json' }) }
@@ -32,7 +25,7 @@ export const GET: APIRoute = async ({ params }) => {
     }
 
     return new Response(
-      JSON.stringify({ slug: doc.id, ...doc.data() }),
+      JSON.stringify(item),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   } catch (error: any) {
@@ -47,7 +40,7 @@ export const GET: APIRoute = async ({ params }) => {
 // PUT: Update portfolio item
 export const PUT: APIRoute = async ({ request, params }) => {
   try {
-    await verifyAuth(request);
+    await verifyAuthToken(request);
     
     const { slug } = params;
     if (!slug) {
@@ -60,10 +53,9 @@ export const PUT: APIRoute = async ({ request, params }) => {
     const data = await request.json();
     const { slug: _, ...updateData } = data;
 
-    const docRef = adminDb.collection('portfolio').doc(slug);
-    const doc = await docRef.get();
+    const [item] = await db.select().from(schema.portfolioItems).where(eq(schema.portfolioItems.slug, slug)).limit(1);
     
-    if (!doc.exists) {
+    if (!item) {
       return new Response(
         JSON.stringify({ error: 'Portfolio item non trovato' }),
         { status: 404, headers: withCors({ 'Content-Type': 'application/json' }) }
@@ -71,15 +63,16 @@ export const PUT: APIRoute = async ({ request, params }) => {
     }
 
     const now = new Date();
-    const currentData = doc.data();
     
-    await docRef.update({
-      ...updateData,
-      updatedAt: now,
-      publishedAt: updateData.published !== undefined 
-        ? (updateData.published ? (currentData?.publishedAt || now) : null)
-        : currentData?.publishedAt,
-    });
+    await db.update(schema.portfolioItems)
+      .set({
+        ...updateData,
+        updatedAt: now,
+        publishedAt: updateData.published !== undefined 
+          ? (updateData.published ? (item.publishedAt || now) : null)
+          : item.publishedAt,
+      })
+      .where(eq(schema.portfolioItems.slug, slug));
 
     return new Response(
       JSON.stringify({ slug, message: 'Portfolio item aggiornato con successo' }),
@@ -97,7 +90,7 @@ export const PUT: APIRoute = async ({ request, params }) => {
 // DELETE: Delete portfolio item
 export const DELETE: APIRoute = async ({ request, params }) => {
   try {
-    await verifyAuth(request);
+    await verifyAuthToken(request);
     
     const { slug } = params;
     if (!slug) {
@@ -107,7 +100,7 @@ export const DELETE: APIRoute = async ({ request, params }) => {
       );
     }
 
-    await adminDb.collection('portfolio').doc(slug).delete();
+    await db.delete(schema.portfolioItems).where(eq(schema.portfolioItems.slug, slug));
 
     return new Response(
       JSON.stringify({ message: 'Portfolio item eliminato con successo' }),

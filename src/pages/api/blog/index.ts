@@ -1,34 +1,21 @@
 import type { APIRoute } from 'astro';
-import { adminDb, adminAuth } from '@/lib/firebase/admin';
+import { db, schema } from '@/lib/db';
+import { eq, desc } from 'drizzle-orm';
+import { verifyAuthToken } from '@/lib/auth/jwt';
 import { getCorsHeaders, withCors } from '@/lib/api/cors';
-
-async function verifyAuth(request: Request) {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new Error('Non autenticato');
-  }
-  const idToken = authHeader.split('Bearer ')[1];
-  await adminAuth.verifyIdToken(idToken);
-}
 
 export const GET: APIRoute = async ({ request }) => {
   try {
     const url = new URL(request.url);
     const published = url.searchParams.get('published');
     
-    let query = adminDb.collection('blog');
+    let query = db.select().from(schema.blogPosts);
     
     if (published === 'true') {
-      query = query.where('published', '==', true);
+      query = query.where(eq(schema.blogPosts.published, true)) as any;
     }
     
-    query = query.orderBy('publishedAt', 'desc');
-    
-    const snapshot = await query.get();
-    const items = snapshot.docs.map((doc) => ({
-      slug: doc.id,
-      ...doc.data(),
-    }));
+    const items = await query.orderBy(desc(schema.blogPosts.publishedAt));
 
     return new Response(JSON.stringify(items), {
       status: 200,
@@ -45,7 +32,7 @@ export const GET: APIRoute = async ({ request }) => {
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    await verifyAuth(request);
+    await verifyAuthToken(request);
     
     const data = await request.json();
     const { slug, ...postData } = data;
@@ -57,8 +44,8 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const existingDoc = await adminDb.collection('blog').doc(slug).get();
-    if (existingDoc.exists) {
+    const [existing] = await db.select().from(schema.blogPosts).where(eq(schema.blogPosts.slug, slug)).limit(1);
+    if (existing) {
       return new Response(
         JSON.stringify({ error: 'Uno slug con questo nome esiste già' }),
         { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
@@ -66,7 +53,8 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const now = new Date();
-    await adminDb.collection('blog').doc(slug).set({
+    await db.insert(schema.blogPosts).values({
+      slug,
       ...postData,
       updatedAt: now,
       publishedAt: postData.published ? now : null,

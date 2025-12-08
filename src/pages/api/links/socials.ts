@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
-import { adminDb } from '@/lib/firebase/admin';
+import { db, schema } from '@/lib/db';
+import { eq } from 'drizzle-orm';
 import { getCorsHeaders, withCors } from '@/lib/api/cors';
 
 export interface SocialLinks {
@@ -11,17 +12,20 @@ export interface SocialLinks {
 // GET: Get social links (public endpoint, no auth required)
 export const GET: APIRoute = async () => {
   try {
-    const doc = await adminDb.collection('links').doc('socials').get();
+    const [links] = await db.select().from(schema.socialLinks).where(eq(schema.socialLinks.id, 'socials')).limit(1);
     
-    if (!doc.exists) {
-      // Return empty object if document doesn't exist
+    if (!links) {
+      // Return empty object if record doesn't exist
       return new Response(
         JSON.stringify({}),
         { status: 200, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    const data = doc.data() as SocialLinks;
+    const data: SocialLinks = {
+      instagram: links.instagram || undefined,
+      linkedin: links.linkedin || undefined,
+    };
     return new Response(
       JSON.stringify(data),
       { status: 200, headers: { 'Content-Type': 'application/json' } }

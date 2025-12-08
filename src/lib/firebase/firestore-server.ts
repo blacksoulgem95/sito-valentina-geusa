@@ -1,7 +1,6 @@
-// Server-side Firestore utilities for Astro
-import { getDocs, collection, query, where, orderBy, getDoc, doc } from 'firebase/firestore';
-import { db } from './config';
-import { adminDb } from './admin';
+// Server-side database utilities for Astro
+import { db, schema } from '@/lib/db';
+import { eq, desc } from 'drizzle-orm';
 
 export interface BlogPost {
   slug: string;
@@ -77,44 +76,15 @@ export interface Page {
   seoDescription?: string;
 }
 
-// Get all published blog posts
-const isServer = typeof window === 'undefined';
-
-function getServerDb() {
-  return isServer ? adminDb : undefined;
-}
-
 export async function getBlogPosts(): Promise<BlogPost[]> {
-  const adminDbInstance = getServerDb();
-
-  if (!adminDbInstance && (typeof window !== 'undefined' || !db)) {
-    return [];
-  }
-
   try {
-    if (adminDbInstance) {
-      const snapshot = await adminDbInstance
-        .collection('blog')
-        .where('published', '==', true)
-        .orderBy('publishedAt', 'desc')
-        .get();
-
-      return snapshot.docs.map((doc) => ({
-        slug: doc.id,
-        ...doc.data(),
-      })) as BlogPost[];
-    }
-
-    const q = query(
-      collection(db, 'blog'),
-      where('published', '==', true),
-      orderBy('publishedAt', 'desc')
-    );
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
-      slug: doc.id,
-      ...doc.data(),
-    })) as BlogPost[];
+    const posts = await db
+      .select()
+      .from(schema.blogPosts)
+      .where(eq(schema.blogPosts.published, true))
+      .orderBy(desc(schema.blogPosts.publishedAt));
+    
+    return posts as BlogPost[];
   } catch (error) {
     console.error('Error fetching blog posts:', error);
     return [];
@@ -123,31 +93,15 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 
 // Get a single blog post by slug
 export async function getBlogPost(slug: string): Promise<BlogPost | null> {
-  const adminDbInstance = getServerDb();
-
-  if (!adminDbInstance && (typeof window !== 'undefined' || !db)) {
-    return null;
-  }
-
   try {
-    if (adminDbInstance) {
-      const docSnap = await adminDbInstance.collection('blog').doc(slug).get();
-      if (docSnap.exists && docSnap.data()?.published) {
-        return {
-          slug: docSnap.id,
-          ...docSnap.data(),
-        } as BlogPost;
-      }
-      return null;
-    }
-
-    const docRef = doc(db, 'blog', slug);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists() && docSnap.data().published) {
-      return {
-        slug: docSnap.id,
-        ...docSnap.data(),
-      } as BlogPost;
+    const [post] = await db
+      .select()
+      .from(schema.blogPosts)
+      .where(eq(schema.blogPosts.slug, slug))
+      .limit(1);
+    
+    if (post && post.published) {
+      return post as BlogPost;
     }
     return null;
   } catch (error) {
@@ -158,36 +112,14 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
 
 // Get all published portfolio items
 export async function getPortfolioItems(): Promise<PortfolioItem[]> {
-  const adminDbInstance = getServerDb();
-
-  if (!adminDbInstance && (typeof window !== 'undefined' || !db)) {
-    return [];
-  }
-
   try {
-    if (adminDbInstance) {
-      const snapshot = await adminDbInstance
-        .collection('portfolio')
-        .where('published', '==', true)
-        .orderBy('updatedAt', 'desc')
-        .get();
-
-      return snapshot.docs.map((doc) => ({
-        slug: doc.id,
-        ...doc.data(),
-      })) as PortfolioItem[];
-    }
-
-    const q = query(
-      collection(db, 'portfolio'),
-      where('published', '==', true),
-      orderBy('updatedAt', 'desc')
-    );
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
-      slug: doc.id,
-      ...doc.data(),
-    })) as PortfolioItem[];
+    const items = await db
+      .select()
+      .from(schema.portfolioItems)
+      .where(eq(schema.portfolioItems.published, true))
+      .orderBy(desc(schema.portfolioItems.updatedAt));
+    
+    return items as PortfolioItem[];
   } catch (error) {
     console.error('Error fetching portfolio items:', error);
     return [];
@@ -196,31 +128,15 @@ export async function getPortfolioItems(): Promise<PortfolioItem[]> {
 
 // Get a single portfolio item by slug
 export async function getPortfolioItem(slug: string): Promise<PortfolioItem | null> {
-  const adminDbInstance = getServerDb();
-
-  if (!adminDbInstance && (typeof window !== 'undefined' || !db)) {
-    return null;
-  }
-
   try {
-    if (adminDbInstance) {
-      const docSnap = await adminDbInstance.collection('portfolio').doc(slug).get();
-      if (docSnap.exists && docSnap.data()?.published) {
-        return {
-          slug: docSnap.id,
-          ...docSnap.data(),
-        } as PortfolioItem;
-      }
-      return null;
-    }
-
-    const docRef = doc(db, 'portfolio', slug);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists() && docSnap.data().published) {
-      return {
-        slug: docSnap.id,
-        ...docSnap.data(),
-      } as PortfolioItem;
+    const [item] = await db
+      .select()
+      .from(schema.portfolioItems)
+      .where(eq(schema.portfolioItems.slug, slug))
+      .limit(1);
+    
+    if (item && item.published) {
+      return item as PortfolioItem;
     }
     return null;
   } catch (error) {
@@ -231,31 +147,15 @@ export async function getPortfolioItem(slug: string): Promise<PortfolioItem | nu
 
 // Get a page by slug
 export async function getPage(slug: string): Promise<Page | null> {
-  const adminDbInstance = getServerDb();
-
-  if (!adminDbInstance && (typeof window !== 'undefined' || !db)) {
-    return null;
-  }
-
   try {
-    if (adminDbInstance) {
-      const docSnap = await adminDbInstance.collection('pages').doc(slug).get();
-      if (docSnap.exists && docSnap.data()?.published) {
-        return {
-          slug: docSnap.id,
-          ...docSnap.data(),
-        } as Page;
-      }
-      return null;
-    }
-
-    const docRef = doc(db, 'pages', slug);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists() && docSnap.data().published) {
-      return {
-        slug: docSnap.id,
-        ...docSnap.data(),
-      } as Page;
+    const [page] = await db
+      .select()
+      .from(schema.pages)
+      .where(eq(schema.pages.slug, slug))
+      .limit(1);
+    
+    if (page && page.published) {
+      return page as Page;
     }
     return null;
   } catch (error) {

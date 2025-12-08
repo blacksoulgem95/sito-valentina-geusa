@@ -1,15 +1,8 @@
 import type { APIRoute } from 'astro';
-import { adminDb, adminAuth } from '@/lib/firebase/admin';
+import { db, schema } from '@/lib/db';
+import { eq } from 'drizzle-orm';
+import { verifyAuthToken } from '@/lib/auth/jwt';
 import { getCorsHeaders, withCors } from '@/lib/api/cors';
-
-async function verifyAuth(request: Request) {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new Error('Non autenticato');
-  }
-  const idToken = authHeader.split('Bearer ')[1];
-  await adminAuth.verifyIdToken(idToken);
-}
 
 export const GET: APIRoute = async ({ params }) => {
   try {
@@ -21,9 +14,9 @@ export const GET: APIRoute = async ({ params }) => {
       );
     }
 
-    const doc = await adminDb.collection('blog').doc(slug).get();
+    const [post] = await db.select().from(schema.blogPosts).where(eq(schema.blogPosts.slug, slug)).limit(1);
     
-    if (!doc.exists) {
+    if (!post) {
       return new Response(
         JSON.stringify({ error: 'Blog post non trovato' }),
         { status: 404, headers: withCors({ 'Content-Type': 'application/json' }) }
@@ -31,7 +24,7 @@ export const GET: APIRoute = async ({ params }) => {
     }
 
     return new Response(
-      JSON.stringify({ slug: doc.id, ...doc.data() }),
+      JSON.stringify(post),
       { status: 200, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   } catch (error: any) {
@@ -45,7 +38,7 @@ export const GET: APIRoute = async ({ params }) => {
 
 export const PUT: APIRoute = async ({ request, params }) => {
   try {
-    await verifyAuth(request);
+    await verifyAuthToken(request);
     
     const { slug } = params;
     if (!slug) {
@@ -58,10 +51,9 @@ export const PUT: APIRoute = async ({ request, params }) => {
     const data = await request.json();
     const { slug: _, ...updateData } = data;
 
-    const docRef = adminDb.collection('blog').doc(slug);
-    const doc = await docRef.get();
+    const [post] = await db.select().from(schema.blogPosts).where(eq(schema.blogPosts.slug, slug)).limit(1);
     
-    if (!doc.exists) {
+    if (!post) {
       return new Response(
         JSON.stringify({ error: 'Blog post non trovato' }),
         { status: 404, headers: withCors({ 'Content-Type': 'application/json' }) }
@@ -69,15 +61,16 @@ export const PUT: APIRoute = async ({ request, params }) => {
     }
 
     const now = new Date();
-    const currentData = doc.data();
     
-    await docRef.update({
-      ...updateData,
-      updatedAt: now,
-      publishedAt: updateData.published !== undefined 
-        ? (updateData.published ? (currentData?.publishedAt || now) : null)
-        : currentData?.publishedAt,
-    });
+    await db.update(schema.blogPosts)
+      .set({
+        ...updateData,
+        updatedAt: now,
+        publishedAt: updateData.published !== undefined 
+          ? (updateData.published ? (post.publishedAt || now) : null)
+          : post.publishedAt,
+      })
+      .where(eq(schema.blogPosts.slug, slug));
 
     return new Response(
       JSON.stringify({ slug, message: 'Blog post aggiornato con successo' }),
@@ -94,7 +87,7 @@ export const PUT: APIRoute = async ({ request, params }) => {
 
 export const DELETE: APIRoute = async ({ request, params }) => {
   try {
-    await verifyAuth(request);
+    await verifyAuthToken(request);
     
     const { slug } = params;
     if (!slug) {
@@ -104,7 +97,7 @@ export const DELETE: APIRoute = async ({ request, params }) => {
       );
     }
 
-    await adminDb.collection('blog').doc(slug).delete();
+    await db.delete(schema.blogPosts).where(eq(schema.blogPosts.slug, slug));
 
     return new Response(
       JSON.stringify({ message: 'Blog post eliminato con successo' }),

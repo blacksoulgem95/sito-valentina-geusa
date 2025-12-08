@@ -1,16 +1,8 @@
 import type { APIRoute } from 'astro';
-import { adminDb, adminAuth } from '@/lib/firebase/admin';
+import { db, schema } from '@/lib/db';
+import { eq, desc } from 'drizzle-orm';
+import { verifyAuthToken } from '@/lib/auth/jwt';
 import { getCorsHeaders, withCors } from '@/lib/api/cors';
-
-// Helper to verify authentication
-async function verifyAuth(request: Request) {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new Error('Non autenticato');
-  }
-  const idToken = authHeader.split('Bearer ')[1];
-  await adminAuth.verifyIdToken(idToken);
-}
 
 // GET: List all portfolio items
 export const GET: APIRoute = async ({ request }) => {
@@ -18,19 +10,13 @@ export const GET: APIRoute = async ({ request }) => {
     const url = new URL(request.url);
     const published = url.searchParams.get('published');
     
-    let query = adminDb.collection('portfolio');
+    let query = db.select().from(schema.portfolioItems);
     
     if (published === 'true') {
-      query = query.where('published', '==', true);
+      query = query.where(eq(schema.portfolioItems.published, true)) as any;
     }
     
-    query = query.orderBy('updatedAt', 'desc');
-    
-    const snapshot = await query.get();
-    const items = snapshot.docs.map((doc) => ({
-      slug: doc.id,
-      ...doc.data(),
-    }));
+    const items = await query.orderBy(desc(schema.portfolioItems.updatedAt));
 
     return new Response(JSON.stringify(items), {
       status: 200,
@@ -48,7 +34,7 @@ export const GET: APIRoute = async ({ request }) => {
 // POST: Create new portfolio item
 export const POST: APIRoute = async ({ request }) => {
   try {
-    await verifyAuth(request);
+    await verifyAuthToken(request);
     
     const data = await request.json();
     const { slug, ...itemData } = data;
@@ -61,8 +47,8 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Check if slug exists
-    const existingDoc = await adminDb.collection('portfolio').doc(slug).get();
-    if (existingDoc.exists) {
+    const [existing] = await db.select().from(schema.portfolioItems).where(eq(schema.portfolioItems.slug, slug)).limit(1);
+    if (existing) {
       return new Response(
         JSON.stringify({ error: 'Uno slug con questo nome esiste già' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
@@ -70,7 +56,8 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const now = new Date();
-    await adminDb.collection('portfolio').doc(slug).set({
+    await db.insert(schema.portfolioItems).values({
+      slug,
       ...itemData,
       updatedAt: now,
       publishedAt: itemData.published ? now : null,

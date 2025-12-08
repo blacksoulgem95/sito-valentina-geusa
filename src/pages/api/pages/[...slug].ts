@@ -1,15 +1,8 @@
 import type { APIRoute } from 'astro';
-import { adminDb, adminAuth } from '@/lib/firebase/admin';
+import { db, schema } from '@/lib/db';
+import { eq } from 'drizzle-orm';
+import { verifyAuthToken } from '@/lib/auth/jwt';
 import { getCorsHeaders, withCors } from '@/lib/api/cors';
-
-async function verifyAuth(request: Request) {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new Error('Non autenticato');
-  }
-  const idToken = authHeader.split('Bearer ')[1];
-  await adminAuth.verifyIdToken(idToken);
-}
 
 export const GET: APIRoute = async ({ params }) => {
   try {
@@ -21,12 +14,11 @@ export const GET: APIRoute = async ({ params }) => {
       );
     }
 
-    // Join slug parts with slashes to handle nested paths like "legal/dati-societari"
     const slug = Array.isArray(slugParts) ? slugParts.join('/') : slugParts;
 
-    const doc = await adminDb.collection('pages').doc(slug).get();
+    const [page] = await db.select().from(schema.pages).where(eq(schema.pages.slug, slug)).limit(1);
     
-    if (!doc.exists) {
+    if (!page) {
       return new Response(
         JSON.stringify({ error: 'Pagina non trovata' }),
         { status: 404, headers: { 'Content-Type': 'application/json' } }
@@ -34,7 +26,7 @@ export const GET: APIRoute = async ({ params }) => {
     }
 
     return new Response(
-      JSON.stringify({ slug: doc.id, ...doc.data() }),
+      JSON.stringify(page),
       { status: 200, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   } catch (error: any) {
@@ -48,7 +40,7 @@ export const GET: APIRoute = async ({ params }) => {
 
 export const PUT: APIRoute = async ({ request, params }) => {
   try {
-    await verifyAuth(request);
+    await verifyAuthToken(request);
     
     const { slug: slugParts } = params;
     if (!slugParts || (Array.isArray(slugParts) && slugParts.length === 0)) {
@@ -58,16 +50,14 @@ export const PUT: APIRoute = async ({ request, params }) => {
       );
     }
 
-    // Join slug parts with slashes to handle nested paths
     const oldSlug = Array.isArray(slugParts) ? slugParts.join('/') : slugParts;
 
     const data = await request.json();
     const { slug: newSlug, ...updateData } = data;
 
-    const oldDocRef = adminDb.collection('pages').doc(oldSlug);
-    const oldDoc = await oldDocRef.get();
+    const [oldPage] = await db.select().from(schema.pages).where(eq(schema.pages.slug, oldSlug)).limit(1);
     
-    if (!oldDoc.exists) {
+    if (!oldPage) {
       return new Response(
         JSON.stringify({ error: 'Pagina non trovata' }),
         { status: 404, headers: withCors({ 'Content-Type': 'application/json' }) }
@@ -75,50 +65,47 @@ export const PUT: APIRoute = async ({ request, params }) => {
     }
 
     const now = new Date();
-    const currentData = oldDoc.data();
     
-    // If slug changed, we need to create a new document and delete the old one
+    // If slug changed, we need to create a new record and delete the old one
     if (newSlug && newSlug !== oldSlug) {
-      // Check if new slug already exists
-      const newDocRef = adminDb.collection('pages').doc(newSlug);
-      const newDoc = await newDocRef.get();
+      const [existing] = await db.select().from(schema.pages).where(eq(schema.pages.slug, newSlug)).limit(1);
       
-      if (newDoc.exists) {
+      if (existing) {
         return new Response(
           JSON.stringify({ error: 'Questo slug è già in uso' }),
           { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
         );
       }
 
-      // Create new document with new slug
-      // Remove old slug from currentData if present, and ensure new slug is set
-      const { slug: _, ...dataWithoutSlug } = currentData || {};
-      await newDocRef.set({
-        ...dataWithoutSlug,
-        ...updateData,
+      // Create new record with new slug
+      await db.insert(schema.pages).values({
         slug: newSlug,
+        ...oldPage,
+        ...updateData,
         updatedAt: now,
         publishedAt: updateData.published !== undefined 
-          ? (updateData.published ? (currentData?.publishedAt || now) : null)
-          : currentData?.publishedAt,
+          ? (updateData.published ? (oldPage.publishedAt || now) : null)
+          : oldPage.publishedAt,
       });
 
-      // Delete old document
-      await oldDocRef.delete();
+      // Delete old record
+      await db.delete(schema.pages).where(eq(schema.pages.slug, oldSlug));
 
       return new Response(
         JSON.stringify({ slug: newSlug, message: 'Pagina aggiornata con successo' }),
         { status: 200, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     } else {
-      // Slug unchanged, just update the document
-      await oldDocRef.update({
-        ...updateData,
-        updatedAt: now,
-        publishedAt: updateData.published !== undefined 
-          ? (updateData.published ? (currentData?.publishedAt || now) : null)
-          : currentData?.publishedAt,
-      });
+      // Slug unchanged, just update the record
+      await db.update(schema.pages)
+        .set({
+          ...updateData,
+          updatedAt: now,
+          publishedAt: updateData.published !== undefined 
+            ? (updateData.published ? (oldPage.publishedAt || now) : null)
+            : oldPage.publishedAt,
+        })
+        .where(eq(schema.pages.slug, oldSlug));
 
       return new Response(
         JSON.stringify({ slug: oldSlug, message: 'Pagina aggiornata con successo' }),
@@ -136,7 +123,7 @@ export const PUT: APIRoute = async ({ request, params }) => {
 
 export const DELETE: APIRoute = async ({ request, params }) => {
   try {
-    await verifyAuth(request);
+    await verifyAuthToken(request);
     
     const { slug: slugParts } = params;
     if (!slugParts || (Array.isArray(slugParts) && slugParts.length === 0)) {
@@ -146,10 +133,9 @@ export const DELETE: APIRoute = async ({ request, params }) => {
       );
     }
 
-    // Join slug parts with slashes to handle nested paths
     const slug = Array.isArray(slugParts) ? slugParts.join('/') : slugParts;
 
-    await adminDb.collection('pages').doc(slug).delete();
+    await db.delete(schema.pages).where(eq(schema.pages.slug, slug));
 
     return new Response(
       JSON.stringify({ message: 'Pagina eliminata con successo' }),

@@ -7,7 +7,12 @@
     "build": "astro build",
     "preview": "astro preview --host",
     "start": "node dist/server/entry.mjs",
-    "astro": "astro"
+    "astro": "astro",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "postbuild": "npm run db:migrate || true"
   },
   "dependencies": {
     "@astrojs/node": "^9.5.1",
@@ -19,8 +24,6 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "astro": "^5.15.3",
-    "firebase": "^12.6.0",
-    "firebase-admin": "^13.6.0",
     "lucide-astro": "^0.554.0",
     "marked": "^17.0.1",
     "react": "^19.2.1",

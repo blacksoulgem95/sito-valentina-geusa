@@ -1,29 +1,34 @@
 import type { APIRoute } from 'astro';
-import { adminDb, adminAuth } from '@/lib/firebase/admin';
+import { db, schema } from '@/lib/db';
+import { eq } from 'drizzle-orm';
+import { verifyAuthToken } from '@/lib/auth/jwt';
 import { getCorsHeaders, withCors } from '@/lib/api/cors';
-
-async function verifyAuth(request: Request) {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new Error('Non autenticato');
-  }
-  const idToken = authHeader.split('Bearer ')[1];
-  await adminAuth.verifyIdToken(idToken);
-}
 
 // PUT: Update social links
 export const PUT: APIRoute = async ({ request }) => {
   try {
-    await verifyAuth(request);
+    await verifyAuthToken(request);
     
     const data = await request.json();
     const { instagram, linkedin } = data;
 
-    const updateData: Record<string, string> = {};
-    if (instagram !== undefined) updateData.instagram = instagram;
-    if (linkedin !== undefined) updateData.linkedin = linkedin;
+    const updateData: Record<string, string | null> = {};
+    if (instagram !== undefined) updateData.instagram = instagram || null;
+    if (linkedin !== undefined) updateData.linkedin = linkedin || null;
 
-    await adminDb.collection('links').doc('socials').set(updateData, { merge: true });
+    // Check if record exists
+    const [existing] = await db.select().from(schema.socialLinks).where(eq(schema.socialLinks.id, 'socials')).limit(1);
+    
+    if (existing) {
+      await db.update(schema.socialLinks)
+        .set(updateData)
+        .where(eq(schema.socialLinks.id, 'socials'));
+    } else {
+      await db.insert(schema.socialLinks).values({
+        id: 'socials',
+        ...updateData,
+      });
+    }
 
     return new Response(
       JSON.stringify({ message: 'Link social aggiornati con successo' }),

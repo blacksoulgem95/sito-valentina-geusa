@@ -1,26 +1,12 @@
 import type { APIRoute } from 'astro';
-import { adminDb, adminAuth } from '@/lib/firebase/admin';
+import { db, schema } from '@/lib/db';
+import { eq, asc } from 'drizzle-orm';
+import { verifyAuthToken } from '@/lib/auth/jwt';
 import { getCorsHeaders, withCors } from '@/lib/api/cors';
-
-async function verifyAuth(request: Request) {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new Error('Non autenticato');
-  }
-  const idToken = authHeader.split('Bearer ')[1];
-  await adminAuth.verifyIdToken(idToken);
-}
 
 export const GET: APIRoute = async () => {
   try {
-    const snapshot = await adminDb.collection('blog_categories')
-      .orderBy('name')
-      .get();
-    
-    const categories = snapshot.docs.map((doc) => ({
-      slug: doc.id,
-      ...doc.data(),
-    }));
+    const categories = await db.select().from(schema.blogCategories).orderBy(asc(schema.blogCategories.name));
 
     return new Response(JSON.stringify(categories), {
       status: 200,
@@ -37,7 +23,7 @@ export const GET: APIRoute = async () => {
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    await verifyAuth(request);
+    await verifyAuthToken(request);
     
     const data = await request.json();
     const { slug, ...categoryData } = data;
@@ -49,15 +35,15 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const existingDoc = await adminDb.collection('blog_categories').doc(slug).get();
-    if (existingDoc.exists) {
+    const [existing] = await db.select().from(schema.blogCategories).where(eq(schema.blogCategories.slug, slug)).limit(1);
+    if (existing) {
       return new Response(
         JSON.stringify({ error: 'Una categoria con questo slug esiste già' }),
         { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
-    await adminDb.collection('blog_categories').doc(slug).set(categoryData);
+    await db.insert(schema.blogCategories).values({ slug, ...categoryData });
 
     return new Response(
       JSON.stringify({ slug, message: 'Categoria creata con successo' }),

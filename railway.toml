@@ -1,0 +1,18 @@
+[build]
+builder = "railpack"
+buildCommand = "npm run build"
+
+[deploy]
+startCommand = "npm start"
+healthcheckPath = "/"
+healthcheckTimeout = 100
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
+
+# Environment variables needed (set these in Railway dashboard):
+# DATABASE_URL - MySQL connection string
+# STORAGE_PATH - Path for file storage (default: ./storage)
+# JWT_SECRET - Secret key for JWT tokens
+# AUTHORIZER_URL - Authorizer.dev instance URL (if using Authorizer)
+# AUTHORIZER_CLIENT_ID - Authorizer.dev client ID (if using Authorizer)
+

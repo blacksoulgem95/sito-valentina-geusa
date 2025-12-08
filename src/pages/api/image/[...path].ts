@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { adminStorage } from '@/lib/firebase/admin';
+import { getFile } from '@/lib/storage/local';
 import { getCorsHeaders, withCors } from '@/lib/api/cors';
 
 const ONE_WEEK_IN_SECONDS = 60 * 60 * 24 * 7;
@@ -27,36 +27,20 @@ export const GET: APIRoute = async ({ params }) => {
       );
     }
 
-    const bucketName =
-      process.env.FIREBASE_STORAGE_BUCKET ||
-      import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
+    const file = await getFile(filePath);
 
-    if (!bucketName) {
-      return new Response(
-        JSON.stringify({ error: 'Storage bucket non configurato' }),
-        { status: 500, headers: withCors({ 'Content-Type': 'application/json' }) }
-      );
-    }
-
-    const file = adminStorage.bucket(bucketName).file(filePath);
-    const [exists] = await file.exists();
-
-    if (!exists) {
+    if (!file) {
       return new Response(
         JSON.stringify({ error: 'Immagine non trovata' }),
         { status: 404, headers: withCors({ 'Content-Type': 'application/json' }) }
       );
     }
 
-    const [metadata] = await file.getMetadata();
-    const [buffer] = await file.download();
-    const contentLength = metadata.size ?? buffer.length.toString();
-
-    return new Response(buffer, {
+    return new Response(file.buffer, {
       status: 200,
       headers: withCors({
-        'Content-Type': metadata.contentType || 'application/octet-stream',
-        'Content-Length': contentLength,
+        'Content-Type': file.contentType,
+        'Content-Length': file.size.toString(),
         'Cache-Control': CACHE_HEADER,
       }),
     });

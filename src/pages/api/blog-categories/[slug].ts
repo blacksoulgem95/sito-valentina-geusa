@@ -1,15 +1,8 @@
 import type { APIRoute } from 'astro';
-import { adminDb, adminAuth } from '@/lib/firebase/admin';
+import { db, schema } from '@/lib/db';
+import { eq } from 'drizzle-orm';
+import { verifyAuthToken } from '@/lib/auth/jwt';
 import { getCorsHeaders, withCors } from '@/lib/api/cors';
-
-async function verifyAuth(request: Request) {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new Error('Non autenticato');
-  }
-  const idToken = authHeader.split('Bearer ')[1];
-  await adminAuth.verifyIdToken(idToken);
-}
 
 export const GET: APIRoute = async ({ params }) => {
   try {
@@ -21,9 +14,9 @@ export const GET: APIRoute = async ({ params }) => {
       );
     }
 
-    const doc = await adminDb.collection('blog_categories').doc(slug).get();
+    const [category] = await db.select().from(schema.blogCategories).where(eq(schema.blogCategories.slug, slug)).limit(1);
     
-    if (!doc.exists) {
+    if (!category) {
       return new Response(
         JSON.stringify({ error: 'Categoria non trovata' }),
         { status: 404, headers: withCors({ 'Content-Type': 'application/json' }) }
@@ -31,7 +24,7 @@ export const GET: APIRoute = async ({ params }) => {
     }
 
     return new Response(
-      JSON.stringify({ slug: doc.id, ...doc.data() }),
+      JSON.stringify(category),
       { status: 200, headers: withCors({ 'Content-Type': 'application/json' }) }
     );
   } catch (error: any) {
@@ -45,7 +38,7 @@ export const GET: APIRoute = async ({ params }) => {
 
 export const PUT: APIRoute = async ({ request, params }) => {
   try {
-    await verifyAuth(request);
+    await verifyAuthToken(request);
     
     const { slug } = params;
     if (!slug) {
@@ -58,7 +51,9 @@ export const PUT: APIRoute = async ({ request, params }) => {
     const data = await request.json();
     const { slug: _, ...updateData } = data;
 
-    await adminDb.collection('blog_categories').doc(slug).update(updateData);
+    await db.update(schema.blogCategories)
+      .set(updateData)
+      .where(eq(schema.blogCategories.slug, slug));
 
     return new Response(
       JSON.stringify({ slug, message: 'Categoria aggiornata con successo' }),
@@ -75,7 +70,7 @@ export const PUT: APIRoute = async ({ request, params }) => {
 
 export const DELETE: APIRoute = async ({ request, params }) => {
   try {
-    await verifyAuth(request);
+    await verifyAuthToken(request);
     
     const { slug } = params;
     if (!slug) {
@@ -85,7 +80,7 @@ export const DELETE: APIRoute = async ({ request, params }) => {
       );
     }
 
-    await adminDb.collection('blog_categories').doc(slug).delete();
+    await db.delete(schema.blogCategories).where(eq(schema.blogCategories.slug, slug));
 
     return new Response(
       JSON.stringify({ message: 'Categoria eliminata con successo' }),

@@ -1,19 +1,11 @@
 import type { APIRoute } from 'astro';
-import { adminStorage, adminAuth } from '@/lib/firebase/admin';
+import { verifyAuthToken } from '@/lib/auth/jwt';
+import { saveFile } from '@/lib/storage/local';
 import { getCorsHeaders, withCors } from '@/lib/api/cors';
-
-async function verifyAuth(request: Request) {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new Error('Non autenticato');
-  }
-  const idToken = authHeader.split('Bearer ')[1];
-  await adminAuth.verifyIdToken(idToken);
-}
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    await verifyAuth(request);
+    await verifyAuthToken(request);
     
     const formData = await request.formData();
     const files = formData.getAll('files') as File[];
@@ -26,40 +18,7 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const storageBucket = process.env.FIREBASE_STORAGE_BUCKET || import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
-    if (!storageBucket) {
-      return new Response(
-        JSON.stringify({ error: 'Storage bucket non configurato' }),
-        { status: 500, headers: withCors({ 'Content-Type': 'application/json' }, request) }
-      );
-    }
-    const bucket = adminStorage.bucket(storageBucket);
-    const uploadPromises = files.map(async (file) => {
-      const fileName = `${Date.now()}-${file.name}`;
-      const filePath = folder ? `${folder}/${fileName}` : fileName;
-      const fileRef = bucket.file(filePath);
-
-      const buffer = Buffer.from(await file.arrayBuffer());
-      await fileRef.save(buffer, {
-        metadata: {
-          contentType: file.type || 'application/octet-stream',
-        },
-      });
-
-      const [url] = await fileRef.getSignedUrl({
-        action: 'read',
-        expires: '03-09-2491',
-      });
-
-      return {
-        name: file.name,
-        fullPath: filePath,
-        url,
-        size: file.size,
-        contentType: file.type || 'application/octet-stream',
-      };
-    });
-
+    const uploadPromises = files.map((file) => saveFile(file, folder));
     const uploadedFiles = await Promise.all(uploadPromises);
 
     return new Response(

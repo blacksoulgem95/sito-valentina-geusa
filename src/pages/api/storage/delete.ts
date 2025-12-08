@@ -1,19 +1,11 @@
 import type { APIRoute } from 'astro';
-import { adminStorage, adminAuth } from '@/lib/firebase/admin';
+import { verifyAuthToken } from '@/lib/auth/jwt';
+import { deleteFile } from '@/lib/storage/local';
 import { getCorsHeaders, withCors } from '@/lib/api/cors';
-
-async function verifyAuth(request: Request) {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new Error('Non autenticato');
-  }
-  const idToken = authHeader.split('Bearer ')[1];
-  await adminAuth.verifyIdToken(idToken);
-}
 
 export const DELETE: APIRoute = async ({ request, url }) => {
   try {
-    await verifyAuth(request);
+    await verifyAuthToken(request);
     
     const urlObj = new URL(url);
     const fullPath = urlObj.searchParams.get('fullPath');
@@ -25,15 +17,7 @@ export const DELETE: APIRoute = async ({ request, url }) => {
       );
     }
 
-    const storageBucket = process.env.FIREBASE_STORAGE_BUCKET || import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
-    if (!storageBucket) {
-      return new Response(
-        JSON.stringify({ error: 'Storage bucket non configurato' }),
-        { status: 500, headers: withCors({ 'Content-Type': 'application/json' }, request) }
-      );
-    }
-    const bucket = adminStorage.bucket(storageBucket);
-    await bucket.file(fullPath).delete();
+    await deleteFile(fullPath);
 
     return new Response(
       JSON.stringify({ message: 'File eliminato con successo' }),
