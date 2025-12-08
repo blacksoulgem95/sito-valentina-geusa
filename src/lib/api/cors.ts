@@ -41,11 +41,25 @@ function getCorsOrigin(request?: Request): string {
 export function getCorsHeaders(request?: Request): Record<string, string> {
   const origin = getCorsOrigin(request);
   
+  // For preflight requests, check what headers are being requested
+  let allowedHeaders = 'Content-Type, Authorization';
+  if (request) {
+    const requestedHeaders = request.headers.get('Access-Control-Request-Headers');
+    if (requestedHeaders) {
+      // Allow the requested headers plus our standard ones
+      const requestedList = requestedHeaders.split(',').map(h => h.trim());
+      const standardHeaders = ['Content-Type', 'Authorization'];
+      const allHeaders = [...new Set([...standardHeaders, ...requestedList])];
+      allowedHeaders = allHeaders.join(', ');
+    }
+  }
+  
   return {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': allowedHeaders,
     'Access-Control-Allow-Credentials': origin !== '*' ? 'true' : 'false',
+    'Access-Control-Max-Age': '86400', // Cache preflight for 24 hours
   };
 }
 

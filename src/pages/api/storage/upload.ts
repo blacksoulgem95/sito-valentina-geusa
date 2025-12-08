@@ -22,7 +22,7 @@ export const POST: APIRoute = async ({ request }) => {
     if (!files || files.length === 0) {
       return new Response(
         JSON.stringify({ error: 'Nessun file fornito' }),
-        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }) }
+        { status: 400, headers: withCors({ 'Content-Type': 'application/json' }, request) }
       );
     }
 
@@ -30,7 +30,7 @@ export const POST: APIRoute = async ({ request }) => {
     if (!storageBucket) {
       return new Response(
         JSON.stringify({ error: 'Storage bucket non configurato' }),
-        { status: 500, headers: withCors({ 'Content-Type': 'application/json' }) }
+        { status: 500, headers: withCors({ 'Content-Type': 'application/json' }, request) }
       );
     }
     const bucket = adminStorage.bucket(storageBucket);
@@ -64,20 +64,20 @@ export const POST: APIRoute = async ({ request }) => {
 
     return new Response(
       JSON.stringify({ files: uploadedFiles }),
-      { status: 200, headers: withCors({ 'Content-Type': 'application/json' }) }
+      { status: 200, headers: withCors({ 'Content-Type': 'application/json' }, request) }
     );
   } catch (error: any) {
     console.error('Error uploading files:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore durante l\'upload dei file' }),
-      { status: error.message === 'Non autenticato' ? 401 : 500, headers: withCors({ 'Content-Type': 'application/json' }) }
+      { status: error.message === 'Non autenticato' ? 401 : 500, headers: withCors({ 'Content-Type': 'application/json' }, request) }
     );
   }
 };
 
-export const OPTIONS: APIRoute = async () => {
+export const OPTIONS: APIRoute = async ({ request }) => {
   return new Response(null, {
     status: 204,
-    headers: getCorsHeaders(),
+    headers: getCorsHeaders(request),
   });
 };

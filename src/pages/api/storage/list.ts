@@ -24,7 +24,7 @@ export const GET: APIRoute = async ({ request, url }) => {
     if (!storageBucket) {
       return new Response(
         JSON.stringify({ error: 'Storage bucket non configurato' }),
-        { status: 500, headers: withCors({ 'Content-Type': 'application/json' }) }
+        { status: 500, headers: withCors({ 'Content-Type': 'application/json' }, request) }
       );
     }
     const bucket = adminStorage.bucket(storageBucket);
@@ -64,20 +64,20 @@ export const GET: APIRoute = async ({ request, url }) => {
 
     return new Response(
       JSON.stringify(fileList),
-      { status: 200, headers: withCors({ 'Content-Type': 'application/json' }) }
+      { status: 200, headers: withCors({ 'Content-Type': 'application/json' }, request) }
     );
   } catch (error: any) {
     console.error('Error listing files:', error);
     return new Response(
       JSON.stringify({ error: error.message || 'Errore durante il recupero dei file' }),
-      { status: error.message === 'Non autenticato' ? 401 : 500, headers: withCors({ 'Content-Type': 'application/json' }) }
+      { status: error.message === 'Non autenticato' ? 401 : 500, headers: withCors({ 'Content-Type': 'application/json' }, request) }
     );
   }
 };
 
-export const OPTIONS: APIRoute = async () => {
+export const OPTIONS: APIRoute = async ({ request }) => {
   return new Response(null, {
     status: 204,
-    headers: getCorsHeaders(),
+    headers: getCorsHeaders(request),
   });
 };
