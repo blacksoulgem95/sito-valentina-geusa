@@ -96,16 +96,26 @@ export default function PagesForm() {
     setLoading(true);
     try {
       if (isEditing) {
-        await pagesService.update(slug!, formData);
+        // Include slug in the update data so it can be changed
+        const result = await pagesService.update(slug!, {
+          ...formData,
+          slug: formData.slug!,
+        });
         toast.success('Pagina aggiornata');
+        // If slug changed, redirect to the new slug
+        if (result.slug && result.slug !== slug) {
+          navigate(`/pages/${result.slug}`);
+        } else {
+          navigate('/pages');
+        }
       } else {
         await pagesService.create({
           ...formData,
           slug: formData.slug!,
         } as Page);
         toast.success('Pagina creata');
+        navigate('/pages');
       }
-      navigate('/pages');
     } catch (error: any) {
       toast.error(error.message || 'Errore durante il salvataggio');
     } finally {
