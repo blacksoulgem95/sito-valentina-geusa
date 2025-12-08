@@ -9,10 +9,9 @@
     "start": "node dist/server/entry.mjs",
     "astro": "astro",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "tsx scripts/migrate.ts",
+    "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
-    "postbuild": "npm run db:migrate || true"
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@astrojs/node": "^9.5.1",
