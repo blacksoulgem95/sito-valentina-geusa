@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - .:/workspace:cached
+      # Mount SSH directory from host (works on Linux, macOS, and WSL)
+      # On Windows, use WSL path or full Windows path converted to Docker format
+      # Try HOME first, fallback to USERPROFILE for Windows
+      - ${HOME:-${USERPROFILE}}/.ssh:/home/node/.ssh:ro
+    command: sleep infinity
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      # MySQL connection settings - app can connect via service name 'mysql'
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: vsoft_user
+      DB_PASSWORD: vsoft_password
+      DB_NAME: vicedomini_softworks
+
+  mysql:
+    image: mysql:8.0
+    container_name: vsoft-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: vicedomini_softworks
+      MYSQL_USER: vsoft_user
+      MYSQL_PASSWORD: vsoft_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-prootpassword",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:

@@ -25,6 +25,9 @@ export async function verifyAuthToken(request: Request): Promise<TokenPayload> {
     throw new Error('Non autenticato');
   }
   const token = authHeader.split('Bearer ')[1];
+  if (!token || token.trim() === '') {
+    throw new Error('Non autenticato');
+  }
   return verifyToken(token);
 }
 

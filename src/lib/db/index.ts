@@ -9,8 +9,7 @@ let pool: mysql.Pool | null = null;
 
 function getPool() {
   if (!pool) {
-    pool = mysql.createPool({
-      uri: connectionString,
+    pool = mysql.createPool(connectionString, {
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
