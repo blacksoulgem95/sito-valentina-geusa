@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   app:
     build:
@@ -8,8 +6,8 @@ services:
     volumes:
       - .:/workspace:cached
       # Mount SSH directory from host (works on Linux, macOS, and WSL)
-      # On Windows, use WSL path or full Windows path converted to Docker format
-      # Try HOME first, fallback to USERPROFILE for Windows
+      # On Windows, the path will be automatically converted by Docker Desktop
+      # If the SSH directory doesn't exist, this mount will be skipped
       - ${HOME:-${USERPROFILE}}/.ssh:/home/node/.ssh:ro
     command: sleep infinity
     depends_on:
@@ -25,7 +23,6 @@ services:
 
   mysql:
     image: mysql:8.0
-    container_name: vsoft-mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
@@ -33,7 +30,7 @@ services:
       MYSQL_USER: vsoft_user
       MYSQL_PASSWORD: vsoft_password
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
